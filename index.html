@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kyu — Distributed Job Queue for Go</title>
+    
+    <!-- Fonts -->
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Highlight.js Theme -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" id="hljs-theme">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: ['class', '[data-theme="dark"]'],
+            theme: {
+                extend: {
+                    colors: {
+                        bg: 'var(--bg)',
+                        fg: 'var(--fg)',
+                        border: 'var(--border)',
+                        muted: 'var(--muted)',
+                        invertBg: 'var(--invert-bg)',
+                        invertFg: 'var(--invert-fg)',
+                    },
+                    fontFamily: {
+                        clash: ['Clash Display', 'sans-serif'],
+                        geist: ['Geist', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    boxShadow: {
+                        'brutal': '4px 4px 0px 0px var(--fg)',
+                        'brutal-hover': '2px 2px 0px 0px var(--fg)',
+                        'brutal-lg': '8px 8px 0px 0px var(--fg)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            /* Strict Black & White Light Mode */
+            --bg: #FFFFFF;
+            --fg: #000000;
+            --border: #000000;
+            --muted: #666666;
+            --invert-bg: #000000;
+            --invert-fg: #FFFFFF;
+        }
+
+        :root[data-theme="dark"] {
+            /* Strict Black & White Dark Mode */
+            --bg: #000000;
+            --fg: #FFFFFF;
+            --border: #FFFFFF;
+            --muted: #999999;
+            --invert-bg: #FFFFFF;
+            --invert-fg: #000000;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: 'Geist', sans-serif;
+            transition: background-color 0.1s, color 0.1s;
+            line-height: 1.6;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6, .font-clash {
+            font-family: 'Clash Display', sans-serif;
+            color: var(--fg);
+            text-transform: uppercase;
+        }
+
+        /* Brutalist Grid Background */
+        .bg-grid-pattern {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                linear-gradient(to right, var(--border) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.1;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            height: 10px; width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+            border-left: 2px solid var(--border);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--fg);
+        }
+
+        /* Brutalist Card */
+        .brutal-card {
+            background: var(--bg);
+            border: 2px solid var(--border);
+            box-shadow: var(--brutal);
+            transition: transform 0.1s, box-shadow 0.1s;
+            z-index: 1;
+        }
+        .brutal-card:hover {
+            transform: translate(2px, 2px);
+            box-shadow: var(--brutal-hover);
+        }
+
+        /* Brutalist Button */
+        .brutal-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg);
+            color: var(--fg);
+            border: 2px solid var(--border);
+            box-shadow: var(--brutal);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            text-transform: uppercase;
+            transition: all 0.1s;
+            cursor: pointer;
+        }
+        .brutal-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: var(--brutal-hover);
+            background: var(--invert-bg);
+            color: var(--invert-fg);
+        }
+        .brutal-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0 0 0 0 var(--border);
+        }
+
+        /* Window Frame */
+        .window-frame {
+            border: 2px solid var(--border);
+            background: var(--bg);
+            box-shadow: var(--brutal-lg);
+            overflow: hidden;
+            position: relative;
+        }
+        .window-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 16px;
+            background: var(--invert-bg);
+            color: var(--invert-fg);
+            border-bottom: 2px solid var(--border);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        /* Code Block Styling */
+        pre { margin: 0 !important; }
+        code.hljs { background: transparent !important; padding: 1.5rem !important; font-size: 14px; line-height: 1.5; font-family: 'JetBrains Mono', monospace;}
+        .hljs-keyword { font-weight: bold; text-decoration: underline; }
+        
+        /* Rigid animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-fg selection:text-bg border-x-4 border-border mx-auto max-w-[1600px] bg-bg min-h-screen relative">
+
+    <div class="bg-grid-pattern"></div>
+
+    <!-- Navbar -->
+    <nav class="sticky top-0 z-50 bg-bg border-b-4 border-border transition-colors">
+        <div class="px-6 lg:px-12">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex-shrink-0 flex items-center gap-3">
+                    <div class="w-8 h-8 border-2 border-border bg-invertBg text-invertFg flex items-center justify-center font-clash font-bold">
+                        K
+                    </div>
+                    <a href="#" class="font-clash font-bold text-2xl tracking-tight">KYU</a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8 font-mono text-sm font-bold">
+                    <a href="#architecture" class="hover:underline underline-offset-4 decoration-2">ARCHITECTURE</a>
+                    <a href="#features" class="hover:underline underline-offset-4 decoration-2">FEATURES</a>
+                    <a href="#docs" class="hover:underline underline-offset-4 decoration-2">DOCS</a>
+                </div>
+                <div class="flex items-center gap-6">
+                    <a href="https://github.com/codetesla51/kyu" target="_blank" class="hidden md:block font-mono text-sm font-bold hover:underline underline-offset-4 decoration-2">
+                        GITHUB
+                    </a>
+                    <button id="theme-toggle" class="brutal-btn w-8 h-8 p-0" aria-label="Toggle Theme">
+                        <span id="theme-toggle-light-icon" class="hidden">D</span>
+                        <span id="theme-toggle-dark-icon" class="hidden">L</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="px-6 lg:px-12 pt-24 pb-24 border-b-4 border-border relative z-10 bg-bg">
+        <div class="max-w-5xl">
+            <div class="inline-block border-2 border-border px-3 py-1 font-mono text-xs font-bold mb-8 bg-invertBg text-invertFg">
+                GO 1.21+ DISTRIBUTED QUEUE
+            </div>
+            
+            <h1 class="font-clash text-6xl md:text-8xl lg:text-[140px] font-bold leading-[0.9] tracking-tighter mb-8 break-words">
+                JOBS THAT<br>SURVIVE.
+            </h1>
+            
+            <p class="text-xl md:text-2xl font-mono max-w-3xl mb-12 border-l-4 border-border pl-6">
+                POSTGRESQL IS THE SOURCE OF TRUTH.<br>
+                REDIS IS THE FAST LANE.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-6 mb-20 font-mono">
+                <button onclick="copyInstallCmd()" class="brutal-btn px-8 py-4 text-left justify-start relative group w-full sm:w-auto overflow-visible">
+                    <span class="mr-4">$</span>
+                    <span id="install-cmd">go get github.com/codetesla51/kyu</span>
+                    <span id="copy-tooltip" class="absolute -top-12 left-0 bg-invertBg text-invertFg text-xs py-1 px-2 border-2 border-border opacity-0 transition-opacity">COPIED!</span>
+                </button>
+                
+                <a href="https://github.com/codetesla51/kyu" target="_blank" class="brutal-btn px-8 py-4 w-full sm:w-auto bg-invertBg text-invertFg hover:bg-bg hover:text-fg">
+                    GITHUB REPO
+                </a>
+            </div>
+
+            <!-- Brutalist Architecture Visualizer -->
+            <div class="window-frame mt-16 max-w-4xl">
+                <div class="window-header">
+                    <span>SYSTEM TOPOLOGY</span>
+                    <span class="animate-pulse">ONLINE</span>
+                </div>
+                <div class="relative h-[300px] flex items-center justify-center p-8 bg-bg">
+                    
+                    <!-- Diagram container -->
+                    <div class="flex w-full justify-between items-center relative z-10">
+                        
+                        <!-- Redis -->
+                        <div class="brutal-card p-4 text-center w-32">
+                            <div class="font-mono font-bold border-b-2 border-border pb-2 mb-2">REDIS</div>
+                            <div class="text-xs font-mono">FAST INDEX</div>
+                        </div>
+
+                        <!-- Worker -->
+                        <div id="worker-node" class="brutal-card p-6 text-center w-48 bg-invertBg text-invertFg">
+                            <div class="font-clash font-bold text-2xl border-b-2 border-invertFg pb-2 mb-2">WORKER</div>
+                            <div class="text-xs font-mono">BZMPOP + SYNC</div>
+                        </div>
+
+                        <!-- Postgres -->
+                        <div class="brutal-card p-4 text-center w-32">
+                            <div class="font-mono font-bold border-b-2 border-border pb-2 mb-2">PGSQL</div>
+                            <div class="text-xs font-mono">STATE</div>
+                        </div>
+
+                    </div>
+
+                    <!-- SVG Lines strictly black and white -->
+                    <svg class="absolute inset-0 w-full h-full pointer-events-none" id="arch-lines">
+                        <line x1="20%" y1="50%" x2="50%" y2="50%" stroke="var(--border)" stroke-width="4" stroke-dasharray="8 8" class="animate-[dash_1s_linear_infinite]" />
+                        <line x1="50%" y1="50%" x2="80%" y2="50%" stroke="var(--border)" stroke-width="4" stroke-dasharray="8 8" class="animate-[dash_1s_linear_infinite]" />
+                    </svg>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Architecture Section -->
+    <section id="architecture" class="py-24 border-b-4 border-border bg-bg px-6 lg:px-12">
+        <div class="max-w-6xl reveal">
+            <h2 class="text-6xl md:text-8xl font-clash font-bold mb-16 break-words border-b-8 border-border inline-block pb-2">THE ENGINE</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="brutal-card p-8">
+                    <h3 class="text-2xl font-bold font-mono mb-4 border-b-2 border-border pb-2">01. DISPATCHER</h3>
+                    <p class="font-geist">Workers execute a blocking BZMPOP on Redis to get job IDs instantly with near-zero latency, avoiding DB polling entirely.</p>
+                </div>
+                
+                <div class="brutal-card p-8 bg-invertBg text-invertFg">
+                    <h3 class="text-2xl font-bold font-mono mb-4 border-b-2 border-invertFg pb-2">02. SCHEDULER</h3>
+                    <p class="font-geist">A background goroutine queries Postgres to promote scheduled jobs and backoff retries directly into the Redis ready queue.</p>
+                </div>
+                
+                <div class="brutal-card p-8">
+                    <h3 class="text-2xl font-bold font-mono mb-4 border-b-2 border-border pb-2">03. REAPER</h3>
+                    <p class="font-geist">If a worker panics or an instance dies OOM, the reaper detects orphaned locks in Postgres and automatically resets them.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SQL Section -->
+    <section class="py-24 border-b-4 border-border bg-bg px-6 lg:px-12">
+        <div class="max-w-6xl reveal">
+            <h2 class="text-4xl md:text-6xl font-clash font-bold mb-8 uppercase">Every job is a row.</h2>
+            <p class="font-mono text-xl mb-12 max-w-2xl border-l-4 border-border pl-4">No opaque binary blobs. Query your queue state using standard SQL.</p>
+
+            <div class="window-frame">
+                <div class="window-header">
+                    <span>TABLE: kyu_jobs</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left font-mono text-sm">
+                        <thead class="border-b-2 border-border bg-invertBg text-invertFg">
+                            <tr>
+                                <th class="px-6 py-4">ID</th>
+                                <th class="px-6 py-4 border-l-2 border-invertFg">TYPE</th>
+                                <th class="px-6 py-4 border-l-2 border-invertFg">STATUS</th>
+                                <th class="px-6 py-4 border-l-2 border-invertFg">PAYLOAD</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y-2 divide-border">
+                            <tr class="hover:bg-invertBg hover:text-invertFg transition-none cursor-crosshair">
+                                <td class="px-6 py-4">...a1b2</td>
+                                <td class="px-6 py-4 border-l-2 border-border font-bold">send_email</td>
+                                <td class="px-6 py-4 border-l-2 border-border uppercase">completed</td>
+                                <td class="px-6 py-4 border-l-2 border-border">{"to": "dev@..."}</td>
+                            </tr>
+                            <tr class="hover:bg-invertBg hover:text-invertFg transition-none cursor-crosshair">
+                                <td class="px-6 py-4">...c3d4</td>
+                                <td class="px-6 py-4 border-l-2 border-border font-bold">process_img</td>
+                                <td class="px-6 py-4 border-l-2 border-border uppercase">running</td>
+                                <td class="px-6 py-4 border-l-2 border-border">{"url": "s3://..."}</td>
+                            </tr>
+                            <tr class="hover:bg-invertBg hover:text-invertFg transition-none cursor-crosshair">
+                                <td class="px-6 py-4">...e5f6</td>
+                                <td class="px-6 py-4 border-l-2 border-border font-bold">charge_card</td>
+                                <td class="px-6 py-4 border-l-2 border-border uppercase">failed</td>
+                                <td class="px-6 py-4 border-l-2 border-border">{"amt": 5000}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Docs Section -->
+    <section id="docs" class="py-24 border-b-4 border-border bg-bg px-6 lg:px-12">
+        <div class="max-w-6xl reveal">
+            <h2 class="text-6xl md:text-8xl font-clash font-bold mb-16 break-words border-b-8 border-border inline-block pb-2">CODE</h2>
+            
+            <div class="window-frame">
+                <div class="window-header border-b-2 border-border">
+                    <div class="flex gap-2">
+                        <button onclick="switchTab('init')" id="btn-init" class="px-4 py-1 border-2 border-invertFg bg-invertFg text-invertBg font-bold hover:bg-bg hover:text-fg">MAIN.GO</button>
+                        <button onclick="switchTab('enqueue')" id="btn-enqueue" class="px-4 py-1 border-2 border-transparent hover:border-invertFg">ENQUEUE.GO</button>
+                    </div>
+                </div>
+                <div class="relative bg-bg">
+                    <div id="init" class="tab-content block overflow-x-auto border-t-2 border-border">
+<pre><code class="language-go">package main
+
+import (
+    "context"
+    "log"
+    "github.com/codetesla51/kyu"
+)
+
+func main() {
+    q := kyu.New(kyu.Config{
+        DSN:         "postgres://user:pass@localhost:5432/mydb",
+        RedisAddr:   "localhost:6379",
+        Workers:     10,
+    })
+
+    q.Register("send_email", func(ctx context.Context, payload string) error {
+        log.Printf("Email: %s", payload)
+        return nil
+    })
+
+    if err := q.Connect(context.Background()); err != nil {
+        log.Fatal(err)
+    }
+
+    q.Start(context.Background())
+}</code></pre>
+                    </div>
+
+                    <div id="enqueue" class="tab-content hidden overflow-x-auto border-t-2 border-border">
+<pre><code class="language-go">package main
+
+// Enqueue immediately
+jobID, _ := q.Enqueue(ctx, "send_email", `{"to": "user@example.com"}`, kyu.EnqueueOptions{
+    MaxRetries: 3,
+    Priority:   1,
+})
+
+// Transactional enqueue (Atomic with your DB writes)
+tx, _ := db.BeginTx(ctx, nil)
+defer tx.Rollback()
+
+// INSERT INTO users...
+
+jobID, _ := q.EnqueueTx(ctx, tx, "welcome_email", `{"user_id": 1}`, kyu.EnqueueOptions{})
+tx.Commit()</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-24 border-b-4 border-border bg-bg px-6 lg:px-12">
+        <div class="max-w-6xl reveal">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 font-mono">
+                <div class="border-4 border-border p-6 hover:bg-invertBg hover:text-invertFg transition-colors cursor-crosshair">
+                    <h3 class="text-2xl font-bold mb-2 uppercase">Exponential Backoff</h3>
+                    <p>Failed jobs retry with increasing delays to protect downstream APIs.</p>
+                </div>
+                <div class="border-4 border-border p-6 hover:bg-invertBg hover:text-invertFg transition-colors cursor-crosshair">
+                    <h3 class="text-2xl font-bold mb-2 uppercase">Priority Queues</h3>
+                    <p>Assign integer priorities at enqueue time. High priority skips the line.</p>
+                </div>
+                <div class="border-4 border-border p-6 hover:bg-invertBg hover:text-invertFg transition-colors cursor-crosshair">
+                    <h3 class="text-2xl font-bold mb-2 uppercase">Graceful Shutdown</h3>
+                    <p>Intercepts SIGTERM. Finishes active jobs before killing the process.</p>
+                </div>
+                <div class="border-4 border-border p-6 hover:bg-invertBg hover:text-invertFg transition-colors cursor-crosshair">
+                    <h3 class="text-2xl font-bold mb-2 uppercase">Prometheus Ready</h3>
+                    <p>Native exporter. Track queue depth, rates, and failures automatically.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 bg-invertBg text-invertFg px-6 lg:px-12 text-center md:text-left">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center font-mono font-bold">
+            <div class="text-4xl font-clash tracking-widest mb-6 md:mb-0">KYU</div>
+            <div class="flex space-x-8">
+                <a href="https://github.com/codetesla51/kyu" class="hover:underline underline-offset-4 decoration-2">GITHUB</a>
+                <a href="#" class="hover:underline underline-offset-4 decoration-2">LICENSE</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
+    
+    <script>
+        // DOM Elements
+        const root = document.documentElement;
+        const themeToggle = document.getElementById('theme-toggle');
+        const hljsTheme = document.getElementById('hljs-theme');
+
+        // Dark Mode Logic
+        function updateThemeIcons(isDark) {
+            document.getElementById('theme-toggle-light-icon').classList.toggle('hidden', !isDark);
+            document.getElementById('theme-toggle-dark-icon').classList.toggle('hidden', isDark);
+        }
+
+        function toggleTheme() {
+            const isDark = root.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            root.setAttribute('data-theme', newTheme);
+            
+            hljsTheme.href = newTheme === 'dark' 
+                ? 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css' 
+                : 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css';
+            
+            updateThemeIcons(newTheme === 'dark');
+        }
+
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            root.setAttribute('data-theme', 'dark');
+            hljsTheme.href = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css';
+        }
+        updateThemeIcons(root.getAttribute('data-theme') === 'dark');
+        themeToggle.addEventListener('click', toggleTheme);
+
+        // Copy Install Command
+        function copyInstallCmd() {
+            const cmd = document.getElementById('install-cmd').innerText;
+            navigator.clipboard.writeText(cmd).then(() => {
+                const tooltip = document.getElementById('copy-tooltip');
+                tooltip.classList.remove('opacity-0');
+                setTimeout(() => tooltip.classList.add('opacity-0'), 1500);
+            });
+        }
+
+        // Tabs Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+            
+            document.getElementById('btn-init').className = 'px-4 py-1 border-2 border-transparent hover:border-invertFg';
+            document.getElementById('btn-enqueue').className = 'px-4 py-1 border-2 border-transparent hover:border-invertFg';
+            
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.className = 'px-4 py-1 border-2 border-invertFg bg-invertFg text-invertBg font-bold hover:bg-bg hover:text-fg';
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            hljs.highlightAll();
+            
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if(entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+        });
+    </script>
+    <style>
+        @keyframes dash {
+            to { stroke-dashoffset: -16; }
+        }
+    </style>
+</body>
+</html>
