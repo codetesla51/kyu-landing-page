@@ -119,7 +119,7 @@
     .hljs-wrap{overflow-x:auto;margin:0;}
     .hljs-wrap pre{margin:0!important;padding:22px 24px!important;background:transparent!important;overflow-x:auto;white-space:pre;}
     .hljs-wrap code.hljs{font-family:'JetBrains Mono',monospace!important;font-size:0.8125rem!important;line-height:1.7!important;background:transparent!important;padding:0!important;white-space:pre;}
-    .code-copy-btn{position:absolute;top:10px;right:10px;background:var(--color-border);border:1px solid var(--color-border-2);border-radius:6px;padding:5px 10px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--color-muted);cursor:pointer;display:flex;align-items:center;gap:6px;transition:color 0.2s,border-color 0.2s,background 0.2s;z-index:2;min-height:44px;}
+    .code-copy-btn{position:absolute;top:10px;right:10px;background:var(--color-border);border:1px solid var(--color-border-2);border-radius:6px;padding:10px 12px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--color-muted);cursor:pointer;display:flex;align-items:center;gap:6px;transition:color 0.2s,border-color 0.2s,background 0.2s;z-index:2;min-height:44px;}
     .code-copy-btn:hover{color:var(--color-accent);border-color:var(--color-accent);background:var(--color-surface);}
 
     /* TABULATOR THEME */
@@ -189,7 +189,7 @@
       .comparison-table{min-width:860px;}
       .hero-grid{gap:24px;}
       .hero-sub,.card-desc,.engine-desc,.stat-note,.stat-label,.gh-link,.tab-btn,.nav-pill-link,.nav-gh-btn,#mobile-menu .nav-link,#nav-star-badge{font-size:13px!important;}
-      [style*="font-size:0.6875rem"],[style*="font-size:0.75rem"],[style*="font-size:0.625rem"],[style*="font-size:0.8125rem"]{font-size:13px!important;}
+      #lifecycle .section-inner > .scroll-reveal p,#quickstart .section-inner > div[style*="margin-top:40px"] > div:first-child,#benchmarks .section-inner > p,#footer span,#footer p{font-size:13px!important;}
       #stat-grid{grid-template-columns:1fr!important;}
     }
     @media(min-width:768px){
@@ -208,7 +208,7 @@
   <div class="nav-inner">
     <a href="#" class="nav-logo">
       kyu
-      <a id="nav-star-badge" href="https://github.com/codetesla51/kyu" target="_blank" rel="noopener"><i class="ti ti-star-filled ti-inline-icon"></i> <span id="nav-star-count">...</span></a>
+      <a id="nav-star-badge" href="https://github.com/codetesla51/kyu" target="_blank" rel="noopener"><i class="ti ti-star-filled ti-inline-icon"></i> <span id="nav-star-count">…</span></a>
     </a>
     <div id="nav-desktop-links" class="nav-center" style="display:none;">
       <a href="#how-it-works" class="nav-pill-link" data-section="how-it-works">How it works</a>
@@ -255,11 +255,11 @@
     <div class="hero-grid">
       <div id="hero-copy" style="max-width:600px;">
         <div id="hero-status-el" class="hero-status">
-          <span class="hero-status-item"><span class="hero-dot hero-dot-green">●</span> WORKERS ACTIVE</span>
+          <span class="hero-status-item" role="status" aria-label="Workers active"><span class="hero-dot hero-dot-green" aria-hidden="true">●</span> WORKERS ACTIVE</span>
           <span class="hero-status-divider"></span>
-          <span class="hero-status-item"><span class="hero-dot hero-dot-amber">●</span> SCHEDULER RUNNING</span>
+          <span class="hero-status-item" role="status" aria-label="Scheduler running"><span class="hero-dot hero-dot-amber" aria-hidden="true">●</span> SCHEDULER RUNNING</span>
           <span class="hero-status-divider"></span>
-          <span class="hero-status-item"><span class="hero-dot hero-dot-muted">●</span> REAPER WATCHING</span>
+          <span class="hero-status-item" role="status" aria-label="Reaper watching"><span class="hero-dot hero-dot-muted" aria-hidden="true">●</span> REAPER WATCHING</span>
         </div>
         <div id="hero-label-el" class="hero-label" style="margin-bottom:12px;">DISTRIBUTED JOB QUEUE · GO 1.21+</div>
         <h1 class="hero-headline">
@@ -303,7 +303,7 @@
           <text x="304" y="196" class="svg-path-label">update status</text>
           <g id="d1-complete-pill" opacity="0">
             <rect x="396" y="268" width="108" height="30" rx="15" fill="color-mix(in srgb,var(--color-green) 15%,transparent)" stroke="var(--color-green)" stroke-width="1.5"/>
-            <foreignObject x="408" y="274" width="16" height="16"><div xmlns="http://www.w3.org/1999/xhtml" style="line-height:1;color:var(--color-green);"><i class="ti ti-circle-check-filled ti-inline-icon"></i></div></foreignObject>
+            <foreignObject x="408" y="274" width="16" height="16"><div xmlns="http://www.w3.org/1999/xhtml" aria-hidden="true" style="line-height:1;color:var(--color-green);"><i class="ti ti-circle-check-filled ti-inline-icon"></i></div></foreignObject>
             <text x="460" y="288" font-family="'JetBrains Mono',monospace" font-size="13" fill="var(--color-green)" text-anchor="middle">completed</text>
           </g>
           <circle id="d1-dot-main" r="4.5" fill="var(--color-accent)" opacity="0" style="filter:drop-shadow(0 0 4px var(--color-accent));"/>
@@ -495,7 +495,7 @@
     <div class="scroll-reveal" style="margin-bottom:48px;">
       <div class="grafana-wrap">
         <img src="https://raw.githubusercontent.com/codetesla51/kyu/master/docs/graphana.png" alt="Kyu Grafana dashboard" onerror="this.style.display='none';this.parentElement.querySelector('.grafana-fallback').style.display='block';">
-        <div class="grafana-fallback"><div style="margin-bottom:8px;"><i class="ti ti-chart-bar ti-card-icon"></i></div><div>Grafana dashboard — queue depth, throughput, failure rates by job type</div><div style="margin-top:8px;color:var(--color-accent);">github.com/codetesla51/kyu</div></div>
+        <div class="grafana-fallback"><div style="margin-bottom:8px;"><i class="ti ti-chart-bar ti-card-icon" aria-hidden="true"></i></div><div>Grafana dashboard — queue depth, throughput, failure rates by job type</div><div style="margin-top:8px;color:var(--color-accent);">github.com/codetesla51/kyu</div></div>
       </div>
     </div>
     <div class="scroll-reveal"><div id="metrics-table" class="tab-table-wrap"></div></div>
@@ -539,12 +539,12 @@
             <tr><td>Storage backend</td><td>PostgreSQL + Redis</td><td>Redis only</td><td>PostgreSQL only</td><td>Redis / AMQP / MongoDB</td><td>Redis only</td></tr>
             <tr><td>Priority scheduling</td><td>Redis sorted set</td><td>Redis sorted set</td><td>Weighted queues</td><td>Basic</td><td>Redis sorted set</td></tr>
             <tr><td>Job durability</td><td>Survives Redis restart</td><td>Lost if Redis clears</td><td>Full durability</td><td>Depends on backend</td><td>Lost if Redis clears</td></tr>
-            <tr><td>Transactional enqueue</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td class="no"><i class="ti ti-minus ti-inline-icon"></i>No</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td class="no"><i class="ti ti-minus ti-inline-icon"></i>No</td><td class="no"><i class="ti ti-minus ti-inline-icon"></i>No</td></tr>
+            <tr><td>Transactional enqueue</td><td class="yes"><i class="ti ti-check ti-inline-icon" aria-hidden="true"></i>Yes</td><td class="no"><i class="ti ti-minus ti-inline-icon" aria-hidden="true"></i>No</td><td class="yes"><i class="ti ti-check ti-inline-icon" aria-hidden="true"></i>Yes</td><td class="no"><i class="ti ti-minus ti-inline-icon" aria-hidden="true"></i>No</td><td class="no"><i class="ti ti-minus ti-inline-icon" aria-hidden="true"></i>No</td></tr>
             <tr><td>Full job history</td><td>Yes (SQL)</td><td>Limited (Redis TTL)</td><td>Yes (SQL)</td><td>Limited</td><td>Limited (Redis TTL)</td></tr>
-            <tr><td>Stale job reaper</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td>Limited</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td class="no"><i class="ti ti-minus ti-inline-icon"></i>No</td><td>Limited</td></tr>
-            <tr><td>Prometheus native</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td>Separate</td><td class="no"><i class="ti ti-minus ti-inline-icon"></i>No</td><td class="no"><i class="ti ti-minus ti-inline-icon"></i>No</td><td>Separate</td></tr>
-            <tr><td>Scheduled jobs</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td></tr>
-            <tr><td>Middleware system</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td class="no"><i class="ti ti-minus ti-inline-icon"></i>No</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td></tr>
+            <tr><td>Stale job reaper</td><td class="yes"><i class="ti ti-check ti-inline-icon" aria-hidden="true"></i>Yes</td><td>Limited</td><td class="yes"><i class="ti ti-check ti-inline-icon" aria-hidden="true"></i>Yes</td><td class="no"><i class="ti ti-minus ti-inline-icon" aria-hidden="true"></i>No</td><td>Limited</td></tr>
+            <tr><td>Prometheus native</td><td class="yes"><i class="ti ti-check ti-inline-icon" aria-hidden="true"></i>Yes</td><td>Separate</td><td class="no"><i class="ti ti-minus ti-inline-icon" aria-hidden="true"></i>No</td><td class="no"><i class="ti ti-minus ti-inline-icon" aria-hidden="true"></i>No</td><td>Separate</td></tr>
+            <tr><td>Scheduled jobs</td><td class="yes"><i class="ti ti-check ti-inline-icon" aria-hidden="true"></i>Yes</td><td class="yes"><i class="ti ti-check ti-inline-icon" aria-hidden="true"></i>Yes</td><td class="yes"><i class="ti ti-check ti-inline-icon" aria-hidden="true"></i>Yes</td><td class="yes"><i class="ti ti-check ti-inline-icon" aria-hidden="true"></i>Yes</td><td class="yes"><i class="ti ti-check ti-inline-icon" aria-hidden="true"></i>Yes</td></tr>
+            <tr><td>Middleware system</td><td class="yes"><i class="ti ti-check ti-inline-icon" aria-hidden="true"></i>Yes</td><td class="yes"><i class="ti ti-check ti-inline-icon" aria-hidden="true"></i>Yes</td><td class="no"><i class="ti ti-minus ti-inline-icon" aria-hidden="true"></i>No</td><td class="yes"><i class="ti ti-check ti-inline-icon" aria-hidden="true"></i>Yes</td><td class="yes"><i class="ti ti-check ti-inline-icon" aria-hidden="true"></i>Yes</td></tr>
             <tr><td>Retries + backoff</td><td>Exponential</td><td>Exponential</td><td>Exponential</td><td>Basic</td><td>Exponential</td></tr>
             <tr><td>Open source</td><td>MIT</td><td>MIT</td><td>MIT</td><td>MIT</td><td>MIT</td></tr>
           </tbody>
@@ -807,13 +807,14 @@ new IntersectionObserver(function(entries){
 
 // ── Hero entrance animation ─────────────────────────────
 (function(){
-  anime({targets:'#hero-status-el',opacity:[0,1],duration:400,easing:'easeOutCubic',delay:0});
-  anime({targets:'#hero-label-el',opacity:[0,1],translateY:[10,0],duration:350,easing:'easeOutCubic',delay:200});
-  anime({targets:'#hero-h1-line1',opacity:[0,1],translateY:[20,0],duration:450,easing:'easeOutCubic',delay:400});
-  anime({targets:'#hero-h1-line2',opacity:[0,1],translateY:[20,0],duration:450,easing:'easeOutCubic',delay:550});
-  anime({targets:'#hero-sub-el',opacity:[0,1],duration:400,easing:'easeOutCubic',delay:750});
-  anime({targets:'#hero-cta-el .hero-cta-item',opacity:[0,1],scale:[0.96,1],duration:320,easing:'easeOutCubic',delay:anime.stagger(100,{start:900})});
-  anime({targets:'#hero-diagram-el',opacity:[0,1],duration:600,easing:'easeOutCubic',delay:300});
+  var t={status:0,label:200,h1a:400,h1b:550,sub:750,cta:900,diagram:300};
+  anime({targets:'#hero-status-el',opacity:[0,1],duration:400,easing:'easeOutCubic',delay:t.status});
+  anime({targets:'#hero-label-el',opacity:[0,1],translateY:[10,0],duration:350,easing:'easeOutCubic',delay:t.label});
+  anime({targets:'#hero-h1-line1',opacity:[0,1],translateY:[20,0],duration:450,easing:'easeOutCubic',delay:t.h1a});
+  anime({targets:'#hero-h1-line2',opacity:[0,1],translateY:[20,0],duration:450,easing:'easeOutCubic',delay:t.h1b});
+  anime({targets:'#hero-sub-el',opacity:[0,1],duration:400,easing:'easeOutCubic',delay:t.sub});
+  anime({targets:'#hero-cta-el .hero-cta-item',opacity:[0,1],scale:[0.96,1],duration:320,easing:'easeOutCubic',delay:anime.stagger(100,{start:t.cta})});
+  anime({targets:'#hero-diagram-el',opacity:[0,1],duration:600,easing:'easeOutCubic',delay:t.diagram});
 })();
 
 // ── Diagram 1: Dual-storage flow ────────────────────────
@@ -844,18 +845,22 @@ new IntersectionObserver(function(entries){
 // ── Diagram 2: Concurrent engines ───────────────────────
 (function(){
   function flash(sel){anime({targets:sel,stroke:['var(--color-border-2)','var(--color-accent)','var(--color-border-2)'],duration:400,easing:'easeInOutSine'});}
-  function lane(dotId,x,loopDur,startDelay,redisFlash){
+  function lane(cfg){
+    var dotId=cfg.dotId,x=cfg.x,loopDur=cfg.loopDur,startDelay=cfg.startDelay,redisFlash=cfg.redisFlash;
     var d=document.getElementById(dotId); if(!d)return;
     setTimeout(function cycle(){
       anime({targets:d,cx:[x,x],cy:[92,314],opacity:[1,1,0],duration:loopDur,easing:'linear',
-        complete:function(){flash('#d2-pg-foundation');if(redisFlash)flash('#d2-redis-body');setTimeout(cycle,loopDur===1500?0:loopDur===3000?0:0);}
+        complete:function(){flash('#d2-pg-foundation');if(redisFlash)flash('#d2-redis-body');setTimeout(cycle,0);}
       });
     },startDelay);
   }
-  lane('d2-dot1',115,1500,200,true);lane('d2-dot2',320,3000,500,true);lane('d2-dot3',525,6000,900,false);
+  lane({dotId:'d2-dot1',x:115,loopDur:1500,startDelay:200,redisFlash:true});
+  lane({dotId:'d2-dot2',x:320,loopDur:3000,startDelay:500,redisFlash:true});
+  lane({dotId:'d2-dot3',x:525,loopDur:6000,startDelay:900,redisFlash:false});
   function laneM(id,line,loop,start){
     var d=document.getElementById(id),p=document.getElementById(line);if(!d||!p)return;var path=anime.path('#'+line);
-    setTimeout(function cycle(){anime({targets:d,translateX:path('x'),translateY:path('y'),opacity:[1,1,0],duration:900,easing:'linear',complete:function(){setTimeout(cycle,loop);}});},start);
+    function cycle(){anime({targets:d,translateX:path('x'),translateY:path('y'),opacity:[1,1,0],duration:900,easing:'linear'});}
+    setTimeout(function(){cycle();setInterval(cycle,loop);},start);
   }
   laneM('d2m-dot1','d2m-line1',600,300);laneM('d2m-dot2','d2m-line2',2300,700);laneM('d2m-dot3','d2m-line3',5200,1100);
 })();
