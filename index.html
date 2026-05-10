@@ -171,7 +171,7 @@
   <div class="nav-inner">
     <a href="#" class="nav-logo">
       kyu
-      <a id="nav-star-badge" href="https://github.com/codetesla51/kyu" target="_blank" rel="noopener"><i class="ti ti-star-filled ti-inline-icon"></i> <span id="nav-star-count">0</span></a>
+      <a id="nav-star-badge" href="https://github.com/codetesla51/kyu" target="_blank" rel="noopener"><i class="ti ti-star-filled ti-inline-icon"></i> <span id="nav-star-count">...</span></a>
     </a>
     <div id="nav-desktop-links" class="nav-center" style="display:none;">
       <a href="#how-it-works" class="nav-pill-link" data-section="how-it-works">How it works</a>
@@ -266,7 +266,13 @@
           <path d="M446,205 L446,316" class="svg-path" marker-end="url(#arr1)"/>
           <path d="M390,339 L310,339 L310,124" class="svg-path" stroke-dasharray="4,3" marker-end="url(#arr1)"/>
           <text x="328" y="356" class="svg-path-label" text-anchor="middle">update status</text>
-          <g id="d1-completed" opacity="0"><rect x="390" y="366" width="112" height="22" rx="4" fill="none" stroke="var(--color-green)" stroke-width="1"/><text x="446" y="377" font-family="JetBrains Mono,monospace" font-size="10" fill="var(--color-green)" text-anchor="middle" dominant-baseline="middle">completed</text></g>
+          <g id="d1-completed" opacity="0">
+            <rect x="390" y="366" width="112" height="22" rx="4" fill="none" stroke="var(--color-green)" stroke-width="1"/>
+            <foreignObject x="397" y="368" width="16" height="16">
+              <div xmlns="http://www.w3.org/1999/xhtml" style="line-height:1;color:var(--color-green);"><i class="ti ti-circle-check-filled ti-inline-icon"></i></div>
+            </foreignObject>
+            <text x="452" y="377" font-family="JetBrains Mono,monospace" font-size="10" fill="var(--color-green)" text-anchor="middle" dominant-baseline="middle">completed</text>
+          </g>
           <!-- Fork flash ring -->
           <circle id="d1-fork-flash" cx="178" cy="181" r="0" fill="none" stroke="var(--color-accent)" stroke-width="2" opacity="0"/>
           <!-- Animated dots — bigger + glowing -->
