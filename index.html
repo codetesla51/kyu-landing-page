@@ -8,6 +8,7 @@
   <script>(function(){var t=localStorage.getItem('kyu-theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
   <!-- Subtask 4: Highlight.js replacing Shiki -->
   <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css">
   <link id="hljs-dark"  rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" disabled>
@@ -45,20 +46,20 @@
     .nav-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
     .nav-gh-btn{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--color-body);text-decoration:none;border:1px solid var(--color-border-2);border-radius:8px;padding:7px 13px;background:var(--color-surface);transition:border-color 0.15s,color 0.15s;white-space:nowrap;}
     .nav-gh-btn:hover{border-color:var(--color-accent);color:var(--color-heading);}
-    .nav-gh-btn svg{width:14px;height:14px;flex-shrink:0;fill:currentColor;}
     #theme-toggle,#theme-toggle-mobile{background:var(--color-surface);border:1px solid var(--color-border);border-radius:8px;cursor:pointer;padding:7px;color:var(--color-muted);display:flex;align-items:center;justify-content:center;transition:border-color 0.2s,color 0.2s;min-width:36px;min-height:36px;}
     #theme-toggle:hover,#theme-toggle-mobile:hover{border-color:var(--color-border-2);color:var(--color-heading);}
-    .icon-sun,.icon-moon{width:15px;height:15px;}
+    .ti-nav-icon{font-size:20px;line-height:1;}
+    .ti-inline-icon{font-size:16px;line-height:1;}
+    .ti-card-icon{font-size:18px;line-height:1;}
     [data-theme="light"] .icon-moon{display:none;}
     [data-theme="dark"] .icon-sun{display:none;}
     #nav-mobile-controls{display:none;align-items:center;gap:10px;}
     #mobile-menu{overflow:hidden;max-height:0;transition:max-height 0.28s ease;display:flex;flex-direction:column;background-color:var(--color-surface);}
     #mobile-menu.open{max-height:300px;border-bottom:1px solid var(--color-border);}
-    #hamburger{background:none;border:1px solid var(--color-border);border-radius:6px;cursor:pointer;padding:8px;color:var(--color-muted);display:flex;flex-direction:column;gap:5px;min-width:44px;min-height:44px;align-items:center;justify-content:center;}
-    .ham-line{display:block;width:18px;height:1.5px;background:currentColor;transition:transform 0.2s,opacity 0.2s;}
-    #hamburger.open .ham-line:nth-child(1){transform:rotate(45deg) translate(4px,4px);}
-    #hamburger.open .ham-line:nth-child(2){opacity:0;}
-    #hamburger.open .ham-line:nth-child(3){transform:rotate(-45deg) translate(4px,-4px);}
+    #hamburger{background:none;border:1px solid var(--color-border);border-radius:6px;cursor:pointer;padding:8px;color:var(--color-muted);display:flex;min-width:44px;min-height:44px;align-items:center;justify-content:center;}
+    #hamburger .icon-close{display:none;}
+    #hamburger.open .icon-menu{display:none;}
+    #hamburger.open .icon-close{display:inline-block;}
 
     /* HERO */
     .hero-label{font-family:'JetBrains Mono',monospace;font-size:0.6875rem;color:var(--color-muted);letter-spacing:0.15em;text-transform:uppercase;}
@@ -75,7 +76,6 @@
     .install-box code{font-family:'JetBrains Mono',monospace;font-size:0.8125rem;color:var(--color-body);background:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .copy-btn{background:none;border:none;cursor:pointer;color:var(--color-muted);flex-shrink:0;display:flex;align-items:center;padding:4px;transition:color 0.2s;min-width:44px;min-height:44px;justify-content:center;}
     .copy-btn:hover{color:var(--color-accent);}
-    .copy-btn svg{width:16px;height:16px;}
 
     /* SECTIONS */
     .section{padding:96px 0;}
@@ -171,7 +171,7 @@
   <div class="nav-inner">
     <a href="#" class="nav-logo">
       kyu
-      <a id="nav-star-badge" href="https://github.com/codetesla51/kyu" target="_blank" rel="noopener">★ <span id="nav-star-count">…</span></a>
+      <a id="nav-star-badge" href="https://github.com/codetesla51/kyu" target="_blank" rel="noopener"><i class="ti ti-star-filled ti-inline-icon"></i> <span id="nav-star-count">0</span></a>
     </a>
     <div id="nav-desktop-links" class="nav-center" style="display:none;">
       <a href="#how-it-works" class="nav-pill-link" data-section="how-it-works">How it works</a>
@@ -182,21 +182,22 @@
     </div>
     <div id="nav-desktop-actions" class="nav-actions" style="display:none;">
       <a href="https://github.com/codetesla51/kyu" target="_blank" rel="noopener" class="nav-gh-btn">
-        <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+        <i class="ti ti-brand-github ti-nav-icon"></i>
         GitHub
       </a>
       <button id="theme-toggle" aria-label="Toggle theme">
-        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <i class="ti ti-sun ti-nav-icon icon-sun"></i>
+        <i class="ti ti-moon ti-nav-icon icon-moon"></i>
       </button>
     </div>
     <div id="nav-mobile-controls" style="display:none;">
       <button id="theme-toggle-mobile" aria-label="Toggle theme">
-        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <i class="ti ti-sun ti-nav-icon icon-sun"></i>
+        <i class="ti ti-moon ti-nav-icon icon-moon"></i>
       </button>
       <button id="hamburger" aria-label="Open menu">
-        <span class="ham-line"></span><span class="ham-line"></span><span class="ham-line"></span>
+        <i class="ti ti-menu-2 ti-nav-icon icon-menu"></i>
+        <i class="ti ti-x ti-nav-icon icon-close"></i>
       </button>
     </div>
   </div>
@@ -223,11 +224,11 @@
           <div class="install-box" onclick="copyInstall()" style="width:100%;">
             <code>go get github.com/codetesla51/kyu</code>
             <button class="copy-btn" aria-label="Copy">
-              <svg id="install-icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-              <svg id="install-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none;color:var(--color-green);"><polyline points="20 6 9 17 4 12"/></svg>
+              <i id="install-icon-copy" class="ti ti-copy ti-inline-icon"></i>
+              <i id="install-icon-check" class="ti ti-check ti-inline-icon" style="display:none;color:var(--color-green);"></i>
             </button>
           </div>
-          <a href="https://github.com/codetesla51/kyu" target="_blank" rel="noopener" class="gh-link">View on GitHub →</a>
+          <a href="https://github.com/codetesla51/kyu" target="_blank" rel="noopener" class="gh-link">View on GitHub <i class="ti ti-external-link ti-inline-icon"></i></a>
         </div>
       </div>
       <div id="hero-diagram">
@@ -265,7 +266,7 @@
           <path d="M446,205 L446,316" class="svg-path" marker-end="url(#arr1)"/>
           <path d="M390,339 L310,339 L310,124" class="svg-path" stroke-dasharray="4,3" marker-end="url(#arr1)"/>
           <text x="328" y="356" class="svg-path-label" text-anchor="middle">update status</text>
-          <g id="d1-completed" opacity="0"><rect x="390" y="366" width="112" height="22" rx="4" fill="none" stroke="var(--color-green)" stroke-width="1"/><text x="446" y="377" font-family="JetBrains Mono,monospace" font-size="10" fill="var(--color-green)" text-anchor="middle" dominant-baseline="middle">completed ✓</text></g>
+          <g id="d1-completed" opacity="0"><rect x="390" y="366" width="112" height="22" rx="4" fill="none" stroke="var(--color-green)" stroke-width="1"/><text x="446" y="377" font-family="JetBrains Mono,monospace" font-size="10" fill="var(--color-green)" text-anchor="middle" dominant-baseline="middle">completed</text></g>
           <!-- Fork flash ring -->
           <circle id="d1-fork-flash" cx="178" cy="181" r="0" fill="none" stroke="var(--color-accent)" stroke-width="2" opacity="0"/>
           <!-- Animated dots — bigger + glowing -->
@@ -390,19 +391,19 @@
       </div>
       <div class="tab-panel active" id="tab-install">
         <div class="code-block-wrap">
-          <button class="code-copy-btn" onclick="copyCodeRaw('go get github.com/codetesla51/kyu',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>copy</button>
+          <button class="code-copy-btn" onclick="copyCodeRaw('go get github.com/codetesla51/kyu',this)"><i class="ti ti-copy ti-inline-icon"></i>copy</button>
           <div class="hljs-wrap"><pre><code id="hljs-install" class="language-bash"></code></pre></div>
         </div>
       </div>
       <div class="tab-panel" id="tab-quickstart-code">
         <div class="code-block-wrap">
-          <button class="code-copy-btn" onclick="copyCodeRaw(window.__codeRaw.qs,this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>copy</button>
+          <button class="code-copy-btn" onclick="copyCodeRaw(window.__codeRaw.qs,this)"><i class="ti ti-copy ti-inline-icon"></i>copy</button>
           <div class="hljs-wrap"><pre><code id="hljs-qs" class="language-go"></code></pre></div>
         </div>
       </div>
       <div class="tab-panel" id="tab-enqueue">
         <div class="code-block-wrap">
-          <button class="code-copy-btn" onclick="copyCodeRaw(window.__codeRaw.enq,this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>copy</button>
+          <button class="code-copy-btn" onclick="copyCodeRaw(window.__codeRaw.enq,this)"><i class="ti ti-copy ti-inline-icon"></i>copy</button>
           <div class="hljs-wrap"><pre><code id="hljs-enq" class="language-go"></code></pre></div>
         </div>
       </div>
@@ -410,7 +411,7 @@
     <div style="margin-top:40px;" class="scroll-reveal">
       <div style="font-family:'JetBrains Mono',monospace;font-size:0.6875rem;color:var(--color-muted);margin-bottom:8px;letter-spacing:0.05em;">// middleware</div>
       <div class="standalone-code">
-        <button class="code-copy-btn" onclick="copyCodeRaw(window.__codeRaw.mw,this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>copy</button>
+        <button class="code-copy-btn" onclick="copyCodeRaw(window.__codeRaw.mw,this)"><i class="ti ti-copy ti-inline-icon"></i>copy</button>
         <div class="hljs-wrap"><pre><code id="hljs-mw" class="language-go"></code></pre></div>
       </div>
     </div>
@@ -463,7 +464,7 @@
     <div class="scroll-reveal" style="margin-bottom:48px;">
       <div class="grafana-wrap">
         <img src="https://raw.githubusercontent.com/codetesla51/kyu/master/docs/graphana.png" alt="Kyu Grafana dashboard" onerror="this.style.display='none';this.parentElement.querySelector('.grafana-fallback').style.display='block';">
-        <div class="grafana-fallback"><div style="font-size:1.5rem;margin-bottom:8px;">📊</div><div>Grafana dashboard — queue depth, throughput, failure rates by job type</div><div style="margin-top:8px;color:var(--color-accent);">github.com/codetesla51/kyu</div></div>
+        <div class="grafana-fallback"><div style="margin-bottom:8px;"><i class="ti ti-chart-bar ti-card-icon"></i></div><div>Grafana dashboard — queue depth, throughput, failure rates by job type</div><div style="margin-top:8px;color:var(--color-accent);">github.com/codetesla51/kyu</div></div>
       </div>
     </div>
     <div class="scroll-reveal"><div id="metrics-table" class="tab-table-wrap"></div></div>
@@ -653,7 +654,7 @@ function copyCodeRaw(text,btn){
   if(!text)return;
   navigator.clipboard.writeText(text).then(function(){
     var orig=btn.innerHTML;
-    btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> copied!';
+    btn.innerHTML='<i class="ti ti-check ti-inline-icon"></i> copied!';
     btn.style.color='var(--color-green)';
     setTimeout(function(){btn.innerHTML=orig;btn.style.color='';},1500);
   }).catch(function(){});
@@ -725,7 +726,7 @@ document.querySelectorAll('.tab-btn').forEach(function(btn){
         headerHtmlTitle:'<span style="color:var(--color-accent);font-weight:700;">Kyu</span>',
         formatter:function(cell){
           var v=cell.getValue();
-          if(v==='Yes'||v==='MIT')return '<span class="cell-yes">✓ '+v+'</span>';
+          if(v==='Yes'||v==='MIT')return '<span class="cell-yes"><i class="ti ti-check ti-inline-icon"></i> '+v+'</span>';
           return v;
         }
       },
