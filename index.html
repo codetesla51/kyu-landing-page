@@ -133,11 +133,13 @@
     .hljs-wrap{overflow-x:auto;margin:0;}
     .hljs-wrap pre{margin:0!important;padding:22px 24px!important;background:transparent!important;overflow-x:auto;white-space:pre;}
     .hljs-wrap code.hljs{font-family:var(--font-mono)!important;font-size:0.8125rem!important;line-height:1.7!important;background:transparent!important;padding:0!important;white-space:pre;}
+    .code-block-wrap pre,.standalone-code pre{overflow-x:auto;white-space:pre;}
     .code-copy-btn{position:absolute;top:10px;right:10px;background:var(--color-border);border:1px solid var(--color-border-2);border-radius:6px;padding:5px 10px;font-family:var(--font-mono);font-size:0.6875rem;color:var(--color-muted);cursor:pointer;display:flex;align-items:center;gap:6px;transition:color 0.2s,border-color 0.2s,background 0.2s;z-index:2;min-height:32px;}
     .code-copy-btn:hover{color:var(--color-accent);border-color:var(--color-accent);background:var(--color-surface);}
     .code-copy-btn .ti{font-size:16px;}
 
     /* TABLES — pure CSS vars, no Tabulator dependency */
+    .table-scroll-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;}
     .data-table-wrap{overflow-x:auto;border:1px solid var(--color-border);border-radius:10px;overflow:hidden;position:relative;}
     .data-table{width:100%;border-collapse:collapse;background:var(--color-surface);color:var(--color-body);font-family:var(--font-mono);font-size:0.8125rem;}
     .data-table thead tr{background:var(--color-bg);border-bottom:1px solid var(--color-border-2);}
@@ -155,9 +157,21 @@
     .kyu-col{background:rgba(232,168,76,0.04);}
     .kyu-col-header{border-top:2px solid var(--color-accent)!important;color:var(--color-accent)!important;}
     /* Mobile scroll gradient */
-    .table-scroll-wrap{position:relative;}
-    .table-scroll-wrap::after{content:'';position:absolute;top:0;right:0;bottom:0;width:40px;background:linear-gradient(to right,transparent 0%,var(--color-bg) 100%);pointer-events:none;display:none;}
-    @media(max-width:767px){.table-scroll-wrap::after{display:block;}}
+    @media (max-width: 768px) {
+      .table-scroll-wrapper {
+        position: relative;
+      }
+      .table-scroll-wrapper::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 48px;
+        height: 100%;
+        background: linear-gradient(to right, transparent, var(--color-bg));
+        pointer-events: none;
+      }
+    }
 
     /* STATS */
     .stat-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:12px;padding:28px 24px;}
@@ -192,13 +206,21 @@
 
     /* HERO LAYOUT */
     .hero-grid{display:grid;grid-template-columns:45% 55%;gap:48px;align-items:center;}
-    @media(max-width:767px){
+    .feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:40px;}
+    @media(max-width:1023px) and (min-width:641px){
+      .feature-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+    }
+    @media(max-width:640px){
+      .feature-grid{grid-template-columns:1fr;}
+    }
+    @media(max-width:768px){
       .hero-grid{grid-template-columns:1fr;gap:40px;}
       .hero-diagram-col{order:2;}
       .section{padding:64px 0;}
       #nav-desktop-links,#nav-desktop-actions{display:none!important;}
       #nav-mobile-controls{display:flex!important;}
       .status-item span:last-child{display:none;}
+      .nav-pill-link,#nav-star-badge,.nav-gh-btn,#mobile-menu a{font-size:12px;}
     }
     @media(min-width:768px){
       #nav-mobile-controls{display:none!important;}
@@ -570,9 +592,9 @@
 
     <!-- Schema table -->
     <div class="scroll-reveal">
-      <div class="table-scroll-wrap">
+      <div class="table-scroll-wrapper">
         <div class="data-table-wrap">
-          <table class="data-table">
+          <table class="data-table" style="min-width:600px;">
             <thead>
               <tr>
                 <th>Column</th>
@@ -581,18 +603,21 @@
               </tr>
             </thead>
             <tbody>
-              <tr><td>id</td><td>UUID</td><td>Unique job identifier</td></tr>
-              <tr><td>job_type</td><td>TEXT</td><td>Registered handler name</td></tr>
-              <tr><td>payload</td><td>TEXT</td><td>JSON payload passed to handler</td></tr>
-              <tr><td>status</td><td>TEXT</td><td>pending / running / failed / completed / dead / cancelled</td></tr>
-              <tr><td>priority</td><td>INT</td><td>Higher = processed first</td></tr>
-              <tr><td>scheduled_at</td><td>TIMESTAMPTZ</td><td>Null means enqueue immediately</td></tr>
-              <tr><td>max_retries</td><td>INT</td><td>Maximum retry attempts</td></tr>
-              <tr><td>retry_count</td><td>INT</td><td>Current retry attempt</td></tr>
-              <tr><td>error_message</td><td>TEXT</td><td>Last error string from handler</td></tr>
-              <tr><td>locked_by</td><td>TEXT</td><td>Worker ID that claimed this job</td></tr>
-              <tr><td>locked_at</td><td>TIMESTAMPTZ</td><td>When the worker claimed it</td></tr>
-              <tr><td>completed_at</td><td>TIMESTAMPTZ</td><td>When the job finished successfully</td></tr>
+              <tr><td>id</td><td>STRING</td><td>Unique job identifier</td></tr>
+              <tr><td>job_type</td><td>STRING</td><td>Registered handler name, used to find the handler</td></tr>
+              <tr><td>priority</td><td>INT</td><td>Higher = processed first. Default 0</td></tr>
+              <tr><td>created_at</td><td>TIME</td><td>When the job was created</td></tr>
+              <tr><td>updated_at</td><td>TIME</td><td>When the job record was last updated</td></tr>
+              <tr><td>deleted_at</td><td>TIME</td><td>Soft delete timestamp. Null if not deleted</td></tr>
+              <tr><td>payload</td><td>STRING</td><td>JSON string passed to the handler</td></tr>
+              <tr><td>status</td><td>STRING</td><td>pending / running / failed / completed / dead / cancelled</td></tr>
+              <tr><td>completed_at</td><td>TIME</td><td>When the job finished. Null if not completed</td></tr>
+              <tr><td>scheduled_at</td><td>TIME</td><td>When to run the job. Null means run immediately</td></tr>
+              <tr><td>max_retries</td><td>INT</td><td>Maximum number of retry attempts allowed</td></tr>
+              <tr><td>retry_count</td><td>INT</td><td>How many times this job has been retried</td></tr>
+              <tr><td>error_message</td><td>STRING</td><td>Last error returned by the handler</td></tr>
+              <tr><td>locked_at</td><td>TIME</td><td>When a worker claimed this job</td></tr>
+              <tr><td>locked_by</td><td>STRING</td><td>ID of the worker that claimed this job</td></tr>
             </tbody>
           </table>
         </div>
@@ -647,7 +672,7 @@
 <section id="features" class="section" style="border-top:1px solid var(--color-border);">
   <div class="section-inner">
     <h2 class="section-title scroll-reveal">Production-grade from day one.</h2>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin-top:40px;">
+    <div class="feature-grid">
 
       <!-- Card: Durable by default -->
       <div class="card scroll-reveal">
@@ -887,9 +912,9 @@
       </div>
     </div>
     <div class="scroll-reveal">
-      <div class="table-scroll-wrap">
+      <div class="table-scroll-wrapper">
         <div class="data-table-wrap">
-          <table class="data-table">
+          <table class="data-table" style="min-width:600px;">
             <thead>
               <tr>
                 <th>Metric</th>
@@ -956,9 +981,9 @@
 
     <!-- Comparison table: Kyu, Asynq, River, Machinery, BullMQ -->
     <div class="scroll-reveal">
-      <div class="table-scroll-wrap">
+      <div class="table-scroll-wrapper">
         <div class="data-table-wrap">
-          <table class="data-table" style="min-width:680px;">
+          <table class="data-table" style="min-width:800px;">
             <thead>
               <tr>
                 <th>Feature</th>
@@ -1251,6 +1276,17 @@ document.querySelectorAll('.tab-btn').forEach(function(btn){
     document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active');});
     this.classList.add('active');
     var p=document.getElementById(tid);if(p)p.classList.add('active');
+  });
+});
+
+// ── Feature card hover ──────────────────────────────────────
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('#features .card').forEach(function(card){
+    card.addEventListener('mouseenter',function(){
+      var svg=card.querySelector('svg');
+      if(!svg)return;
+      anime({targets:svg,scale:[1,1.015,1],duration:420,easing:'easeOutCubic'});
+    });
   });
 });
 
