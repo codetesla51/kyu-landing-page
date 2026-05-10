@@ -40,13 +40,13 @@
     #nav-star-badge:hover{border-color:var(--color-accent);color:var(--color-accent);}
     #nav-star-badge.visible{display:flex;}
     .nav-center{display:flex;align-items:center;gap:2px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:10px;padding:4px;}
-    .nav-pill-link{font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--color-muted);text-decoration:none;padding:6px 14px;border-radius:7px;transition:color 0.15s,background 0.15s;white-space:nowrap;}
+    .nav-pill-link{font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--color-muted);text-decoration:none;padding:6px 14px;border-radius:7px;transition:color 0.15s,background 0.15s;white-space:nowrap;display:flex;align-items:center;min-height:44px;}
     .nav-pill-link:hover{color:var(--color-heading);background:var(--color-border);}
     .nav-pill-link.is-active{color:var(--color-heading);background:var(--color-bg);box-shadow:0 1px 4px rgba(0,0,0,0.08);}
     .nav-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
-    .nav-gh-btn{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--color-body);text-decoration:none;border:1px solid var(--color-border-2);border-radius:8px;padding:7px 13px;background:var(--color-surface);transition:border-color 0.15s,color 0.15s;white-space:nowrap;}
+    .nav-gh-btn{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--color-body);text-decoration:none;border:1px solid var(--color-border-2);border-radius:8px;padding:7px 13px;background:var(--color-surface);transition:border-color 0.15s,color 0.15s;white-space:nowrap;min-height:44px;}
     .nav-gh-btn:hover{border-color:var(--color-accent);color:var(--color-heading);}
-    #theme-toggle,#theme-toggle-mobile{background:var(--color-surface);border:1px solid var(--color-border);border-radius:8px;cursor:pointer;padding:7px;color:var(--color-muted);display:flex;align-items:center;justify-content:center;transition:border-color 0.2s,color 0.2s;min-width:36px;min-height:36px;}
+    #theme-toggle,#theme-toggle-mobile{background:var(--color-surface);border:1px solid var(--color-border);border-radius:8px;cursor:pointer;padding:7px;color:var(--color-muted);display:flex;align-items:center;justify-content:center;transition:border-color 0.2s,color 0.2s;min-width:44px;min-height:44px;}
     #theme-toggle:hover,#theme-toggle-mobile:hover{border-color:var(--color-border-2);color:var(--color-heading);}
     .ti-nav-icon{font-size:20px;line-height:1;}
     .ti-inline-icon{font-size:16px;line-height:1;}
@@ -56,19 +56,31 @@
     #nav-mobile-controls{display:none;align-items:center;gap:10px;}
     #mobile-menu{overflow:hidden;max-height:0;transition:max-height 0.28s ease;display:flex;flex-direction:column;background-color:var(--color-surface);}
     #mobile-menu.open{max-height:300px;border-bottom:1px solid var(--color-border);}
+    #mobile-menu .nav-link{min-height:44px;display:flex!important;align-items:center;}
     #hamburger{background:none;border:1px solid var(--color-border);border-radius:6px;cursor:pointer;padding:8px;color:var(--color-muted);display:flex;min-width:44px;min-height:44px;align-items:center;justify-content:center;}
     #hamburger .icon-close{display:none;}
     #hamburger.open .icon-menu{display:none;}
     #hamburger.open .icon-close{display:inline-block;}
 
     /* HERO */
-    .hero-label{font-family:'JetBrains Mono',monospace;font-size:0.6875rem;color:var(--color-muted);letter-spacing:0.15em;text-transform:uppercase;}
-    .hero-headline{font-family:'Syne',sans-serif;font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;line-height:1.05;color:var(--color-heading);letter-spacing:-0.02em;}
-    .hero-sub{font-family:'Roboto',sans-serif;font-weight:300;font-size:clamp(1rem,1.5vw,1.125rem);color:var(--color-body);line-height:1.65;max-width:480px;}
-    #hero-label-el{opacity:0;}
-    #hero-headline-el{opacity:0;}
-    #hero-sub-el{opacity:0;}
-    #hero-cta-el{opacity:0;}
+    .hero-grid{display:grid;grid-template-columns:1fr;gap:36px;align-items:start;}
+    .hero-label{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--color-muted);letter-spacing:0.15em;text-transform:uppercase;}
+    .hero-headline{font-family:'Syne',sans-serif;font-size:clamp(2.4rem,5.8vw,4.4rem);font-weight:800;line-height:1.04;color:var(--color-heading);letter-spacing:-0.02em;margin-bottom:18px;}
+    .hero-sub{font-family:'Roboto',sans-serif;font-weight:300;font-size:clamp(1rem,1.5vw,1.125rem);color:var(--color-body);line-height:1.65;max-width:540px;margin-bottom:32px;}
+    .hero-status{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--color-muted);line-height:1;text-transform:uppercase;letter-spacing:.02em;opacity:0;}
+    .hero-status-item{display:flex;align-items:center;gap:6px;white-space:nowrap;}
+    .hero-status-divider{width:1px;height:10px;background:var(--color-border-2);}
+    .hero-dot{font-size:9px;line-height:1;}
+    .hero-dot-green{color:var(--color-green);animation:pulse-dot-1 1.25s ease-in-out infinite;}
+    .hero-dot-amber{color:var(--color-accent);animation:pulse-dot-2 1.75s ease-in-out infinite;}
+    .hero-dot-muted{color:var(--color-muted);animation:pulse-dot-3 2.4s ease-in-out infinite;}
+    @keyframes pulse-dot-1{0%,100%{opacity:.35}50%{opacity:1}}
+    @keyframes pulse-dot-2{0%,100%{opacity:.3}45%{opacity:1}}
+    @keyframes pulse-dot-3{0%,100%{opacity:.22}50%{opacity:.8}}
+    #hero-label-el,#hero-h1-line1,#hero-h1-line2,#hero-sub-el,#hero-cta-el,#hero-diagram-el{opacity:0;transform:translateY(0);}
+    .hero-h1-line{display:block;}
+    #hero-cta-el{display:flex;flex-direction:column;gap:16px;align-items:flex-start;}
+    .hero-cta-item{opacity:0;transform:scale(.96);}
 
     /* INSTALL BOX */
     .install-box{display:flex;align-items:center;justify-content:space-between;background:var(--color-surface);border:1px solid var(--color-border-2);border-radius:8px;padding:12px 16px;gap:12px;cursor:pointer;transition:border-color 0.2s;max-width:480px;}
@@ -107,7 +119,7 @@
     .hljs-wrap{overflow-x:auto;margin:0;}
     .hljs-wrap pre{margin:0!important;padding:22px 24px!important;background:transparent!important;overflow-x:auto;white-space:pre;}
     .hljs-wrap code.hljs{font-family:'JetBrains Mono',monospace!important;font-size:0.8125rem!important;line-height:1.7!important;background:transparent!important;padding:0!important;white-space:pre;}
-    .code-copy-btn{position:absolute;top:10px;right:10px;background:var(--color-border);border:1px solid var(--color-border-2);border-radius:6px;padding:5px 10px;font-family:'JetBrains Mono',monospace;font-size:0.6875rem;color:var(--color-muted);cursor:pointer;display:flex;align-items:center;gap:6px;transition:color 0.2s,border-color 0.2s,background 0.2s;z-index:2;min-height:32px;}
+    .code-copy-btn{position:absolute;top:10px;right:10px;background:var(--color-border);border:1px solid var(--color-border-2);border-radius:6px;padding:5px 10px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--color-muted);cursor:pointer;display:flex;align-items:center;gap:6px;transition:color 0.2s,border-color 0.2s,background 0.2s;z-index:2;min-height:44px;}
     .code-copy-btn:hover{color:var(--color-accent);border-color:var(--color-accent);background:var(--color-surface);}
 
     /* TABULATOR THEME */
@@ -119,9 +131,22 @@
     .tabulator-row:last-child{border-bottom:none!important;}
     .tabulator-row:hover{background:var(--color-surface)!important;}
     .tabulator-row .tabulator-cell{border-right:none!important;padding:12px 16px!important;color:var(--color-body)!important;vertical-align:top;}
-    .tabulator-row .tabulator-cell.kyu-col{background:rgba(232,168,76,0.04)!important;}
     .tab-table-wrap{overflow-x:auto;border:1px solid var(--color-border);border-radius:10px;overflow:hidden;}
     .cell-yes{color:var(--color-green);}
+
+    /* COMPARISON TABLE */
+    .comparison-wrap{position:relative;}
+    .comparison-scroll{position:relative;overflow-x:auto;border:1px solid var(--color-border);border-radius:10px;background:var(--color-surface);}
+    .comparison-table{min-width:980px;width:100%;border-collapse:separate;border-spacing:0;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--color-body);}
+    .comparison-table th,.comparison-table td{padding:12px 14px;border-bottom:1px solid var(--color-border);text-align:left;vertical-align:middle;}
+    .comparison-table thead th{font-size:12px;color:var(--color-muted);letter-spacing:.06em;font-variant-caps:all-small-caps;text-transform:uppercase;}
+    .comparison-table tr:nth-child(even) td{background:color-mix(in srgb,var(--color-surface) 50%,transparent);}
+    .comparison-table .kyu-head{border-top:2px solid var(--color-accent);background:var(--color-surface);font-weight:700;color:var(--color-heading);}
+    .comparison-table .bullmq-head small{display:block;color:var(--color-muted);font-size:11px;letter-spacing:0;}
+    .comparison-table .yes{color:var(--color-green);}
+    .comparison-table .no{color:var(--color-muted);}
+    .comparison-table .yes i,.comparison-table .no i{margin-right:5px;}
+    .comparison-scroll::after{content:'';position:absolute;right:0;top:0;bottom:0;width:50px;pointer-events:none;background:linear-gradient(to right,transparent 85%,var(--color-bg) 100%);}
 
     /* STATS */
     .stat-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:12px;padding:28px 24px;}
@@ -130,11 +155,14 @@
     .stat-note{font-family:'Roboto',sans-serif;font-weight:400;font-size:0.8125rem;color:var(--color-muted);}
 
     /* DIAGRAMS */
+    .diagram-stage{background:var(--color-bg);border:1px solid var(--color-border);border-radius:12px;padding:12px;overflow:hidden;}
     .diagram-svg{width:100%;height:auto;display:block;}
+    .svg-desktop{display:block;}
+    .svg-mobile{display:none;}
     .svg-node-rect{fill:var(--color-surface);stroke:var(--color-border-2);stroke-width:1.5;}
-    .svg-node-text{fill:var(--color-body);font-family:'JetBrains Mono',monospace;font-size:11px;}
+    .svg-node-text{fill:var(--color-heading);font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;}
     .svg-path{stroke:var(--color-border-2);stroke-width:1.5;fill:none;}
-    .svg-path-label{fill:var(--color-muted);font-family:'JetBrains Mono',monospace;font-size:9px;}
+    .svg-path-label{fill:var(--color-muted);font-family:'JetBrains Mono',monospace;font-size:11px;}
     .spectrum-marker{opacity:0;}
 
     /* GRAFANA */
@@ -156,11 +184,20 @@
       .section{padding:64px 0;}
       #nav-desktop-links,#nav-desktop-actions{display:none!important;}
       #nav-mobile-controls{display:flex!important;}
+      .svg-desktop{display:none!important;}
+      .svg-mobile{display:block!important;}
+      .comparison-table{min-width:860px;}
+      .hero-grid{gap:24px;}
+      .hero-sub,.card-desc,.engine-desc,.stat-note,.stat-label,.gh-link,.tab-btn,.nav-pill-link,.nav-gh-btn,#mobile-menu .nav-link,#nav-star-badge{font-size:13px!important;}
+      [style*="font-size:0.6875rem"],[style*="font-size:0.75rem"],[style*="font-size:0.625rem"],[style*="font-size:0.8125rem"]{font-size:13px!important;}
+      #stat-grid{grid-template-columns:1fr!important;}
     }
     @media(min-width:768px){
       #nav-mobile-controls{display:none!important;}
       #nav-desktop-links,#nav-desktop-actions{display:flex!important;}
       #mobile-menu{display:none!important;max-height:none!important;}
+      .hero-grid{grid-template-columns:45% 55%;gap:28px;}
+      .comparison-scroll::after{display:none;}
     }
   </style>
 </head>
@@ -215,70 +252,74 @@
 <!-- HERO -->
 <section id="hero" style="padding:80px 0 96px;">
   <div class="section-inner">
-    <div style="display:grid;grid-template-columns:1fr;gap:64px;align-items:center;">
+    <div class="hero-grid">
       <div id="hero-copy" style="max-width:600px;">
-        <div id="hero-label-el" class="hero-label" style="margin-bottom:20px;">DISTRIBUTED JOB QUEUE · GO 1.21+</div>
-        <h1 id="hero-headline-el" class="hero-headline" style="margin-bottom:24px;">Jobs that survive.<br>Queues that scale.</h1>
-        <p id="hero-sub-el" class="hero-sub" style="margin-bottom:36px;">PostgreSQL is the source of truth. Redis is the fast lane. If Redis goes down, your jobs don't.</p>
-        <div id="hero-cta-el" style="display:flex;flex-direction:column;gap:16px;align-items:flex-start;">
-          <div class="install-box" onclick="copyInstall()" style="width:100%;">
+        <div id="hero-status-el" class="hero-status">
+          <span class="hero-status-item"><span class="hero-dot hero-dot-green">●</span> WORKERS ACTIVE</span>
+          <span class="hero-status-divider"></span>
+          <span class="hero-status-item"><span class="hero-dot hero-dot-amber">●</span> SCHEDULER RUNNING</span>
+          <span class="hero-status-divider"></span>
+          <span class="hero-status-item"><span class="hero-dot hero-dot-muted">●</span> REAPER WATCHING</span>
+        </div>
+        <div id="hero-label-el" class="hero-label" style="margin-bottom:12px;">DISTRIBUTED JOB QUEUE · GO 1.21+</div>
+        <h1 class="hero-headline">
+          <span id="hero-h1-line1" class="hero-h1-line">Jobs that survive.</span>
+          <span id="hero-h1-line2" class="hero-h1-line">Queues that scale.</span>
+        </h1>
+        <p id="hero-sub-el" class="hero-sub">PostgreSQL is the source of truth. Redis is the fast lane. If Redis goes down, your jobs don't.</p>
+        <div id="hero-cta-el">
+          <div class="install-box hero-cta-item" onclick="copyInstall()" style="width:100%;">
             <code>go get github.com/codetesla51/kyu</code>
             <button class="copy-btn" aria-label="Copy">
               <i id="install-icon-copy" class="ti ti-copy ti-inline-icon"></i>
               <i id="install-icon-check" class="ti ti-check ti-inline-icon" style="display:none;color:var(--color-green);"></i>
             </button>
           </div>
-          <a href="https://github.com/codetesla51/kyu" target="_blank" rel="noopener" class="gh-link">View on GitHub <i class="ti ti-external-link ti-inline-icon"></i></a>
+          <a href="https://github.com/codetesla51/kyu" target="_blank" rel="noopener" class="gh-link hero-cta-item">View on GitHub <i class="ti ti-external-link ti-inline-icon"></i></a>
         </div>
       </div>
-      <div id="hero-diagram">
-        <!-- DIAGRAM 1: Enhanced dual-storage flow -->
-        <svg id="diag1" viewBox="0 0 520 390" class="diagram-svg" style="max-height:430px;">
+      <div id="hero-diagram-el" class="diagram-stage">
+        <svg id="diag1" viewBox="0 0 600 340" class="diagram-svg svg-desktop">
           <defs>
-            <marker id="arr1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="var(--color-border-2)"/></marker>
-            <linearGradient id="gnode" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--color-border)" stop-opacity="0.25"/><stop offset="100%" stop-color="var(--color-surface)" stop-opacity="0"/></linearGradient>
-            <filter id="glow1"><feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            <filter id="glowpg"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            <filter id="sh1"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.1)"/></filter>
+            <marker id="arr1" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="var(--color-border-2)"/></marker>
+            <marker id="arr1a" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="var(--color-accent)"/></marker>
           </defs>
-          <!-- Your App -->
-          <g filter="url(#sh1)"><rect x="18" y="158" width="102" height="46" rx="8" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><rect x="18" y="158" width="102" height="46" rx="8" fill="url(#gnode)"/><text x="69" y="181" class="svg-node-text" text-anchor="middle" dominant-baseline="middle">Your App</text></g>
-          <!-- Fork dot -->
-          <circle cx="178" cy="181" r="3" fill="var(--color-accent)" opacity="0.6"/>
-          <!-- Paths -->
-          <path d="M120,181 L178,181 L178,100 L260,100" class="svg-path" marker-end="url(#arr1)"/>
-          <text x="148" y="132" class="svg-path-label" text-anchor="middle" font-style="italic">write full record</text>
-          <path d="M120,181 L178,181 L178,270 L260,270" class="svg-path" marker-end="url(#arr1)"/>
-          <text x="148" y="244" class="svg-path-label" text-anchor="middle" font-style="italic">push job ID</text>
-          <!-- Postgres -->
-          <g id="d1-pg" filter="url(#sh1)"><rect x="260" y="76" width="100" height="48" rx="8" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><rect x="260" y="76" width="100" height="48" rx="8" fill="url(#gnode)"/><ellipse cx="310" cy="76" rx="50" ry="10" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><text x="310" y="101" class="svg-node-text" text-anchor="middle" dominant-baseline="middle">PostgreSQL</text></g>
-          <ellipse id="d1-pg-glow" cx="310" cy="100" rx="50" ry="24" fill="rgba(76,175,130,0)" filter="url(#glowpg)"/>
-          <!-- Redis -->
-          <g id="d1-redis" filter="url(#sh1)"><rect x="260" y="246" width="100" height="48" rx="8" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><rect x="260" y="246" width="100" height="48" rx="8" fill="url(#gnode)"/><ellipse cx="310" cy="246" rx="50" ry="10" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><text x="310" y="271" class="svg-node-text" text-anchor="middle" dominant-baseline="middle">Redis</text></g>
-          <!-- Worker Pool -->
-          <g id="d1-worker" filter="url(#sh1)"><rect x="390" y="157" width="112" height="48" rx="8" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><rect x="390" y="157" width="112" height="48" rx="8" fill="url(#gnode)"/><text x="446" y="181" class="svg-node-text" text-anchor="middle" dominant-baseline="middle">Worker Pool</text></g>
-          <path d="M360,100 L420,100 L420,157" class="svg-path" marker-end="url(#arr1)"/>
-          <text x="408" y="130" class="svg-path-label" text-anchor="middle" font-style="italic">fetch record</text>
-          <path d="M360,270 L420,270 L420,205" class="svg-path" marker-end="url(#arr1)"/>
-          <text x="408" y="252" class="svg-path-label" text-anchor="middle" font-style="italic">pop ID</text>
-          <!-- Handler -->
-          <g id="d1-handler" filter="url(#sh1)"><rect x="390" y="316" width="112" height="46" rx="8" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><rect x="390" y="316" width="112" height="46" rx="8" fill="url(#gnode)"/><text x="446" y="339" class="svg-node-text" text-anchor="middle" dominant-baseline="middle">Handler fn()</text></g>
-          <path d="M446,205 L446,316" class="svg-path" marker-end="url(#arr1)"/>
-          <path d="M390,339 L310,339 L310,124" class="svg-path" stroke-dasharray="4,3" marker-end="url(#arr1)"/>
-          <text x="328" y="356" class="svg-path-label" text-anchor="middle">update status</text>
-          <g id="d1-completed" opacity="0">
-            <rect x="390" y="366" width="112" height="22" rx="4" fill="none" stroke="var(--color-green)" stroke-width="1"/>
-            <foreignObject x="397" y="368" width="16" height="16">
-              <div xmlns="http://www.w3.org/1999/xhtml" style="line-height:1;color:var(--color-green);"><i class="ti ti-circle-check-filled ti-inline-icon"></i></div>
-            </foreignObject>
-            <text x="452" y="377" font-family="JetBrains Mono,monospace" font-size="10" fill="var(--color-green)" text-anchor="middle" dominant-baseline="middle">completed</text>
+          <rect x="20" y="132" width="120" height="40" rx="4" class="svg-node-rect"/><text x="80" y="156" class="svg-node-text" text-anchor="middle">Your App</text>
+          <ellipse cx="260" cy="96" rx="62" ry="10" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><rect id="d1-pg-body" x="198" y="96" width="124" height="54" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><ellipse cx="260" cy="150" rx="62" ry="10" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><text x="260" y="126" class="svg-node-text" text-anchor="middle">PostgreSQL</text>
+          <ellipse cx="260" cy="230" rx="62" ry="10" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><rect id="d1-redis-body" x="198" y="230" width="124" height="54" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><ellipse cx="260" cy="284" rx="62" ry="10" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><text x="260" y="260" class="svg-node-text" text-anchor="middle">Redis</text>
+          <rect id="d1-worker-node" x="380" y="126" width="136" height="44" rx="6" class="svg-node-rect"/><text x="448" y="152" class="svg-node-text" text-anchor="middle">Worker Pool</text>
+          <rect id="d1-handler-node" x="392" y="208" width="112" height="40" rx="4" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5" stroke-dasharray="4 2"/><text x="448" y="232" class="svg-node-text" text-anchor="middle">Handler fn()</text>
+          <path id="d1-p-app-pg" d="M140 142 L186 142 L186 108 L198 108" class="svg-path" marker-end="url(#arr1)"/>
+          <text x="150" y="118" class="svg-path-label">write full record</text>
+          <path id="d1-p-app-rd" d="M140 164 L186 164 L186 250 L198 250" class="svg-path" marker-end="url(#arr1)"/>
+          <text x="148" y="234" class="svg-path-label">push job ID</text>
+          <path id="d1-p-pg-worker" d="M322 124 L360 124 L360 140 L380 140" class="svg-path" marker-end="url(#arr1)"/>
+          <text x="334" y="112" class="svg-path-label">fetch record</text>
+          <path id="d1-p-rd-worker" d="M322 250 L360 250 L360 156 L380 156" class="svg-path" marker-end="url(#arr1)"/>
+          <text x="334" y="240" class="svg-path-label">pop ID</text>
+          <path id="d1-p-worker-handler" d="M448 170 L448 208" class="svg-path" marker-end="url(#arr1)"/>
+          <text x="456" y="190" class="svg-path-label">run handler</text>
+          <path id="d1-p-handler-pg" d="M392 228 L350 228 L350 175 L260 175 L260 150" class="svg-path" marker-end="url(#arr1a)"/>
+          <text x="304" y="196" class="svg-path-label">update status</text>
+          <g id="d1-complete-pill" opacity="0">
+            <rect x="396" y="268" width="108" height="30" rx="15" fill="color-mix(in srgb,var(--color-green) 15%,transparent)" stroke="var(--color-green)" stroke-width="1.5"/>
+            <foreignObject x="408" y="274" width="16" height="16"><div xmlns="http://www.w3.org/1999/xhtml" style="line-height:1;color:var(--color-green);"><i class="ti ti-circle-check-filled ti-inline-icon"></i></div></foreignObject>
+            <text x="460" y="288" font-family="'JetBrains Mono',monospace" font-size="13" fill="var(--color-green)" text-anchor="middle">completed</text>
           </g>
-          <!-- Fork flash ring -->
-          <circle id="d1-fork-flash" cx="178" cy="181" r="0" fill="none" stroke="var(--color-accent)" stroke-width="2" opacity="0"/>
-          <!-- Animated dots — bigger + glowing -->
-          <circle id="d1-dot-main"  r="7" fill="var(--color-accent)" opacity="0" filter="url(#glow1)"/>
-          <circle id="d1-dot-pg"    r="6" fill="var(--color-accent)" opacity="0" filter="url(#glow1)"/>
-          <circle id="d1-dot-redis" r="6" fill="var(--color-accent)" opacity="0" filter="url(#glow1)"/>
+          <circle id="d1-dot-main" r="4.5" fill="var(--color-accent)" opacity="0" style="filter:drop-shadow(0 0 4px var(--color-accent));"/>
+          <circle id="d1-dot-split-a" r="4.5" fill="var(--color-accent)" opacity="0" style="filter:drop-shadow(0 0 4px var(--color-accent));"/>
+          <circle id="d1-dot-split-b" r="4.5" fill="var(--color-accent)" opacity="0" style="filter:drop-shadow(0 0 4px var(--color-accent));"/>
+        </svg>
+        <svg id="diag1-mobile" viewBox="0 0 320 480" class="diagram-svg svg-mobile">
+          <defs><marker id="arr1m" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="var(--color-border-2)"/></marker></defs>
+          <rect x="100" y="20" width="120" height="38" rx="4" class="svg-node-rect"/><text x="160" y="44" class="svg-node-text" text-anchor="middle">Your App</text>
+          <ellipse cx="95" cy="126" rx="62" ry="9" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><rect x="33" y="126" width="124" height="46" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><ellipse cx="95" cy="172" rx="62" ry="9" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><text x="95" y="150" class="svg-node-text" text-anchor="middle">PostgreSQL</text>
+          <ellipse cx="225" cy="126" rx="62" ry="9" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><rect x="163" y="126" width="124" height="46" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><ellipse cx="225" cy="172" rx="62" ry="9" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><text x="225" y="150" class="svg-node-text" text-anchor="middle">Redis</text>
+          <rect x="92" y="238" width="136" height="40" rx="6" class="svg-node-rect"/><text x="160" y="263" class="svg-node-text" text-anchor="middle">Worker Pool</text>
+          <rect x="104" y="312" width="112" height="38" rx="4" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5" stroke-dasharray="4 2"/><text x="160" y="335" class="svg-node-text" text-anchor="middle">Handler fn()</text>
+          <ellipse cx="160" cy="392" rx="62" ry="9" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><rect x="98" y="392" width="124" height="46" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><ellipse cx="160" cy="438" rx="62" ry="9" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><text x="160" y="416" class="svg-node-text" text-anchor="middle">PostgreSQL</text>
+          <rect x="100" y="448" width="120" height="24" rx="12" fill="color-mix(in srgb,var(--color-green) 15%,transparent)" stroke="var(--color-green)" stroke-width="1.5"/><text x="160" y="464" font-family="'JetBrains Mono',monospace" font-size="13" fill="var(--color-green)" text-anchor="middle">completed</text>
+          <path d="M160 58 L160 88 L95 88 L95 126" class="svg-path" marker-end="url(#arr1m)"/><path d="M160 58 L160 88 L225 88 L225 126" class="svg-path" marker-end="url(#arr1m)"/><path d="M95 172 L95 208 L160 208 L160 238" class="svg-path" marker-end="url(#arr1m)"/><path d="M225 172 L225 208 L160 208 L160 238" class="svg-path" marker-end="url(#arr1m)"/><path d="M160 278 L160 312" class="svg-path" marker-end="url(#arr1m)"/><path d="M160 350 L160 392" class="svg-path" marker-end="url(#arr1m)"/>
         </svg>
       </div>
     </div>
@@ -291,32 +332,29 @@
     <h2 class="section-title scroll-reveal">Three engines. One queue.</h2>
     <p class="section-body scroll-reveal">On <code style="font-family:'JetBrains Mono',monospace;font-size:0.875em;background:var(--color-border);padding:2px 6px;border-radius:4px;">Start()</code>, Kyu launches three concurrent goroutines. They run independently, coordinated only through PostgreSQL and Redis. No internal message bus. No shared state.</p>
     <!-- DIAGRAM 2 -->
-    <div class="scroll-reveal" style="margin-bottom:48px;">
-      <svg id="diag2" viewBox="0 0 720 340" class="diagram-svg" style="max-height:360px;">
-        <defs><marker id="arr2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="var(--color-border-2)"/></marker><filter id="sh2"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.09)"/></filter><filter id="glow2"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-        <rect x="30"  y="10" width="185" height="210" rx="10" fill="var(--color-surface)" stroke="var(--color-border)" stroke-width="1.5"/>
-        <rect x="268" y="10" width="185" height="210" rx="10" fill="var(--color-surface)" stroke="var(--color-border)" stroke-width="1.5"/>
-        <rect x="506" y="10" width="185" height="210" rx="10" fill="var(--color-surface)" stroke="var(--color-border)" stroke-width="1.5"/>
-        <text x="122"  y="36" font-family="Syne,sans-serif" font-size="13" font-weight="700" fill="var(--color-heading)" text-anchor="middle">Worker Pool</text>
-        <text x="360"  y="36" font-family="Syne,sans-serif" font-size="13" font-weight="700" fill="var(--color-heading)" text-anchor="middle">Scheduler</text>
-        <text x="598"  y="36" font-family="Syne,sans-serif" font-size="13" font-weight="700" fill="var(--color-heading)" text-anchor="middle">Stale Reaper</text>
-        <text x="122"  y="62" font-family="JetBrains Mono,monospace" font-size="9" fill="var(--color-muted)" text-anchor="middle">pop → fetch → run → update</text>
-        <text x="122"  y="78" font-family="JetBrains Mono,monospace" font-size="9" fill="var(--color-accent)" text-anchor="middle">continuous</text>
-        <text x="360"  y="62" font-family="JetBrains Mono,monospace" font-size="9" fill="var(--color-muted)" text-anchor="middle">query Postgres → push to Redis</text>
-        <text x="360"  y="78" font-family="JetBrains Mono,monospace" font-size="9" fill="var(--color-accent)" text-anchor="middle">every 5s</text>
-        <text x="598"  y="62" font-family="JetBrains Mono,monospace" font-size="9" fill="var(--color-muted)" text-anchor="middle">find stuck → reset to pending</text>
-        <text x="598"  y="78" font-family="JetBrains Mono,monospace" font-size="9" fill="var(--color-accent)" text-anchor="middle">every 60s</text>
-        <path d="M122,220 L122,258" class="svg-path" marker-end="url(#arr2)"/>
-        <path d="M360,220 L360,258" class="svg-path" marker-end="url(#arr2)"/>
-        <path d="M598,220 L598,258" class="svg-path" marker-end="url(#arr2)"/>
-        <g id="d2-redis" filter="url(#sh2)"><rect x="200" y="120" width="78" height="36" rx="6" class="svg-node-rect"/><text x="239" y="138" class="svg-node-text" text-anchor="middle" dominant-baseline="middle">Redis</text></g>
-        <path d="M218,138 L200,138" class="svg-path" stroke-dasharray="3,2" marker-end="url(#arr2)"/>
-        <path d="M278,138 L294,138" class="svg-path" stroke-dasharray="3,2" marker-end="url(#arr2)"/>
-        <!-- Postgres — wider, heavier (Subtask 6) -->
-        <g id="d2-pg" filter="url(#sh2)"><rect x="220" y="258" width="280" height="58" rx="10" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="2.5"/><ellipse cx="360" cy="258" rx="140" ry="13" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="2.5"/><text x="360" y="288" font-family="JetBrains Mono,monospace" font-size="12" fill="var(--color-body)" text-anchor="middle" dominant-baseline="middle" font-weight="500">PostgreSQL</text><text x="360" y="306" font-family="JetBrains Mono,monospace" font-size="8" fill="var(--color-muted)" text-anchor="middle">shared foundation</text></g>
-        <circle id="d2-dot1" cx="122" cy="100" r="6" fill="var(--color-accent)" opacity="0" filter="url(#glow2)"/>
-        <circle id="d2-dot2" cx="360" cy="100" r="6" fill="var(--color-accent)" opacity="0" filter="url(#glow2)"/>
-        <circle id="d2-dot3" cx="598" cy="100" r="6" fill="var(--color-accent)" opacity="0" filter="url(#glow2)"/>
+    <div class="scroll-reveal diagram-stage" style="margin-bottom:48px;">
+      <svg id="diag2" viewBox="0 0 640 360" class="diagram-svg svg-desktop">
+        <defs><marker id="arr2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="var(--color-border-2)"/></marker></defs>
+        <rect x="30" y="26" width="170" height="56" rx="10" class="svg-node-rect"/><text x="115" y="50" class="svg-node-text" text-anchor="middle">Worker Pool</text><text x="115" y="68" class="svg-path-label" text-anchor="middle">continuous</text>
+        <rect x="235" y="26" width="170" height="56" rx="10" class="svg-node-rect"/><text x="320" y="50" class="svg-node-text" text-anchor="middle">Scheduler</text><text x="320" y="68" class="svg-path-label" text-anchor="middle">every 5s</text>
+        <rect x="440" y="26" width="170" height="56" rx="10" class="svg-node-rect"/><text x="525" y="50" class="svg-node-text" text-anchor="middle">Stale Reaper</text><text x="525" y="68" class="svg-path-label" text-anchor="middle">every 60s</text>
+        <line x1="115" y1="82" x2="115" y2="284" stroke="var(--color-border-2)" stroke-dasharray="5 4" stroke-width="1.5"/><line x1="320" y1="82" x2="320" y2="284" stroke="var(--color-border-2)" stroke-dasharray="5 4" stroke-width="1.5"/><line x1="525" y1="82" x2="525" y2="284" stroke="var(--color-border-2)" stroke-dasharray="5 4" stroke-width="1.5"/>
+        <text x="55" y="122" class="svg-path-label">pop ID from Redis</text><text x="55" y="150" class="svg-path-label">fetch record</text><text x="55" y="178" class="svg-path-label">run handler</text><text x="55" y="206" class="svg-path-label">update status</text>
+        <text x="260" y="122" class="svg-path-label">query Postgres</text><text x="260" y="150" class="svg-path-label">find due jobs</text><text x="260" y="178" class="svg-path-label">push IDs to Redis</text>
+        <text x="455" y="122" class="svg-path-label">find stuck jobs</text><text x="455" y="150" class="svg-path-label">past StaleJobTimeout?</text><text x="455" y="178" class="svg-path-label">reset to pending</text>
+        <ellipse cx="220" cy="222" rx="58" ry="9" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><rect id="d2-redis-body" x="162" y="222" width="116" height="40" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><ellipse cx="220" cy="262" rx="58" ry="9" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><text x="220" y="245" class="svg-node-text" text-anchor="middle">Redis</text>
+        <path id="d2-worker-redis" d="M138 210 L162 230" class="svg-path" marker-end="url(#arr2)"/><path id="d2-scheduler-redis" d="M312 210 L278 230" class="svg-path" marker-end="url(#arr2)"/><path id="d2-redis-worker" d="M162 252 L140 242" class="svg-path" marker-end="url(#arr2)"/><path id="d2-redis-scheduler" d="M278 252 L312 242" class="svg-path" marker-end="url(#arr2)"/>
+        <path d="M115 284 L115 314" class="svg-path" marker-end="url(#arr2)"/><path d="M320 284 L320 314" class="svg-path" marker-end="url(#arr2)"/><path d="M525 284 L525 314" class="svg-path" marker-end="url(#arr2)"/>
+        <ellipse cx="320" cy="316" rx="214" ry="12" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="3"/><rect id="d2-pg-foundation" x="106" y="316" width="428" height="34" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="3"/><ellipse cx="320" cy="350" rx="214" ry="12" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="3"/><text x="320" y="336" class="svg-node-text" text-anchor="middle">PostgreSQL</text>
+        <circle id="d2-dot1" r="4.5" fill="var(--color-accent)" opacity="0" style="filter:drop-shadow(0 0 4px var(--color-accent));"/><circle id="d2-dot2" r="4.5" fill="var(--color-accent)" opacity="0" style="filter:drop-shadow(0 0 4px var(--color-accent));"/><circle id="d2-dot3" r="4.5" fill="var(--color-accent)" opacity="0" style="filter:drop-shadow(0 0 4px var(--color-accent));"/>
+      </svg>
+      <svg id="diag2-mobile" viewBox="0 0 320 520" class="diagram-svg svg-mobile">
+        <defs><marker id="arr2m" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="var(--color-border-2)"/></marker></defs>
+        <rect x="20" y="20" width="280" height="94" rx="10" class="svg-node-rect"/><text x="38" y="44" class="svg-node-text">Worker Pool</text><text x="38" y="64" class="svg-path-label">pop ID from Redis → fetch record → run handler → update status</text><line id="d2m-line1" x1="36" y1="88" x2="284" y2="88" class="svg-path" marker-end="url(#arr2m)"/>
+        <rect x="20" y="132" width="280" height="94" rx="10" class="svg-node-rect"/><text x="38" y="156" class="svg-node-text">Scheduler</text><text x="38" y="176" class="svg-path-label">query Postgres → find due jobs → push IDs to Redis</text><line id="d2m-line2" x1="36" y1="200" x2="284" y2="200" class="svg-path" marker-end="url(#arr2m)"/>
+        <rect x="20" y="244" width="280" height="94" rx="10" class="svg-node-rect"/><text x="38" y="268" class="svg-node-text">Stale Reaper</text><text x="38" y="288" class="svg-path-label">find stuck jobs → past timeout → reset pending</text><line id="d2m-line3" x1="36" y1="312" x2="284" y2="312" class="svg-path" marker-end="url(#arr2m)"/>
+        <ellipse cx="160" cy="410" rx="132" ry="10" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="3"/><rect x="28" y="410" width="264" height="44" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="3"/><ellipse cx="160" cy="454" rx="132" ry="10" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="3"/><text x="160" y="436" class="svg-node-text" text-anchor="middle">PostgreSQL</text>
+        <circle id="d2m-dot1" r="4.5" fill="var(--color-accent)" opacity="0" style="filter:drop-shadow(0 0 4px var(--color-accent));"/><circle id="d2m-dot2" r="4.5" fill="var(--color-accent)" opacity="0" style="filter:drop-shadow(0 0 4px var(--color-accent));"/><circle id="d2m-dot3" r="4.5" fill="var(--color-accent)" opacity="0" style="filter:drop-shadow(0 0 4px var(--color-accent));"/>
       </svg>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;">
@@ -333,46 +371,35 @@
     <h2 class="section-title scroll-reveal">Every job. Full history.</h2>
     <p class="section-body scroll-reveal">Every state transition is written to PostgreSQL. There is no ephemeral in-memory state. You can query job history with plain SQL at any time.</p>
     <!-- DIAGRAM 3 -->
-    <div class="scroll-reveal" style="margin-bottom:48px;">
-      <svg id="diag3" viewBox="0 0 720 380" class="diagram-svg" style="max-height:400px;">
-        <defs>
-          <marker id="arr3"  markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="var(--color-border-2)"/></marker>
-          <marker id="arr3g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="var(--color-green)"/></marker>
-          <marker id="arr3r" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="var(--color-red)"/></marker>
-          <marker id="arr3a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="var(--color-accent)"/></marker>
-          <filter id="glow3"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-          <filter id="sh3"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.1)"/></filter>
-        </defs>
-        <!-- pending -->
-        <g filter="url(#sh3)"><rect id="s-pending-rect" x="16" y="148" width="116" height="46" rx="9" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><text x="74" y="171" font-family="JetBrains Mono,monospace" font-size="12" fill="var(--color-body)" text-anchor="middle" dominant-baseline="middle">pending</text></g>
-        <!-- cancelled -->
-        <g filter="url(#sh3)"><rect x="16" y="30" width="116" height="46" rx="9" fill="var(--color-surface)" stroke="var(--color-muted)" stroke-width="1.5"/><text x="74" y="53" font-family="JetBrains Mono,monospace" font-size="12" fill="var(--color-muted)" text-anchor="middle" dominant-baseline="middle">cancelled</text></g>
-        <path d="M74,148 L74,76" stroke="var(--color-muted)" stroke-width="1.5" fill="none" stroke-dasharray="4,3" marker-end="url(#arr3)"/>
-        <text x="84" y="115" font-family="JetBrains Mono,monospace" font-size="8" fill="var(--color-muted)">CancelJob()</text>
-        <!-- running — unmistakable glow -->
-        <rect id="s-running-glow" x="204" y="146" width="120" height="50" rx="10" fill="none" stroke="var(--color-accent)" stroke-width="5" opacity="0.2" filter="url(#glow3)"/>
-        <g filter="url(#sh3)"><rect id="s-running-rect" x="206" y="148" width="116" height="46" rx="9" fill="var(--color-surface)" stroke="var(--color-accent)" stroke-width="2.5"/><text x="264" y="171" font-family="JetBrains Mono,monospace" font-size="12" fill="var(--color-accent)" text-anchor="middle" dominant-baseline="middle">running</text></g>
-        <path d="M132,171 L206,171" stroke="var(--color-border-2)" stroke-width="1.5" fill="none" marker-end="url(#arr3)"/>
-        <text x="169" y="163" font-family="JetBrains Mono,monospace" font-size="8" fill="var(--color-muted)" text-anchor="middle">dequeue</text>
-        <!-- completed -->
-        <g filter="url(#sh3)"><rect id="s-completed-rect" x="396" y="84" width="116" height="46" rx="9" fill="var(--color-surface)" stroke="var(--color-green)" stroke-width="1.5"/><text x="454" y="107" font-family="JetBrains Mono,monospace" font-size="12" fill="var(--color-green)" text-anchor="middle" dominant-baseline="middle">completed</text></g>
-        <path d="M322,160 L396,107" stroke="var(--color-green)" stroke-width="1.5" fill="none" marker-end="url(#arr3g)"/>
-        <text x="358" y="124" font-family="JetBrains Mono,monospace" font-size="8" fill="var(--color-green)" text-anchor="middle">success</text>
-        <!-- failed -->
-        <g filter="url(#sh3)"><rect id="s-failed-rect" x="396" y="216" width="116" height="46" rx="9" fill="var(--color-surface)" stroke="var(--color-red)" stroke-width="1.5"/><text x="454" y="239" font-family="JetBrains Mono,monospace" font-size="12" fill="var(--color-red)" text-anchor="middle" dominant-baseline="middle">failed</text></g>
-        <path d="M322,182 L396,239" stroke="var(--color-red)" stroke-width="1.5" fill="none" marker-end="url(#arr3r)"/>
-        <text x="356" y="224" font-family="JetBrains Mono,monospace" font-size="8" fill="var(--color-red)" text-anchor="middle">error</text>
-        <!-- re-queued -->
-        <g filter="url(#sh3)"><rect id="s-requeued-rect" x="576" y="148" width="116" height="46" rx="9" fill="var(--color-surface)" stroke="var(--color-accent)" stroke-width="1.5" stroke-dasharray="5,3"/><text x="634" y="171" font-family="JetBrains Mono,monospace" font-size="11" fill="var(--color-accent)" text-anchor="middle" dominant-baseline="middle">re-queued</text></g>
-        <path d="M512,232 L634,232 L634,194" stroke="var(--color-accent)" stroke-width="1.5" fill="none" marker-end="url(#arr3a)"/>
-        <text x="564" y="249" font-family="JetBrains Mono,monospace" font-size="8" fill="var(--color-accent)">retries remain</text>
-        <path d="M634,148 L634,50 L74,50 L74,148" stroke="var(--color-accent)" stroke-width="1.5" fill="none" stroke-dasharray="4,3" marker-end="url(#arr3a)"/>
-        <text x="354" y="43" font-family="JetBrains Mono,monospace" font-size="8" fill="var(--color-accent)" text-anchor="middle">back to queue</text>
-        <!-- dead -->
-        <g filter="url(#sh3)"><rect id="s-dead-rect" x="576" y="290" width="116" height="46" rx="9" fill="rgba(192,84,74,0.08)" stroke="var(--color-red)" stroke-width="1.5"/><text x="634" y="313" font-family="JetBrains Mono,monospace" font-size="12" fill="var(--color-red)" text-anchor="middle" dominant-baseline="middle">dead</text></g>
-        <path d="M512,248 L634,290" stroke="var(--color-red)" stroke-width="1.5" fill="none" marker-end="url(#arr3r)"/>
-        <text x="575" y="283" font-family="JetBrains Mono,monospace" font-size="8" fill="var(--color-red)">no retries</text>
-        <circle id="d3-dot" r="7" fill="var(--color-accent)" opacity="0" filter="url(#glow3)"/>
+    <div class="scroll-reveal diagram-stage" style="margin-bottom:48px;">
+      <svg id="diag3" viewBox="0 0 640 400" class="diagram-svg svg-desktop">
+        <defs><marker id="arr3" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="var(--color-border-2)"/></marker><marker id="arr3g" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="var(--color-green)"/></marker><marker id="arr3r" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="var(--color-red)"/></marker></defs>
+        <rect id="d3-pending" x="30" y="176" width="100" height="38" rx="8" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><text x="80" y="200" class="svg-node-text" text-anchor="middle">pending</text>
+        <rect id="d3-cancelled" x="46" y="70" width="100" height="38" rx="8" fill="var(--color-surface)" stroke="var(--color-muted)" stroke-width="1.5" stroke-dasharray="4 3"/><text x="96" y="94" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="700" fill="var(--color-muted)" text-anchor="middle">cancelled</text>
+        <rect id="d3-running" x="232" y="176" width="106" height="38" rx="8" fill="var(--color-surface)" stroke="var(--color-accent)" stroke-width="2"/><text x="285" y="200" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="700" fill="var(--color-accent)" text-anchor="middle">running</text>
+        <rect id="d3-completed" x="460" y="86" width="106" height="38" rx="8" fill="color-mix(in srgb,var(--color-green) 10%,transparent)" stroke="var(--color-green)" stroke-width="2"/><text x="513" y="110" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="700" fill="var(--color-green)" text-anchor="middle">completed</text>
+        <rect id="d3-failed" x="400" y="250" width="106" height="38" rx="8" fill="color-mix(in srgb,var(--color-red) 10%,transparent)" stroke="var(--color-red)" stroke-width="2"/><text x="453" y="274" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="700" fill="var(--color-red)" text-anchor="middle">failed</text>
+        <rect id="d3-requeued" x="520" y="186" width="96" height="38" rx="8" fill="var(--color-surface)" stroke="var(--color-accent)" stroke-width="2" stroke-dasharray="5 3"/><text x="568" y="210" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="700" fill="var(--color-accent)" text-anchor="middle">re-queued</text>
+        <rect id="d3-dead" x="532" y="308" width="104" height="42" rx="8" fill="color-mix(in srgb,var(--color-red) 20%,transparent)" stroke="var(--color-red)" stroke-width="2"/><text x="584" y="335" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="700" fill="var(--color-red)" text-anchor="middle">dead</text>
+        <path id="d3-p-pending-running" d="M130 195 L232 195" class="svg-path" marker-end="url(#arr3)"/><text x="176" y="185" class="svg-path-label" text-anchor="middle">dequeue</text>
+        <path d="M80 176 L80 108" class="svg-path" stroke-dasharray="4 3" marker-end="url(#arr3)"/><text x="92" y="145" class="svg-path-label">CancelJob()</text>
+        <path id="d3-p-running-completed" d="M338 188 L460 112" stroke="var(--color-green)" stroke-width="1.5" fill="none" marker-end="url(#arr3g)"/><text x="390" y="132" class="svg-path-label">success</text>
+        <path id="d3-p-running-failed" d="M338 206 L400 266" stroke="var(--color-red)" stroke-width="1.5" fill="none" marker-end="url(#arr3r)"/><text x="364" y="244" class="svg-path-label">error</text>
+        <path id="d3-p-failed-requeued" d="M506 266 L568 224" class="svg-path" marker-end="url(#arr3)"/><text x="520" y="252" class="svg-path-label">retries remain</text>
+        <path id="d3-p-failed-dead" d="M506 286 L545 310" stroke="var(--color-red)" stroke-width="1.5" fill="none" marker-end="url(#arr3r)"/><text x="507" y="304" class="svg-path-label">no retries</text>
+        <path id="d3-p-requeued-pending" d="M548 186 C548 40 160 40 80 176" class="svg-path" marker-end="url(#arr3)"/><text x="322" y="36" class="svg-path-label" text-anchor="middle">backoff elapsed</text>
+        <circle id="d3-dot" r="4.5" fill="var(--color-accent)" opacity="0" style="filter:drop-shadow(0 0 4px var(--color-accent));"/>
+      </svg>
+      <svg id="diag3-mobile" viewBox="0 0 320 500" class="diagram-svg svg-mobile">
+        <defs><marker id="arr3m" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="var(--color-border-2)"/></marker></defs>
+        <rect x="20" y="110" width="88" height="34" rx="8" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/><text x="64" y="132" class="svg-node-text" text-anchor="middle" style="font-size:11px">pending</text>
+        <rect x="118" y="110" width="88" height="34" rx="8" fill="var(--color-surface)" stroke="var(--color-accent)" stroke-width="2"/><text x="162" y="132" font-family="'JetBrains Mono',monospace" font-size="11" fill="var(--color-accent)" text-anchor="middle">running</text>
+        <rect x="214" y="50" width="88" height="34" rx="8" fill="color-mix(in srgb,var(--color-green) 10%,transparent)" stroke="var(--color-green)" stroke-width="2"/><text x="258" y="72" font-family="'JetBrains Mono',monospace" font-size="11" fill="var(--color-green)" text-anchor="middle">completed</text>
+        <rect x="214" y="178" width="88" height="34" rx="8" fill="color-mix(in srgb,var(--color-red) 10%,transparent)" stroke="var(--color-red)" stroke-width="2"/><text x="258" y="200" font-family="'JetBrains Mono',monospace" font-size="11" fill="var(--color-red)" text-anchor="middle">failed</text>
+        <rect x="20" y="246" width="98" height="34" rx="8" fill="var(--color-surface)" stroke="var(--color-accent)" stroke-width="2" stroke-dasharray="5 3"/><text x="69" y="268" font-family="'JetBrains Mono',monospace" font-size="11" fill="var(--color-accent)" text-anchor="middle">re-queued</text>
+        <rect x="142" y="246" width="88" height="34" rx="8" fill="color-mix(in srgb,var(--color-red) 20%,transparent)" stroke="var(--color-red)" stroke-width="2"/><text x="186" y="268" font-family="'JetBrains Mono',monospace" font-size="11" fill="var(--color-red)" text-anchor="middle">dead</text>
+        <rect x="20" y="50" width="88" height="34" rx="8" fill="var(--color-surface)" stroke="var(--color-muted)" stroke-width="1.5" stroke-dasharray="4 3"/><text x="64" y="72" font-family="'JetBrains Mono',monospace" font-size="11" fill="var(--color-muted)" text-anchor="middle">cancelled</text>
+        <path d="M108 127 L118 127" class="svg-path" marker-end="url(#arr3m)"/><path d="M206 122 L214 84" class="svg-path" marker-end="url(#arr3m)"/><path d="M206 132 L214 184" class="svg-path" marker-end="url(#arr3m)"/><path d="M258 212 L69 246" class="svg-path" marker-end="url(#arr3m)"/><path d="M258 212 L186 246" class="svg-path" marker-end="url(#arr3m)"/><path d="M69 246 C6 210 6 154 20 127" class="svg-path" marker-end="url(#arr3m)"/><path d="M64 110 L64 84" class="svg-path" marker-end="url(#arr3m)"/>
       </svg>
     </div>
     <!-- Schema table (Tabulator) -->
@@ -439,21 +466,19 @@
         <div class="card-monogram">mw</div>
         <div class="card-title">Middleware system</div>
         <p class="card-desc" style="margin-bottom:16px;">Wrap every job with logging, timing, panic recovery. Composable and ordered.</p>
-        <svg id="diag4" viewBox="0 0 300 170" class="diagram-svg" style="max-height:190px;">
-          <defs><filter id="glow4"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-          <!-- Nested layers — each visibly wrapping the next -->
-          <rect x="4"  y="10" width="292" height="150" rx="12" fill="var(--color-surface)"  stroke="var(--color-border-2)" stroke-width="2"   id="mw-logger"/>
-          <text x="14" y="26"  font-family="JetBrains Mono,monospace" font-size="9" fill="var(--color-muted)">Logger</text>
-          <text x="14" y="92"  font-family="JetBrains Mono,monospace" font-size="8" fill="var(--color-muted)">→ in</text>
-          <text x="270" y="92" font-family="JetBrains Mono,monospace" font-size="8" fill="var(--color-muted)">out ←</text>
-          <rect x="22" y="28" width="256" height="114" rx="10" fill="var(--color-bg)"       stroke="var(--color-border-2)" stroke-width="1.5" id="mw-timer"/>
-          <text x="32" y="44"  font-family="JetBrains Mono,monospace" font-size="9" fill="var(--color-muted)">Timer</text>
-          <rect x="40" y="46" width="220" height="80"  rx="8"  fill="var(--color-surface)"  stroke="var(--color-border-2)" stroke-width="1.5" id="mw-panic"/>
-          <text x="50" y="62"  font-family="JetBrains Mono,monospace" font-size="9" fill="var(--color-muted)">Panic Recovery</text>
-          <rect x="80" y="64" width="140" height="40"  rx="7"  fill="var(--color-surface)"  stroke="var(--color-border-2)" stroke-width="1.5" id="mw-handler"/>
-          <text x="150" y="84" font-family="JetBrains Mono,monospace" font-size="10" fill="var(--color-body)" text-anchor="middle" dominant-baseline="middle">Handler fn()</text>
-          <circle id="d4-dot"      r="5" fill="var(--color-accent)" opacity="0" filter="url(#glow4)"/>
-          <circle id="d4-dot-trail" r="3" fill="var(--color-accent)" opacity="0"/>
+        <svg id="diag4" viewBox="0 0 480 260" class="diagram-svg" style="max-height:260px;">
+          <rect id="mw-logger" x="18" y="20" width="444" height="220" rx="10" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/>
+          <text x="36" y="42" font-family="'JetBrains Mono',monospace" font-size="12" fill="var(--color-muted)">Logger</text>
+          <text x="8" y="135" font-family="'JetBrains Mono',monospace" font-size="12" fill="var(--color-muted)">in</text>
+          <text x="438" y="135" font-family="'JetBrains Mono',monospace" font-size="12" fill="var(--color-muted)">out</text>
+          <rect id="mw-timer" x="46" y="48" width="388" height="164" rx="8" fill="var(--color-bg)" stroke="var(--color-border-2)" stroke-width="1.5"/>
+          <text x="62" y="68" font-family="'JetBrains Mono',monospace" font-size="12" fill="var(--color-muted)">Timer</text>
+          <rect id="mw-panic" x="74" y="76" width="332" height="108" rx="6" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5"/>
+          <text x="90" y="96" font-family="'JetBrains Mono',monospace" font-size="12" fill="var(--color-muted)">Panic Recovery</text>
+          <rect id="mw-handler" x="102" y="104" width="276" height="52" rx="4" fill="var(--color-surface)" stroke="var(--color-border-2)" stroke-width="1.5" stroke-dasharray="4 2"/>
+          <text x="240" y="136" class="svg-node-text" text-anchor="middle">Handler fn()</text>
+          <circle id="d4-dot" r="4.5" fill="var(--color-accent)" opacity="0" style="filter:drop-shadow(0 0 4px var(--color-accent));"/>
+          <circle id="d4-dot-trail" r="4" fill="var(--color-accent)" opacity="0" style="filter:drop-shadow(0 0 4px var(--color-accent));"/>
         </svg>
       </div>
       <div class="card scroll-reveal"><div class="card-monogram">pg</div><div class="card-title">Prometheus + Grafana</div><p class="card-desc">Full metrics out of the box. Pre-built Grafana dashboard included. Per-instance registry, no conflicts.</p></div>
@@ -495,16 +520,37 @@
 <section id="comparison" class="section" style="border-top:1px solid var(--color-border);">
   <div class="section-inner">
     <h2 class="section-title scroll-reveal">How Kyu fits the landscape.</h2>
-    <div class="scroll-reveal" style="margin-bottom:48px;">
-      <svg id="spectrum-svg" viewBox="0 0 700 140" class="diagram-svg" style="max-height:160px;">
-        <line x1="60" y1="70" x2="640" y2="70" stroke="var(--color-border-2)" stroke-width="2"/>
-        <g><circle cx="120" cy="70" r="8" fill="var(--color-surface)" stroke="var(--color-muted)" stroke-width="1.5"/><text x="120" y="50" font-family="JetBrains Mono,monospace" font-size="10" fill="var(--color-muted)" text-anchor="middle">Redis-only</text><text x="120" y="38" font-family="JetBrains Mono,monospace" font-size="9" fill="var(--color-muted)" text-anchor="middle">Asynq · BullMQ</text><text x="120" y="95" font-family="JetBrains Mono,monospace" font-size="9" fill="var(--color-muted)" text-anchor="middle">Fast · fragile</text></g>
-        <g><circle cx="350" cy="70" r="8" fill="var(--color-surface)" stroke="var(--color-muted)" stroke-width="1.5"/><text x="350" y="50" font-family="JetBrains Mono,monospace" font-size="10" fill="var(--color-muted)" text-anchor="middle">Postgres-only</text><text x="350" y="38" font-family="JetBrains Mono,monospace" font-size="9" fill="var(--color-muted)" text-anchor="middle">River</text><text x="350" y="95" font-family="JetBrains Mono,monospace" font-size="9" fill="var(--color-muted)" text-anchor="middle">Durable · slower</text></g>
-        <g id="kyu-marker" class="spectrum-marker"><circle cx="580" cy="70" r="10" fill="var(--color-accent)" stroke="var(--color-accent)" stroke-width="2" opacity="0.9"/><text x="580" y="50" font-family="Syne,sans-serif" font-size="12" font-weight="700" fill="var(--color-accent)" text-anchor="middle">Redis + Postgres</text><text x="580" y="36" font-family="JetBrains Mono,monospace" font-size="9" fill="var(--color-accent)" text-anchor="middle">Kyu ← you are here</text><text x="580" y="95" font-family="JetBrains Mono,monospace" font-size="9" fill="var(--color-accent)" text-anchor="middle">Fast AND durable</text></g>
-      </svg>
-    </div>
     <p class="section-body scroll-reveal" style="margin-bottom:40px;">Redis-only queues like Asynq are fast but fragile — if Redis loses data, your jobs are gone. Postgres-only queues like River are durable but don't get Redis's O(log N) sorted set for priority scheduling. Kyu uses both. Postgres is the ledger. Redis is the dispatcher.</p>
-    <div class="scroll-reveal"><div id="comparison-table" class="tab-table-wrap"></div></div>
+    <div class="scroll-reveal comparison-wrap">
+      <div class="comparison-scroll">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th class="kyu-head">Kyu</th>
+              <th>Asynq</th>
+              <th>River</th>
+              <th>Machinery</th>
+              <th class="bullmq-head">BullMQ <small>(Node.js)</small></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Language</td><td>Go</td><td>Go</td><td>Go</td><td>Go</td><td>Node.js</td></tr>
+            <tr><td>Storage backend</td><td>PostgreSQL + Redis</td><td>Redis only</td><td>PostgreSQL only</td><td>Redis / AMQP / MongoDB</td><td>Redis only</td></tr>
+            <tr><td>Priority scheduling</td><td>Redis sorted set</td><td>Redis sorted set</td><td>Weighted queues</td><td>Basic</td><td>Redis sorted set</td></tr>
+            <tr><td>Job durability</td><td>Survives Redis restart</td><td>Lost if Redis clears</td><td>Full durability</td><td>Depends on backend</td><td>Lost if Redis clears</td></tr>
+            <tr><td>Transactional enqueue</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td class="no"><i class="ti ti-minus ti-inline-icon"></i>No</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td class="no"><i class="ti ti-minus ti-inline-icon"></i>No</td><td class="no"><i class="ti ti-minus ti-inline-icon"></i>No</td></tr>
+            <tr><td>Full job history</td><td>Yes (SQL)</td><td>Limited (Redis TTL)</td><td>Yes (SQL)</td><td>Limited</td><td>Limited (Redis TTL)</td></tr>
+            <tr><td>Stale job reaper</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td>Limited</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td class="no"><i class="ti ti-minus ti-inline-icon"></i>No</td><td>Limited</td></tr>
+            <tr><td>Prometheus native</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td>Separate</td><td class="no"><i class="ti ti-minus ti-inline-icon"></i>No</td><td class="no"><i class="ti ti-minus ti-inline-icon"></i>No</td><td>Separate</td></tr>
+            <tr><td>Scheduled jobs</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td></tr>
+            <tr><td>Middleware system</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td class="no"><i class="ti ti-minus ti-inline-icon"></i>No</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td><td class="yes"><i class="ti ti-check ti-inline-icon"></i>Yes</td></tr>
+            <tr><td>Retries + backoff</td><td>Exponential</td><td>Exponential</td><td>Exponential</td><td>Basic</td><td>Exponential</td></tr>
+            <tr><td>Open source</td><td>MIT</td><td>MIT</td><td>MIT</td><td>MIT</td><td>MIT</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -724,39 +770,6 @@ document.querySelectorAll('.tab-btn').forEach(function(btn){
       {metric:'kyu_queue_depth',type:'gauge',desc:'Jobs currently waiting in Redis'},
     ],
   }));
-
-  new Tabulator('#comparison-table',Object.assign({},base,{
-    columns:[
-      {title:'Feature',field:'feature',widthGrow:1.8},
-      {title:'Kyu',field:'kyu',widthGrow:1.6,cssClass:'kyu-col',
-        headerHtmlTitle:'<span style="color:var(--color-accent);font-weight:700;">Kyu</span>',
-        formatter:function(cell){
-          var v=cell.getValue();
-          if(v==='Yes'||v==='MIT')return '<span class="cell-yes"><i class="ti ti-check ti-inline-icon"></i> '+v+'</span>';
-          return v;
-        }
-      },
-      {title:'Asynq',field:'asynq',widthGrow:1.6},
-      {title:'River',field:'river',widthGrow:1.6},
-    ],
-    data:[
-      {feature:'Language',kyu:'Go',asynq:'Go',river:'Go'},
-      {feature:'Storage backend',kyu:'PostgreSQL + Redis',asynq:'Redis only',river:'PostgreSQL only'},
-      {feature:'Priority scheduling',kyu:'Redis sorted set',asynq:'Redis sorted set',river:'Weighted queues'},
-      {feature:'Job durability',kyu:'Survives Redis restart',asynq:'Lost if Redis clears',river:'Full durability'},
-      {feature:'Transactional enqueue',kyu:'Yes',asynq:'No',river:'Yes'},
-      {feature:'Full job history',kyu:'Yes (SQL)',asynq:'Limited (Redis TTL)',river:'Yes (SQL)'},
-      {feature:'Stale job reaper',kyu:'Yes',asynq:'Limited',river:'Yes'},
-      {feature:'Prometheus native',kyu:'Yes',asynq:'Separate',river:'No'},
-      {feature:'Scheduled jobs',kyu:'Yes',asynq:'Yes',river:'Yes'},
-      {feature:'Middleware system',kyu:'Yes',asynq:'Yes',river:'No'},
-      {feature:'Open source',kyu:'MIT',asynq:'MIT',river:'MIT'},
-    ],
-    tableBuilt:function(){
-      var ths=document.querySelectorAll('#comparison-table .tabulator-col[tabulator-field="kyu"]');
-      ths.forEach(function(h){h.style.borderTop='3px solid var(--color-accent)';h.style.color='var(--color-accent)';});
-    }
-  }));
 })();
 
 // ── Scroll reveal ───────────────────────────────────────
@@ -792,151 +805,99 @@ new IntersectionObserver(function(entries){
   });
 },{threshold:0.3}).observe(document.getElementById('stat-grid'));
 
-// ── Spectrum animation ──────────────────────────────────
-var sdone=false;
-new IntersectionObserver(function(entries){
-  entries.forEach(function(e){
-    if(e.isIntersecting&&!sdone){
-      sdone=true;
-      document.getElementById('kyu-marker').style.opacity='1';
-      anime({targets:'#kyu-marker',translateY:[-30,0],opacity:[0,1],duration:800,easing:'spring(1,80,10,0)'});
-    }
-  });
-},{threshold:0.4}).observe(document.getElementById('spectrum-svg'));
-
-// ── Subtask 7: Hero entrance ────────────────────────────
+// ── Hero entrance animation ─────────────────────────────
 (function(){
-  // Split headline words into animatable spans
-  var hel=document.getElementById('hero-headline-el');
-  if(hel){
-    var raw=hel.innerHTML.replace(/<br\s*\/?>/gi,' __BR__ ');
-    hel.innerHTML=raw.trim().split(/\s+/).map(function(w){
-      if(w==='__BR__')return '<br>';
-      return '<span class="hw" style="display:inline-block;opacity:0;transform:translateY(18px);">'+w+'</span>';
-    }).join(' ');
-  }
-  var tl=anime.timeline({autoplay:true});
-  tl.add({targets:'#hero-label-el',opacity:[0,1],translateY:[8,0],duration:280,easing:'easeOutCubic'});
-  tl.add({targets:'#hero-headline-el',opacity:[0,1],duration:1,easing:'linear'},'-=280');
-  tl.add({targets:'#hero-headline-el .hw',opacity:[0,1],translateY:[18,0],duration:360,easing:'easeOutCubic',delay:anime.stagger(60)},'+=20');
-  tl.add({targets:'#hero-sub-el',opacity:[0,1],translateY:[10,0],duration:320,easing:'easeOutCubic'},'-=60');
-  tl.add({targets:'#hero-cta-el',opacity:[0,1],scale:[0.96,1],duration:300,easing:'easeOutCubic'},'-=60');
+  anime({targets:'#hero-status-el',opacity:[0,1],duration:400,easing:'easeOutCubic',delay:0});
+  anime({targets:'#hero-label-el',opacity:[0,1],translateY:[10,0],duration:350,easing:'easeOutCubic',delay:200});
+  anime({targets:'#hero-h1-line1',opacity:[0,1],translateY:[20,0],duration:450,easing:'easeOutCubic',delay:400});
+  anime({targets:'#hero-h1-line2',opacity:[0,1],translateY:[20,0],duration:450,easing:'easeOutCubic',delay:550});
+  anime({targets:'#hero-sub-el',opacity:[0,1],duration:400,easing:'easeOutCubic',delay:750});
+  anime({targets:'#hero-cta-el .hero-cta-item',opacity:[0,1],scale:[0.96,1],duration:320,easing:'easeOutCubic',delay:anime.stagger(100,{start:900})});
+  anime({targets:'#hero-diagram-el',opacity:[0,1],duration:600,easing:'easeOutCubic',delay:300});
 })();
 
-// ── Diagram 1: Dual-Storage (Subtask 6) ────────────────
+// ── Diagram 1: Dual-storage flow ────────────────────────
 (function(){
-  var dot=document.getElementById('d1-dot-main');
-  var dotPg=document.getElementById('d1-dot-pg');
-  var dotRed=document.getElementById('d1-dot-redis');
-  var comp=document.getElementById('d1-completed');
-  var flash=document.getElementById('d1-fork-flash');
-  function sd(d,x,y,o){d.setAttribute('cx',x);d.setAttribute('cy',y);d.setAttribute('opacity',o);}
-  function forkFlash(){
-    anime({targets:{r:0,o:0.8},r:20,o:0,duration:480,easing:'easeOutCubic',
-      update:function(a){flash.setAttribute('r',a.animations[0].currentValue);flash.setAttribute('opacity',a.animations[1].currentValue);}
-    });
+  var dot=document.getElementById('d1-dot-main'),splitA=document.getElementById('d1-dot-split-a'),splitB=document.getElementById('d1-dot-split-b');
+  var pAppPg=anime.path('#d1-p-app-pg'),pAppRd=anime.path('#d1-p-app-rd'),pWorkH=anime.path('#d1-p-worker-handler'),pHpg=anime.path('#d1-p-handler-pg');
+  function flashStroke(id){
+    anime({targets:id,stroke:['var(--color-border-2)','var(--color-accent)','var(--color-border-2)'],duration:300,easing:'easeInOutSine'});
   }
-  function pgGlow(){
-    var g=document.getElementById('d1-pg-glow');
-    anime({targets:{v:0.5},v:0,duration:700,easing:'easeOutCubic',
-      update:function(a){g.setAttribute('fill','rgba(76,175,130,'+a.animations[0].currentValue+')');}
-    });
+  function movePath(el,pathFn,dur,delay){
+    return anime({targets:el,translateX:pathFn('x'),translateY:pathFn('y'),duration:dur,easing:'linear',delay:delay||0});
   }
   function run(){
-    sd(dot,69,181,0);sd(dotPg,69,181,0);sd(dotRed,69,181,0);comp.setAttribute('opacity',0);
-    var tl=anime.timeline({autoplay:true});
-    tl.add({targets:{x:69,y:181},x:178,y:181,duration:460,easing:'easeInOutCubic',
-      update:function(a){sd(dot,a.animations[0].currentValue,a.animations[1].currentValue,1);},
-      complete:function(){sd(dot,178,181,0);forkFlash();}
-    });
-    tl.add({targets:[{x:178,y:181},{x:178,y:181}],x:[310,310],y:function(el,i){return i===0?100:270;},duration:560,easing:'easeInOutCubic',
-      update:function(a){sd(dotPg,a.animations[0].currentValue,a.animations[1].currentValue,1);sd(dotRed,a.animations[2].currentValue,a.animations[3].currentValue,1);}
-    },'-=0');
-    tl.add({duration:280});
-    tl.add({targets:[{x:310,y:100},{x:310,y:270}],x:446,y:181,duration:460,easing:'easeInOutCubic',
-      update:function(a){sd(dotPg,a.animations[0].currentValue,a.animations[1].currentValue,1);sd(dotRed,a.animations[2].currentValue,a.animations[3].currentValue,1);},
-      complete:function(){sd(dotPg,446,181,0);sd(dotRed,446,181,0);sd(dot,446,181,1);}
-    });
-    tl.add({targets:{x:446,y:181},x:446,y:339,duration:360,easing:'easeInOutCubic',update:function(a){sd(dot,a.animations[0].currentValue,a.animations[1].currentValue,1);}});
-    tl.add({targets:{x:446,y:339},x:310,y:339,duration:240,easing:'easeInCubic',update:function(a){sd(dot,a.animations[0].currentValue,a.animations[1].currentValue,1);}});
-    tl.add({targets:{x:310,y:339},x:310,y:100,duration:360,easing:'easeInOutCubic',update:function(a){sd(dot,a.animations[0].currentValue,a.animations[1].currentValue,1);},complete:function(){sd(dot,310,100,0);pgGlow();}});
-    tl.add({targets:'#d1-pg rect',scaleX:[1,1.03,1],scaleY:[1,1.03,1],duration:380,easing:'easeInOutSine'});
-    tl.add({targets:'#d1-completed',opacity:[0,1],duration:280,easing:'easeOutCubic'});
-    tl.add({duration:1400,complete:run});
+    [dot,splitA,splitB].forEach(function(d){d.style.opacity=1;d.setAttribute('opacity',1);d.style.transform='translate(80px,152px)';});
+    document.getElementById('d1-complete-pill').setAttribute('opacity','0');
+    var tl=anime.timeline({complete:function(){setTimeout(run,1500);}});
+    tl.add(movePath(splitA,pAppPg,500,0),0);
+    tl.add(movePath(splitB,pAppRd,500,0),0);
+    tl.add({duration:500,complete:function(){flashStroke('#d1-pg-body');flashStroke('#d1-redis-body');splitA.setAttribute('opacity',0);splitB.setAttribute('opacity',0);} });
+    tl.add({targets:dot,translateX:pWorkH('x'),translateY:pWorkH('y'),duration:520,easing:'linear'});
+    tl.add({targets:dot,translateX:pHpg('x'),translateY:pHpg('y'),duration:620,easing:'linear',complete:function(){flashStroke('#d1-pg-body');anime({targets:'#d1-pg-body',scale:[1,1.04,1],duration:420,easing:'easeInOutSine'});}});
+    tl.add({targets:'#d1-complete-pill',opacity:[0,1],duration:300,easing:'easeOutCubic'});
+    tl.add({duration:1,complete:function(){dot.setAttribute('opacity',0);}});
   }
-  setTimeout(run,700);
+  if(dot && pAppPg)setTimeout(run,400);
 })();
 
-// ── Diagram 2: Engines ──────────────────────────────────
+// ── Diagram 2: Concurrent engines ───────────────────────
 (function(){
-  function pulse(id,delay,interval){
-    function go(){
-      var d=document.getElementById(id);
-      anime({targets:{y:100},y:258,duration:820,easing:'easeInQuad',
-        update:function(a){d.setAttribute('cy',a.animations[0].currentValue);d.setAttribute('opacity',1-(a.animations[0].currentValue-100)/158*0.35);},
-        complete:function(){d.setAttribute('cy',100);d.setAttribute('opacity',0);
-          anime({targets:'#d2-pg rect',stroke:['var(--color-border-2)','var(--color-accent)','var(--color-border-2)'],duration:380,easing:'easeInOutSine'});
-        }
+  function flash(sel){anime({targets:sel,stroke:['var(--color-border-2)','var(--color-accent)','var(--color-border-2)'],duration:400,easing:'easeInOutSine'});}
+  function lane(dotId,x,loopDur,startDelay,redisFlash){
+    var d=document.getElementById(dotId); if(!d)return;
+    setTimeout(function cycle(){
+      anime({targets:d,cx:[x,x],cy:[92,314],opacity:[1,1,0],duration:loopDur,easing:'linear',
+        complete:function(){flash('#d2-pg-foundation');if(redisFlash)flash('#d2-redis-body');setTimeout(cycle,loopDur===1500?0:loopDur===3000?0:0);}
       });
-    }
-    setTimeout(function(){go();setInterval(go,interval);},delay);
+    },startDelay);
   }
-  pulse('d2-dot1',300,1200);pulse('d2-dot2',900,3000);pulse('d2-dot3',1800,5000);
+  lane('d2-dot1',115,1500,200,true);lane('d2-dot2',320,3000,500,true);lane('d2-dot3',525,6000,900,false);
+  function laneM(id,line,loop,start){
+    var d=document.getElementById(id),p=document.getElementById(line);if(!d||!p)return;var path=anime.path('#'+line);
+    setTimeout(function cycle(){anime({targets:d,translateX:path('x'),translateY:path('y'),opacity:[1,1,0],duration:900,easing:'linear',complete:function(){setTimeout(cycle,loop);}});},start);
+  }
+  laneM('d2m-dot1','d2m-line1',600,300);laneM('d2m-dot2','d2m-line2',2300,700);laneM('d2m-dot3','d2m-line3',5200,1100);
 })();
 
-// ── Diagram 3: State Machine ────────────────────────────
+// ── Diagram 3: Lifecycle state machine ──────────────────
 (function(){
   var dot=document.getElementById('d3-dot');
-  var st={pending:{x:74,y:171},running:{x:264,y:171},completed:{x:454,y:107},failed:{x:454,y:239},requeued:{x:634,y:171},dead:{x:634,y:313}};
-  function mv(f,t,dur,col,cb){
-    dot.setAttribute('fill',col||'var(--color-accent)');
-    var o={x:f.x,y:f.y};
-    anime({targets:o,x:t.x,y:t.y,duration:dur||460,easing:'easeInOutCubic',
-      update:function(){dot.setAttribute('cx',o.x);dot.setAttribute('cy',o.y);dot.setAttribute('opacity',1);},
-      complete:cb||function(){}
-    });
+  if(!dot)return;
+  var st={pending:{x:80,y:195},running:{x:285,y:195},completed:{x:513,y:110},failed:{x:453,y:269},requeued:{x:568,y:205},dead:{x:584,y:329}};
+  function glow(id,color,dur){var el=document.querySelector(id);if(!el)return;anime({targets:el,stroke:[color,color],duration:dur||380,easing:'linear',begin:function(){el.style.filter='drop-shadow(0 0 6px '+color+')';},complete:function(){el.style.filter='none';}});}
+  function move(from,to,dur,color,next){
+    dot.setAttribute('fill',color||'var(--color-accent)');
+    var p={x:from.x,y:from.y};
+    anime({targets:p,x:to.x,y:to.y,duration:dur,easing:'easeInOutCubic',update:function(){dot.setAttribute('cx',p.x);dot.setAttribute('cy',p.y);dot.setAttribute('opacity',1);},complete:next});
   }
-  function pulseRun(){anime({targets:'#s-running-glow',opacity:[0.15,0.5,0.15],duration:800,easing:'easeInOutSine'});}
-  var iter=0;
-  var paths=[
-    function(done){mv(st.pending,st.running,460,'var(--color-accent)',function(){pulseRun();setTimeout(function(){mv(st.running,st.completed,430,'var(--color-green)',function(){setTimeout(function(){dot.setAttribute('opacity',0);setTimeout(done,500);},450);});},380);});},
-    function(done){mv(st.pending,st.running,460,'var(--color-accent)',function(){pulseRun();setTimeout(function(){mv(st.running,st.failed,430,'var(--color-red)',function(){setTimeout(function(){mv(st.failed,st.requeued,380,'var(--color-accent)',function(){setTimeout(function(){mv(st.requeued,st.pending,560,'var(--color-accent)',function(){dot.setAttribute('opacity',0);setTimeout(done,500);});},280);});},380);});},350);});},
-    function(done){mv(st.pending,st.running,460,'var(--color-accent)',function(){pulseRun();setTimeout(function(){mv(st.running,st.failed,430,'var(--color-red)',function(){setTimeout(function(){mv(st.failed,st.dead,380,'var(--color-red)',function(){setTimeout(function(){dot.setAttribute('opacity',0);setTimeout(done,600);},450);});},380);});},350);});}
-  ];
-  function loop(){dot.setAttribute('opacity',0);paths[iter](function(){iter=(iter+1)%3;setTimeout(loop,350);});}
-  setTimeout(loop,1000);
+  function iteration1(done){move(st.pending,st.running,420,'var(--color-accent)',function(){glow('#d3-running','var(--color-accent)');move(st.running,st.completed,420,'var(--color-green)',function(){glow('#d3-completed','var(--color-green)',1000);setTimeout(done,800);});});}
+  function iteration2(done){move(st.pending,st.running,420,'var(--color-accent)',function(){glow('#d3-running','var(--color-accent)');move(st.running,st.failed,420,'var(--color-red)',function(){glow('#d3-failed','var(--color-red)');move(st.failed,st.requeued,420,'var(--color-accent)',function(){glow('#d3-requeued','var(--color-accent)');move(st.requeued,st.pending,520,'var(--color-accent)',function(){setTimeout(done,800);});});});});}
+  function iteration3(done){move(st.pending,st.running,420,'var(--color-accent)',function(){glow('#d3-running','var(--color-accent)');move(st.running,st.failed,420,'var(--color-red)',function(){move(st.failed,st.dead,420,'var(--color-red)',function(){glow('#d3-dead','var(--color-red)',1500);setTimeout(done,800);});});});}
+  (function loop(){iteration1(function(){iteration2(function(){iteration3(function(){dot.setAttribute('opacity',0);setTimeout(loop,500);});});});})();
 })();
 
-// ── Diagram 4: Middleware Onion ─────────────────────────
+// ── Diagram 4: Middleware onion ─────────────────────────
 (function(){
   var dot=document.getElementById('d4-dot');
   var trail=document.getElementById('d4-dot-trail');
+  if(!dot||!trail)return;
   var layers=['mw-logger','mw-timer','mw-panic','mw-handler'];
-  var wps=[{x:4,y:86},{x:22,y:86},{x:40,y:86},{x:80,y:84},{x:150,y:84},{x:220,y:84},{x:260,y:86},{x:278,y:86},{x:296,y:86}];
-  var lh=[0,1,2,3,3,2,1,0,0];
-  function sd(d,x,y,o){d.setAttribute('cx',x);d.setAttribute('cy',y);d.setAttribute('opacity',o);}
-  function hl(i){
-    var el=document.getElementById(layers[i]);if(!el)return;
-    el.setAttribute('stroke','var(--color-accent)');el.setAttribute('stroke-width','2.5');
-    setTimeout(function(){el.setAttribute('stroke','var(--color-border-2)');el.setAttribute('stroke-width',i===0?'2':'1.5');},320);
+  var wps=[{x:10,y:130,l:0},{x:46,y:130,l:0},{x:74,y:130,l:1},{x:102,y:130,l:2},{x:240,y:130,l:3},{x:378,y:130,l:2},{x:406,y:130,l:1},{x:434,y:130,l:0},{x:470,y:130,l:0}];
+  function hl(id){anime({targets:'#'+id,stroke:['var(--color-border-2)','var(--color-accent)','var(--color-border-2)'],duration:300,easing:'easeInOutSine'});}
+  function setDot(d,p,o){d.setAttribute('cx',p.x);d.setAttribute('cy',p.y);d.setAttribute('opacity',o);}
+  function seg(from,to,dur,done){
+    var p={x:from.x,y:from.y};
+    anime({targets:p,x:to.x,y:to.y,duration:dur,easing:'easeInOutCubic',update:function(){setDot(dot,p,1);},complete:done});
+    setTimeout(function(){var q={x:from.x,y:from.y};anime({targets:q,x:to.x,y:to.y,duration:dur,easing:'easeInOutCubic',update:function(){setDot(trail,q,.4);},complete:function(){trail.setAttribute('opacity',0);}});},150);
   }
-  function loop(){
-    sd(dot,wps[0].x,wps[0].y,0);sd(trail,wps[0].x,wps[0].y,0);
-    var step=0;
-    function next(){
-      if(step>=wps.length){sd(dot,wps[0].x,wps[0].y,0);sd(trail,wps[0].x,wps[0].y,0);setTimeout(loop,600);return;}
-      var wp=wps[step],prev=step>0?wps[step-1]:wps[0],li=lh[step],pause=step===4?420:110;
-      anime({targets:{x:prev.x,y:prev.y},x:wp.x,y:wp.y,duration:240,easing:'easeInOutCubic',
-        update:function(a){
-          sd(dot,a.animations[0].currentValue,a.animations[1].currentValue,1);
-          sd(trail,a.animations[0].currentValue-7,a.animations[1].currentValue,0.28);
-        },
-        complete:function(){if(li!==undefined)hl(li);sd(trail,wp.x,wp.y,0);step++;setTimeout(next,pause);}
-      });
-    }
-    setTimeout(next,140);
+  function loop(step){
+    if(step===0){setDot(dot,wps[0],0);setDot(trail,wps[0],0);}
+    if(step>=wps.length-1){setDot(dot,wps[0],0);setTimeout(function(){loop(0);},1000);return;}
+    var a=wps[step],b=wps[step+1];
+    seg(a,b,260,function(){hl(layers[b.l]);if(step===3){anime({targets:'#mw-handler',scale:[1,1.05,1],duration:420,easing:'easeInOutSine'});setTimeout(function(){loop(step+1);},600);}else{loop(step+1);}});
   }
-  setTimeout(loop,1300);
+  setTimeout(function(){loop(0);},800);
 })();
 </script>
 </body>
