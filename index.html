@@ -1284,7 +1284,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('#features .card').forEach(function(card) {
     card.addEventListener('mouseenter', function() {
       var svg=card.querySelector('svg');
-      if(!svg)return;
+      if (!svg) return;
       anime({targets:svg,scale:[1,1.015,1],duration:420,easing:'easeOutCubic'});
     });
   });
