@@ -833,7 +833,7 @@ ids, err := q.EnqueueMany(ctx, []kyu.EnqueueRequest{
         <tbody>
           <tr><td>storage</td><td class="kyu-col">Postgres + Redis</td><td>Redis only</td><td>Postgres only</td><td>Redis / AMQP / Mongo</td><td>Redis only</td></tr>
           <tr><td>job durability</td><td class="kyu-col">survives Redis wipe</td><td>lost on flush</td><td>full</td><td>depends on backend</td><td>lost on flush</td></tr>
-          <tr><td>priority scheduling</td><td class="kyu-col">sorted set</td><td class="yes"><i class="ph ph-check"></i></td><td>weighted</td><td>basic</td><td class="yes"><i class="ph ph-check"></i></td></tr>
+          <tr><td>priority scheduling</td><td class="kyu-col">sorted set</td><td class="yes"><i class="ph ph-check"></i></td><td>numeric (1–4)</td><td>—</td><td class="kyu-col">sorted set</td></tr>
           <tr><td>transactional enqueue</td><td class="kyu-col yes"><i class="ph ph-check"></i></td><td class="no">—</td><td class="yes"><i class="ph ph-check"></i></td><td class="no">—</td><td class="no">—</td></tr>
           <tr><td>full job history</td><td class="kyu-col yes"><i class="ph ph-check"></i> SQL</td><td>TTL-limited</td><td class="yes"><i class="ph ph-check"></i> SQL</td><td>limited</td><td>TTL-limited</td></tr>
           <tr><td>stale reaper</td><td class="kyu-col yes"><i class="ph ph-check"></i></td><td>limited</td><td class="yes"><i class="ph ph-check"></i></td><td class="no">—</td><td>limited</td></tr>
