@@ -473,7 +473,7 @@
           <rect x="40" y="16" width="120" height="44" rx="9" class="life-node" stroke="#3A4047" stroke-dasharray="5 3"/>
           <text x="100" y="38" class="life-node-label" text-anchor="middle" dominant-baseline="middle" fill="#6B727A">cancelled</text>
         </g>
-        <path d="M100,104 L100,60" class="life-edge" stroke-dasharray="4 3" marker-end="url(#arrL)"/>
+        <path id="lp-cancel" d="M100,104 L100,60" class="life-edge" stroke-dasharray="4 3" marker-end="url(#arrL)"/>
         <text x="116" y="84" class="life-edge-label">CancelJob()</text>
 
         <!-- running -->
@@ -483,7 +483,7 @@
           <rect id="l-running" x="216" y="102" width="128" height="50" rx="9" class="life-node" stroke="#E8A84C" stroke-width="2.5" fill="url(#lifeNodeGrad)"/>
           <text x="280" y="127" class="life-node-label" text-anchor="middle" dominant-baseline="middle" fill="#F0B968">running</text>
         </g>
-        <path d="M160,127 L216,127" class="life-edge" marker-end="url(#arrL)"/>
+        <path id="lp-dequeue" d="M160,127 L216,127" class="life-edge" marker-end="url(#arrL)"/>
         <text x="188" y="118" class="life-edge-label" text-anchor="middle">dequeue</text>
 
         <!-- completed -->
@@ -491,7 +491,7 @@
           <rect x="420" y="24" width="120" height="44" rx="9" class="life-node" stroke="#4CAF82" stroke-width="2" fill="url(#lifeNodeGrad)"/>
           <text x="480" y="46" class="life-node-label" text-anchor="middle" dominant-baseline="middle" fill="#4CAF82">completed</text>
         </g>
-        <path d="M344,110 L480,68" class="life-edge" stroke="#4CAF82" marker-end="url(#arrL)"/>
+        <path id="lp-ok" d="M344,110 L480,68" class="life-edge" stroke="#4CAF82" marker-end="url(#arrL)"/>
         <text x="400" y="84" class="life-edge-label" fill="#4CAF82" text-anchor="middle">handler ok</text>
 
         <!-- failed -->
@@ -499,7 +499,7 @@
           <rect x="420" y="180" width="120" height="44" rx="9" class="life-node" stroke="#E05252" stroke-width="2" fill="url(#lifeNodeGrad)"/>
           <text x="480" y="202" class="life-node-label" text-anchor="middle" dominant-baseline="middle" fill="#E05252">failed</text>
         </g>
-        <path d="M344,142 L480,180" class="life-edge" stroke="#E05252" marker-end="url(#arrL)"/>
+        <path id="lp-error" d="M344,142 L480,180" class="life-edge" stroke="#E05252" marker-end="url(#arrL)"/>
         <text x="402" y="168" class="life-edge-label" fill="#E05252" text-anchor="middle">error</text>
 
         <!-- dead -->
@@ -507,7 +507,7 @@
           <rect x="616" y="196" width="120" height="48" rx="9" class="life-node" stroke="#E05252" stroke-width="2.5" fill="url(#lifeNodeGrad)"/>
           <text x="676" y="220" class="life-node-label" text-anchor="middle" dominant-baseline="middle" fill="#E05252" font-weight="600">dead</text>
         </g>
-        <path d="M540,202 L616,196" class="life-edge" stroke="#E05252" marker-end="url(#arrL)"/>
+        <path id="lp-dead" d="M540,202 L616,196" class="life-edge" stroke="#E05252" marker-end="url(#arrL)"/>
         <text x="578" y="190" class="life-edge-label" fill="#E05252" text-anchor="middle">no retries</text>
 
         <!-- re-queued -->
@@ -515,9 +515,9 @@
           <rect id="l-requeued" x="616" y="104" width="120" height="46" rx="9" class="life-node" stroke="#E8A84C" stroke-dasharray="5 3" fill="url(#lifeNodeGrad)"/>
           <text x="676" y="127" class="life-node-label" text-anchor="middle" dominant-baseline="middle" fill="#F0B968">re-queued</text>
         </g>
-        <path d="M540,196 L676,196 L676,150" class="life-edge" stroke="#E8A84C" marker-end="url(#arrL)"/>
+        <path id="lp-retry" d="M540,196 L676,196 L676,150" class="life-edge" stroke="#E8A84C" marker-end="url(#arrL)"/>
         <text x="608" y="210" class="life-edge-label" fill="#F0B968">retries remain</text>
-        <path d="M676,104 L676,20 L100,20 L100,104" class="life-edge" stroke="#E8A84C" stroke-dasharray="4 3" marker-end="url(#arrL)"/>
+        <path id="lp-reschedule" d="M676,104 L676,20 L100,20 L100,104" class="life-edge" stroke="#E8A84C" stroke-dasharray="4 3" marker-end="url(#arrL)"/>
         <text x="360" y="12" class="life-edge-label" fill="#F0B968" text-anchor="middle">backoff elapsed → scheduler re-promotes</text>
 
         <!-- particles -->
@@ -998,63 +998,69 @@ fetch('https://api.github.com/repos/codetesla51/kyu')
   });
 })();
 
-// ── lifecycle state machine ─────────────────────────────
+// ── lifecycle state machine (anime.path like arch) ──────────
 (function () {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var dot = document.getElementById('life-dot'), trail = document.getElementById('life-trail'), trail2 = document.getElementById('life-trail2');
   if (!dot) return;
-  var pts = {
-    pending: { x: 100, y: 127 }, running: { x: 280, y: 127 },
-    completed: { x: 480, y: 46 }, failed: { x: 480, y: 202 },
-    requeued: { x: 676, y: 127 }, dead: { x: 676, y: 220 }
+  var pathMap = {
+    dequeue:  '#lp-dequeue',
+    ok:       '#lp-ok',
+    error:    '#lp-error',
+    dead:     '#lp-dead',
+    retry:    '#lp-retry',
+    reschedule: '#lp-reschedule'
   };
-  function show(p) { dot.setAttribute('cx', p.x); dot.setAttribute('cy', p.y); dot.setAttribute('opacity', 1); }
-  function hide() { dot.setAttribute('opacity', 0); trail.setAttribute('opacity', 0); if (trail2) trail2.setAttribute('opacity', 0); }
-  function mv(from, to, dur, col, hold, done) {
-    var o = { x: from.x, y: from.y };
-    dot.setAttribute('fill', col);
+  var routeSequence = [
+    { path: 'dequeue',     col: '#E8A84C', hold: 250 },
+    { path: 'ok',          col: '#4CAF82', hold: 500 },
+    { path: 'error',       col: '#E05252', hold: 250 },
+    { path: 'retry',       col: '#E8A84C', hold: 220 },
+    { path: 'reschedule',  col: '#E8A84C', hold: 450 },
+    { path: 'dead',        col: '#E05252', hold: 600 }
+  ];
+  function hide() {
+    dot.setAttribute('opacity', '0');
+    trail.setAttribute('opacity', '0');
+    if (trail2) trail2.setAttribute('opacity', '0');
+  }
+  function animateStep(idx) {
+    if (idx >= routeSequence.length) { setTimeout(function () { animateStep(0); }, 350); return; }
+    var step = routeSequence[idx];
+    var pathEl = document.querySelector(pathMap[step.path]);
+    if (!pathEl) { animateStep(idx + 1); return; }
+    dot.setAttribute('fill', step.col);
+    var ap = anime.path(pathEl);
+    var getX = ap('x');
+    var getY = ap('y');
     anime({
-      targets: o, x: to.x, y: to.y, duration: dur || 550, easing: 'easeInOutQuart',
-      update: function () {
-        dot.setAttribute('cx', o.x); dot.setAttribute('cy', o.y); dot.setAttribute('opacity', 1);
-        trail.setAttribute('cx', o.x); trail.setAttribute('cy', o.y); trail.setAttribute('opacity', 0.35);
-        if (trail2) { trail2.setAttribute('cx', o.x); trail2.setAttribute('cy', o.y); trail2.setAttribute('opacity', 0.2); }
+      targets: dot,
+      duration: 550,
+      easing: 'easeInOutQuart',
+      update: function (anim) {
+        var progress = Math.min(anim.currentTime / anim.duration, 1);
+        var x = getX(progress);
+        var y = getY(progress);
+        dot.setAttribute('cx', x);
+        dot.setAttribute('cy', y);
+        dot.setAttribute('opacity', '1');
+        trail.setAttribute('cx', x);
+        trail.setAttribute('cy', y);
+        trail.setAttribute('opacity', '0.35');
+        if (trail2) {
+          trail2.setAttribute('cx', x);
+          trail2.setAttribute('cy', y);
+          trail2.setAttribute('opacity', '0.2');
+        }
       },
       complete: function () {
-        trail.setAttribute('opacity', 0);
-        if (trail2) trail2.setAttribute('opacity', 0);
-        setTimeout(done || function () {}, hold || 300);
+        trail.setAttribute('opacity', '0');
+        if (trail2) trail2.setAttribute('opacity', '0');
+        setTimeout(function () { animateStep(idx + 1); }, step.hold);
       }
     });
   }
-  var routes = [
-    ['ok', '#4CAF82', function (next) {
-      mv(pts.pending, pts.running, 550, '#E8A84C', 250, function () {
-        mv(pts.running, pts.completed, 520, '#4CAF82', 500, function () { hide(); next(); });
-      });
-    }],
-    ['retry', '#E8A84C', function (next) {
-      mv(pts.pending, pts.running, 550, '#E8A84C', 250, function () {
-        mv(pts.running, pts.failed, 520, '#E05252', 250, function () {
-          mv(pts.failed, pts.requeued, 480, '#E8A84C', 220, function () {
-            mv(pts.requeued, pts.pending, 640, '#E8A84C', 450, function () { hide(); next(); });
-          });
-        });
-      });
-    }],
-    ['dead', '#E05252', function (next) {
-      mv(pts.pending, pts.running, 550, '#E8A84C', 250, function () {
-        mv(pts.running, pts.failed, 520, '#E05252', 250, function () {
-          mv(pts.failed, pts.dead, 480, '#E05252', 600, function () { hide(); next(); });
-        });
-      });
-    }]
-  ];
-  function loop(i) {
-    hide();
-    routes[i][2](function () { setTimeout(function () { loop((i + 1) % routes.length); }, 350); });
-  }
-  setTimeout(function () { loop(0); }, 600);
+  setTimeout(function () { animateStep(0); }, 600);
 })();
 
 // ── spectrum marker ─────────────────────────────────────
