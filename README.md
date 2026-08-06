@@ -1,25 +1,35 @@
 # Kyu Landing Page
 
-Marketing site for [Kyu](https://github.com/codetesla51/kyu), a postgres-backed job queue for Go.
+Marketing site for [Kyu](https://github.com/codetesla51/kyu), a Postgres-backed job queue for Go.
 
 ## Design
 
-Grafana-dark dashboard aesthetic: near-black layered surfaces, amber accent, Inter + JetBrains Mono. Content is written to reflect Kyu's current state (engines, lifecycle, CLI, config, metrics, and the Barrage load-test benchmark results).
+Vercel-inspired system:
+- Near-black ink on warm white/soft-gray canvas (`#171717` / `#fafafa`) with a 4-step gray ladder for depth
+- Geist + Geist Mono (Google Fonts), sentence-case headlines with aggressive negative tracking
+- Single decorative system: the brand mesh gradient (blue → teal → violet → magenta → coral), used at hero scale only
+- 100px-pill marketing CTAs, 6px-radius nav buttons, 8/12px card radius
+- Stacked hairline + soft-shadow elevation, one polarity-flipped dark band for benchmarks
+- No shadows in hero; the mesh gradient is the atmospheric depth cue
 
-## Sections
+## Structure
 
-- Hero — live dashboard screenshot inside a browser frame, animated ticker, stats strip
-- Architecture — animated SVG pipeline (particles along the queue paths)
-- Lifecycle — animated SVG state machine (ok / retry / dead routes)
-- Features — 13 feature cards
-- Quick start — install / quick start / enqueue code tabs (highlight.js)
-- Dashboard — metrics panel screenshot + Prometheus metric table
-- Benchmarks — dispatch overhead + Barrage load-test results
-- Why Kyu — spectrum comparison vs asynq, river, machinery, bullmq
+1. **Hero** — text-only, problem-led copy ("Stop losing jobs when Redis flushes."), centered, no dashboard image
+2. **The trade-off** — fast-but-not-durable / durable-but-slow / reliable-but-heavy cards, Kyu as the fix
+3. **See it in action** — the Kyu dashboard screenshot (`screenshot-2026-08-05_18-11-32`) in dark browser chrome
+4. **Features** — six marketing-first cards
+5. **Quick start** — install / quick start / enqueue tabs with highlighted Go + Bash (highlight.js)
+6. **Benchmarks** — dark polarity-flip band with measured numbers + link to the full Barrage report
+7. **Compare** — Kyu vs asynq / river / machinery matrix
+8. **CTA + footer**
+
+## Assets
+
+- `dashboard.png` — Kyu dashboard screenshot (copied from `/home/uthman/Pictures/screenshot-2026-08-05_18-11-32.png`)
 
 ## Responsiveness
 
-Fully responsive, tested with a headless-chromium overflow harness at 375 / 768 / 1024 / 1440 px (zero horizontal overflow at every breakpoint). Nav collapses to a hamburger menu below 920 px.
+Tested with a headless-chromium overflow harness at 375 / 768 / 1024 / 1440 px — zero horizontal overflow at every breakpoint. Nav collapses to a hamburger menu below 900px.
 
 ## Run locally
 
@@ -27,8 +37,4 @@ Fully responsive, tested with a headless-chromium overflow harness at 375 / 768 
 node server.js   # serves on http://localhost:3000
 ```
 
-Or open `index.html` directly — it's a single static file. Icons, fonts, anime.js and highlight.js load from CDNs, so an internet connection is expected.
-
-## Animations
-
-All anime.js motion respects `prefers-reduced-motion`, and every block has a CDN-failure fallback so content is never left invisible.
+Or open `index.html` directly — it's a single static file. Geist/Geist Mono fonts and highlight.js load from CDNs.
