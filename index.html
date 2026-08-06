@@ -10,8 +10,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -921,24 +920,29 @@ fetch('https://api.github.com/repos/codetesla51/kyu')
     }
   }).catch(function () {});
 
-// ── scroll reveal (GSAP ScrollTrigger) ────────────────
+// ── scroll reveal ───────────────────────────────────────
 (function () {
+  var els = document.querySelectorAll('.reveal');
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+    els.forEach(function (el) { el.classList.add('in'); });
     return;
   }
-  gsap.registerPlugin(ScrollTrigger);
-  document.querySelectorAll('.reveal').forEach(function (el) {
-    var delay = parseFloat(el.dataset.delay || 0);
-    gsap.fromTo(el, { opacity: 0, y: 22 }, {
-      opacity: 1, y: 0, duration: 0.7, ease: 'power2.out',
-      scrollTrigger: { trigger: el, start: 'top 88%', once: true },
-      delay: delay
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) {
+        var el = e.target, d = parseFloat(el.dataset.delay || 0);
+        setTimeout(function () {
+          el.classList.add('in');
+          el.style.transition = 'opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1)';
+        }, d);
+        io.unobserve(el);
+      }
     });
-  });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  els.forEach(function (el) { io.observe(el); });
 })();
 
-// ── hero entrance (GSAP timeline) ──────────────────────
+// ── hero entrance (improved easing + stagger) ───────────
 (function () {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var hero = document.getElementById('hero-copy');
@@ -952,14 +956,18 @@ fetch('https://api.github.com/repos/codetesla51/kyu')
       return '<span class="hw" style="display:inline-block;opacity:0;transform:translateY(22px)">' + w + '</span>';
     }).join(' ');
   });
-  var tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
-  tl.to('#hero-label', { opacity: 1, y: 0, duration: 0.5 }, 0)
-    .from('#hero-title .hw', { opacity: 0, y: 22, duration: 0.65, stagger: 0.034 }, 0.15)
-    .to('#hero-sub', { opacity: 1, y: 0, duration: 0.6 }, 0.7)
-    .to('#hero-cta, #hero-tags', { opacity: 1, y: 0, duration: 0.55, stagger: 0.09 }, 0.85);
+  if (!window.anime) {
+    document.querySelectorAll('#hero-title .hw').forEach(function (w) { w.style.opacity = 1; w.style.transform = 'none'; });
+    return;
+  }
+  anime.timeline({ easing: 'easeOutExpo' })
+    .add({ targets: '#hero-label', opacity: [0, 1], translateY: [10, 0], duration: 500 }, 0)
+    .add({ targets: '#hero-title .hw', opacity: [0, 1], translateY: [22, 0], duration: 650, delay: anime.stagger(34) }, 150)
+    .add({ targets: '#hero-sub', opacity: [0, 1], translateY: [16, 0], duration: 600 }, 700)
+    .add({ targets: '#hero-cta, #hero-tags', opacity: [0, 1], translateY: [12, 0], duration: 550, delay: anime.stagger(90) }, 850);
 })();
 
-// ── ARCH pipeline particles (GSAP) ────────────────────
+// ── ARCH pipeline particles (anime.path) ────────────────
 (function () {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var hasSVG = document.getElementById('fp-app-pg');
@@ -967,22 +975,16 @@ fetch('https://api.github.com/repos/codetesla51/kyu')
   var dots = ['dot1', 'dot2', 'dot3', 'dot4', 'dot5', 'dot6'];
   var paths = ['#fp-app-pg', '#fp-app-r', '#fp-pg-w', '#fp-r-w', '#fp-w-h', '#fp-h-pg'];
   paths.forEach(function (sel, i) {
-    var pathEl = document.querySelector(sel);
+    var p = anime.path(sel);
     var dot = document.getElementById(dots[i]);
-    if (!pathEl || !dot) return;
-    var len = pathEl.getTotalLength();
-    gsap.to({}, {
-      duration: 2.1,
-      ease: 'power1.inOut',
-      repeat: -1,
-      delay: i * 0.35,
-      onUpdate: function () {
-        var progress = this.progress();
-        var point = pathEl.getPointAtLength(progress * len);
-        dot.setAttribute('cx', point.x);
-        dot.setAttribute('cy', point.y);
-        dot.setAttribute('opacity', 1);
-      }
+    if (!dot) return;
+    anime({
+      targets: dot,
+      translateX: p('x'), translateY: p('y'),
+      easing: 'easeInOutQuart',
+      duration: 2100,
+      loop: true,
+      delay: i * 350
     });
   });
   // moving dashes
@@ -991,13 +993,12 @@ fetch('https://api.github.com/repos/codetesla51/kyu')
     if (el) {
       var len = el.getTotalLength();
       el.style.strokeDasharray = len + ' ' + len;
-      el.style.strokeDashoffset = len;
-      gsap.to(el, { strokeDashoffset: 0, duration: 2.6, ease: 'none', repeat: -1 });
+      anime({ targets: el, strokeDashoffset: [len, 0], duration: 2600, easing: 'linear', loop: true });
     }
   });
 })();
 
-// ── lifecycle state machine (GSAP) ─────────────────────
+// ── lifecycle state machine ─────────────────────────────
 (function () {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var dot = document.getElementById('life-dot'), trail = document.getElementById('life-trail'), trail2 = document.getElementById('life-trail2');
@@ -1007,23 +1008,21 @@ fetch('https://api.github.com/repos/codetesla51/kyu')
     completed: { x: 480, y: 46 }, failed: { x: 480, y: 202 },
     requeued: { x: 676, y: 127 }, dead: { x: 676, y: 220 }
   };
-  function hide() { dot.style.opacity = 0; trail.style.opacity = 0; if (trail2) trail2.style.opacity = 0; }
+  function hide() { dot.setAttribute('opacity', 0); trail.setAttribute('opacity', 0); if (trail2) trail2.setAttribute('opacity', 0); }
   function mv(from, to, dur, col, hold, done) {
+    var o = { x: from.x, y: from.y };
     dot.setAttribute('fill', col);
-    gsap.to(dot, {
-      attr: { cx: to.x, cy: to.y },
-      duration: dur / 1000,
-      ease: 'power1.inOut',
-      onUpdate: function () {
-        var cx = dot.getAttribute('cx'), cy = dot.getAttribute('cy');
-        dot.setAttribute('opacity', 1);
-        trail.setAttribute('cx', cx); trail.setAttribute('cy', cy); trail.setAttribute('opacity', 0.35);
-        if (trail2) { trail2.setAttribute('cx', cx); trail2.setAttribute('cy', cy); trail2.setAttribute('opacity', 0.2); }
+    anime({
+      targets: o, x: to.x, y: to.y, duration: dur || 550, easing: 'easeInOutQuart',
+      update: function () {
+        dot.setAttribute('cx', o.x); dot.setAttribute('cy', o.y); dot.setAttribute('opacity', 1);
+        trail.setAttribute('cx', o.x); trail.setAttribute('cy', o.y); trail.setAttribute('opacity', 0.35);
+        if (trail2) { trail2.setAttribute('cx', o.x); trail2.setAttribute('cy', o.y); trail2.setAttribute('opacity', 0.2); }
       },
-      onComplete: function () {
-        trail.style.opacity = 0;
-        if (trail2) trail2.style.opacity = 0;
-        setTimeout(done || function () {}, hold);
+      complete: function () {
+        trail.setAttribute('opacity', 0);
+        if (trail2) trail2.setAttribute('opacity', 0);
+        setTimeout(done || function () {}, hold || 300);
       }
     });
   }
@@ -1057,20 +1056,18 @@ fetch('https://api.github.com/repos/codetesla51/kyu')
   setTimeout(function () { loop(0); }, 600);
 })();
 
-// ── spectrum marker (GSAP + ScrollTrigger) ─────────────
+// ── spectrum marker ─────────────────────────────────────
 (function () {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var m = document.getElementById('kyu-spec');
   if (!m) return;
-  gsap.registerPlugin(ScrollTrigger);
-  ScrollTrigger.create({
-    trigger: m,
-    start: 'top 80%',
-    once: true,
-    onEnter: function () {
-      gsap.fromTo(m, { opacity: 0, y: 26, scale: 0.5 }, { opacity: 1, y: 0, scale: 1, duration: 0.9, ease: 'power2.out' });
+  var io = new IntersectionObserver(function (e) {
+    if (e[0].isIntersecting) {
+      anime({ targets: '#kyu-spec', opacity: [0, 1], translateY: [26, 0], scale: [0.5, 1], duration: 900, easing: 'spring(1, 90, 10, 0)' });
+      io.unobserve(m);
     }
-  });
+  }, { threshold: 0.4 });
+  io.observe(m);
 })();
 </script>
 </body>
