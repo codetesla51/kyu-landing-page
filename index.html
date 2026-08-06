@@ -18,19 +18,20 @@
 (function(){try{var t=localStorage.getItem('kyu-theme');if(t!=='dark'&&t!=='light'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
   <style>
     :root{
-      --paper:#F5F1E8; --paper-2:#EFEADF; --card:#FDFBF6;
-      --ink:#191A1C; --ink-2:#4A4E55; --ink-3:#858A92;
-      --hair:#DCD5C6; --hair-2:#C6BEB0;
+      --paper:#EEF0EA; --paper-2:#E7E9E2; --card:#FBFCF8;
+      --ink:#191B1E; --ink-2:#474D57; --ink-3:#7E858F;
+      --hair:#D6D9CF; --hair-2:#BEC3B6;
       --pg:#2E5E8C; --pg-tint:#E7EEF5;
       --redis:#B23A1E; --redis-tint:#F7E8E3;
       --ok:#1E7A4F; --ok-tint:#E4F1EA;
+      --grid:rgba(25,27,30,0.045);
       --font-mono:'IBM Plex Mono',ui-monospace,monospace;
       --font-sans:'IBM Plex Sans',system-ui,sans-serif;
       --radius:5px;
       --maxw:1120px;
       --pad:clamp(16px,4vw,24px);
       --node-bg:#FFFFFF;
-      --nav-bg:rgba(245,241,232,0.94);
+      --nav-bg:rgba(238,240,234,0.94);
     }
     :root[data-theme="dark"]{
       --paper:#141517; --paper-2:#1A1C1F; --card:#1F2126;
@@ -41,6 +42,7 @@
       --ok:#3FA573; --ok-tint:#182720;
       --node-bg:#262A31;
       --nav-bg:rgba(20,21,23,0.94);
+      --grid:rgba(237,234,227,0.06);
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html{scroll-padding-top:76px;}
@@ -48,8 +50,8 @@
     body{
       background:var(--paper);color:var(--ink-2);font-family:var(--font-sans);
       font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;
-      background-image:linear-gradient(var(--hair) 1px,transparent 1px);
-      background-size:100% 6px;background-position:0 0;
+      background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+      background-size:20px 20px,20px 20px;background-position:0 0;
     }
     body::before{
       content:'';position:fixed;inset:0 0 auto;height:4px;z-index:200;
@@ -128,9 +130,12 @@
     .tag .ph{font-size:13px;margin-right:4px;vertical-align:-2px;color:var(--pg);}
 
     /* hero schematic */
-    .schematic,.diagram,.spectrum{background:var(--card);border:1px solid var(--hair-2);border-radius:var(--radius);box-shadow:0 1px 0 var(--hair),0 18px 40px rgba(25,26,28,0.07);overflow:hidden;}
-    .schematic svg,.diagram svg,.spectrum svg{width:100%;height:auto;display:block;}
-    .lane-legend{display:flex;flex-wrap:wrap;gap:8px 22px;padding:12px 16px;border-top:1px solid var(--hair);font-family:var(--font-mono);font-size:10.5px;color:var(--ink-3);}
+    .schematic,.diagram,.spectrum{background:var(--card);border:1px solid var(--hair-2);border-radius:var(--radius);box-shadow:0 1px 0 var(--hair),0 18px 40px rgba(25,26,28,0.07);overflow:hidden;position:relative;}
+    .schematic::before,.diagram::before,.spectrum::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+      background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+      background-size:20px 20px,20px 20px;}
+    .schematic svg,.diagram svg,.spectrum svg{width:100%;height:auto;display:block;position:relative;z-index:1;}
+    .lane-legend{display:flex;flex-wrap:wrap;gap:8px 22px;padding:12px 16px;border-top:1px solid var(--hair);font-family:var(--font-mono);font-size:10.5px;color:var(--ink-3);position:relative;z-index:1;}
     .lg{display:inline-flex;align-items:center;gap:7px;}
     .lg::before{content:'';width:14px;height:4px;border-radius:2px;}
     .lg.lg-blue::before{background:var(--pg);}
@@ -148,10 +153,16 @@
     .lane-band.red{fill:var(--redis-tint);}
 
     /* ── STATS ───────────────────────────────────────── */
-    .stats-strip{display:grid;grid-template-columns:repeat(4,1fr);border-top:2px solid var(--ink);border-bottom:1px solid var(--hair-2);margin-top:clamp(36px,6vw,56px);}
+    .hero-seam{height:3px;border-radius:2px;background:linear-gradient(90deg,var(--pg) 0 50%,var(--redis) 50% 100%);margin-top:clamp(36px,6vw,56px);}
+    .stats-strip{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--hair-2);border-bottom:1px solid var(--hair-2);margin-top:0;}
     .stat-panel{padding:20px 22px 24px;border-left:1px solid var(--hair);}
     .stat-panel:first-child{border-left:none;}
-    .s-label{font-family:var(--font-mono);font-size:10.5px;font-weight:500;color:var(--ink-3);letter-spacing:0.1em;text-transform:uppercase;}
+    .s-label{font-family:var(--font-mono);font-size:10.5px;font-weight:500;color:var(--ink-3);letter-spacing:0.1em;text-transform:uppercase;display:flex;align-items:center;gap:7px;}
+    .s-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+    .s-dot.rd{background:var(--redis);}
+    .s-dot.pg{background:var(--pg);}
+    .s-dot.ok{background:var(--ok);}
+    .s-dot.nu{background:var(--hair-2);}
     .s-num{font-family:var(--font-mono);font-weight:600;font-size:clamp(1.45rem,2.6vw,2rem);color:var(--ink);margin-top:8px;letter-spacing:-0.02em;line-height:1;}
     .s-num .suffix{font-size:0.5em;color:var(--ink-3);font-weight:500;}
     .s-note{font-size:12.5px;color:var(--ink-2);margin-top:8px;line-height:1.5;}
@@ -160,17 +171,16 @@
     .section{padding:clamp(60px,8vw,96px) 0;border-top:1px solid var(--hair);}
     .sec-head{margin-bottom:clamp(34px,5vw,46px);}
     .sec-meta{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
-    .sec-num{font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--ink-3);letter-spacing:0.14em;}
-    .sec-num::after{content:'';display:inline-block;width:46px;height:1px;background:var(--hair-2);margin:0 16px 0 12px;vertical-align:middle;}
+    .seam{display:inline-block;width:44px;height:7px;border-radius:2px;background:linear-gradient(90deg,var(--pg) 0 50%,var(--redis) 50% 100%);flex-shrink:0;}
+    .sec-meta::after{content:'';flex:0 0 46px;height:1px;background:var(--hair-2);}
     .lane-tag{font-family:var(--font-mono);font-size:10.5px;font-weight:500;color:var(--ink-2);letter-spacing:0.12em;text-transform:uppercase;display:inline-flex;align-items:center;gap:8px;}
-    .lane-tag::before{content:'';width:16px;height:7px;border-radius:2px;background:linear-gradient(90deg,var(--pg) 0 50%,var(--redis) 50% 100%);}
     .sec-title{font-size:clamp(1.55rem,3.2vw,2.3rem);margin-bottom:16px;}
     .sec-body{max-width:660px;font-size:1rem;line-height:1.7;}
     .sec-body code{font-family:var(--font-mono);font-size:0.85em;color:var(--pg);background:var(--pg-tint);padding:1px 6px;border-radius:3px;border:1px solid var(--pg-tint);}
 
     /* ── DIAGRAM WRAPPERS ────────────────────────────── */
     .diagram,.spectrum{margin-bottom:36px;}
-    .arch-note{display:flex;gap:10px;align-items:flex-start;font-family:var(--font-mono);font-size:11.5px;color:var(--ink-2);border-top:1px solid var(--hair);background:var(--paper-2);padding:12px 16px;}
+    .arch-note{display:flex;gap:10px;align-items:flex-start;font-family:var(--font-mono);font-size:11.5px;color:var(--ink-2);border-top:1px solid var(--hair);background:var(--paper-2);padding:12px 16px;position:relative;z-index:1;}
     .arch-note .ph{color:var(--redis);flex-shrink:0;margin-top:1px;}
     .arch-node{fill:var(--node-bg);stroke:var(--hair-2);stroke-width:1.5;}
     .arch-node.pg{stroke:var(--pg);}
@@ -300,12 +310,10 @@
     @media(max-width:980px){
       .stats-strip{grid-template-columns:repeat(2,1fr);}
       .stat-panel:nth-child(3){border-left:none;}
-      .stat-panel:nth-child(n+3){border-top:1px solid var(--hair);}
     }
     @media(max-width:560px){
       .stats-strip{grid-template-columns:1fr;}
-      .stat-panel{border-left:none;border-top:1px solid var(--hair);}
-      .stat-panel:first-child{border-top:none;}
+      .stat-panel{border-left:none;}
       .feat-grid{grid-template-columns:1fr;}
     }
   </style>
@@ -412,11 +420,12 @@
       </div>
     </div>
 
+    <div class="hero-seam" aria-hidden="true"></div>
     <div class="stats-strip">
-      <div class="stat-panel"><div class="s-label">redis throughput</div><div class="s-num">1,250<span class="suffix">/s</span></div><div class="s-note">p99 41.9ms on the dispatch lane</div></div>
-      <div class="stat-panel"><div class="s-label">postgres durability</div><div class="s-num">749.9<span class="suffix">/s</span></div><div class="s-note">single node · p99 966ms</div></div>
-      <div class="stat-panel"><div class="s-label">job delivery</div><div class="s-num">100<span class="suffix">%</span></div><div class="s-note">zero silent loss across every workload</div></div>
-      <div class="stat-panel"><div class="s-label">dispatch overhead</div><div class="s-num">52<span class="suffix">ns</span></div><div class="s-note">register cost · 0 allocs</div></div>
+      <div class="stat-panel"><div class="s-label"><span class="s-dot rd"></span>redis throughput</div><div class="s-num">1,250<span class="suffix">/s</span></div><div class="s-note">p99 41.9ms on the dispatch lane</div></div>
+      <div class="stat-panel"><div class="s-label"><span class="s-dot pg"></span>postgres durability</div><div class="s-num">749.9<span class="suffix">/s</span></div><div class="s-note">single node · p99 966ms</div></div>
+      <div class="stat-panel"><div class="s-label"><span class="s-dot ok"></span>job delivery</div><div class="s-num">100<span class="suffix">%</span></div><div class="s-note">zero silent loss across every workload</div></div>
+      <div class="stat-panel"><div class="s-label"><span class="s-dot nu"></span>dispatch overhead</div><div class="s-num">52<span class="suffix">ns</span></div><div class="s-note">register cost · 0 allocs</div></div>
     </div>
   </div>
 </header>
@@ -425,7 +434,7 @@
 <section class="section" id="architecture">
   <div class="container">
     <div class="sec-head">
-      <div class="sec-meta"><span class="sec-num">01</span><span class="lane-tag">postgres + redis</span></div>
+      <div class="sec-meta"><span class="seam" aria-hidden="true"></span><span class="lane-tag">postgres + redis</span></div>
       <h2 class="sec-title">Two backends. One job queue. Zero coordination code.</h2>
       <p class="sec-body">Kyu runs five concurrent subsystems after <code>Start()</code>. They don't talk to each other — each one talks to Postgres or Redis. That shared state <em>is</em> the coordination layer.</p>
     </div>
@@ -548,7 +557,7 @@
 <section class="section" id="lifecycle">
   <div class="container">
     <div class="sec-head">
-      <div class="sec-meta"><span class="sec-num">02</span><span class="lane-tag">ledger · postgres</span></div>
+      <div class="sec-meta"><span class="seam" aria-hidden="true"></span><span class="lane-tag">ledger · postgres</span></div>
       <h2 class="sec-title">Every transition is a row you can query.</h2>
       <p class="sec-body">pending → running → completed. Or failed → re-queued with backoff, then dead. Each change is an update in a normal Postgres table — no vendor API, no hidden state, just SQL.</p>
     </div>
@@ -657,7 +666,7 @@
 <section class="section" id="features">
   <div class="container">
     <div class="sec-head">
-      <div class="sec-meta"><span class="sec-num">03</span><span class="lane-tag">postgres + redis</span></div>
+      <div class="sec-meta"><span class="seam" aria-hidden="true"></span><span class="lane-tag">postgres + redis</span></div>
       <h2 class="sec-title">Operable in production, not just in a demo.</h2>
       <p class="sec-body">Kyu ships the tooling real queues need — dead letters, a dashboard, a CLI — as part of the library rather than as add-ons you discover you need later.</p>
     </div>
@@ -723,7 +732,7 @@
 <section class="section" id="quickstart">
   <div class="container">
     <div class="sec-head">
-      <div class="sec-meta"><span class="sec-num">04</span><span class="lane-tag">postgres + redis</span></div>
+      <div class="sec-meta"><span class="seam" aria-hidden="true"></span><span class="lane-tag">postgres + redis</span></div>
       <h2 class="sec-title">From zero to processing in minutes.</h2>
       <p class="sec-body">The <code>jobs</code> table and its indexes are created by embedded goose migrations on the first <code>Connect()</code>. No code generation step, no extra tooling.</p>
     </div>
@@ -820,7 +829,7 @@ ids, err := q.EnqueueMany(ctx, []kyu.EnqueueRequest{
 <section class="section" id="dashboard">
   <div class="container">
     <div class="sec-head">
-      <div class="sec-meta"><span class="sec-num">05</span><span class="lane-tag">ops</span></div>
+      <div class="sec-meta"><span class="seam" aria-hidden="true"></span><span class="lane-tag">ops</span></div>
       <h2 class="sec-title">Watch the queue without leaving your browser.</h2>
       <p class="sec-body"><code>kyu serve</code> starts a web dashboard by default. Live stats stream over SSE, and every management action — retry dead jobs, purge a status, pause workers, enqueue from the UI — is a click away. It's embedded in the binary; nothing extra to install.</p>
     </div>
@@ -849,7 +858,7 @@ ids, err := q.EnqueueMany(ctx, []kyu.EnqueueRequest{
 <section class="section" id="benchmarks">
   <div class="container">
     <div class="sec-head">
-      <div class="sec-meta"><span class="sec-num">06</span><span class="lane-tag">measured</span></div>
+      <div class="sec-meta"><span class="seam" aria-hidden="true"></span><span class="lane-tag">measured</span></div>
       <h2 class="sec-title">Fast where it should be, honest about the rest.</h2>
       <p class="sec-body">Dispatch overhead is under a microsecond — but that's not the ceiling. Cross-layer load testing with Barrage found the real bound is Postgres write latency, which is exactly where durability comes from.</p>
     </div>
@@ -889,7 +898,7 @@ ids, err := q.EnqueueMany(ctx, []kyu.EnqueueRequest{
 <section class="section" id="comparison">
   <div class="container">
     <div class="sec-head">
-      <div class="sec-meta"><span class="sec-num">07</span><span class="lane-tag">postgres + redis</span></div>
+      <div class="sec-meta"><span class="seam" aria-hidden="true"></span><span class="lane-tag">postgres + redis</span></div>
       <h2 class="sec-title">Neither Redis-only nor Postgres-only. Both.</h2>
       <p class="sec-body">Redis-only queues are fast until they lose the queue. Postgres-only queues are durable but scan for what to run next. Kyu deliberately splits the difference: Postgres is the ledger, Redis is the dispatcher.</p>
     </div>
