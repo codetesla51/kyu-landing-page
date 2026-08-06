@@ -116,17 +116,18 @@
     .sec-body code{font-family:var(--font-mono);font-size:0.85em;color:var(--accent-2);background:var(--surface-2);padding:1px 6px;border-radius:5px;border:1px solid var(--border);}
 
     /* ── ARCH DIAGRAM ────────────────────────────────── */
-    .arch-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:40px;}
-    .arch-wrap svg{width:100%;height:auto;display:block;}
-    .arch-node{fill:var(--bg-2);stroke:var(--border-2);stroke-width:1.5;}
+    .arch-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:40px;position:relative;overflow:hidden;}
+    .arch-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(232,168,76,0.04),transparent 70%);pointer-events:none;z-index:0;}
+    .arch-wrap svg{width:100%;height:auto;display:block;position:relative;z-index:1;}
+    .arch-node{fill:url(#nodeGrad);stroke:var(--border-2);stroke-width:1.5;}
     .arch-node-label{fill:var(--text);font-family:var(--font-mono);font-size:12px;font-weight:500;}
     .arch-node-sub{fill:var(--dim);font-family:var(--font-mono);font-size:9px;}
-    .arch-flow{fill:none;stroke:var(--border-2);stroke-width:1.5;}
-    .arch-flow-dash{fill:none;stroke:var(--accent);stroke-width:1.6;stroke-linecap:round;opacity:0.75;}
-    .arch-flow-green{fill:none;stroke:var(--green);stroke-width:1.6;stroke-linecap:round;opacity:0.75;}
-    .arch-label{fill:var(--dim);font-family:var(--font-mono);font-size:9px;}
+    .arch-flow{fill:none;stroke:var(--border-2);stroke-width:1.5;vector-effect:non-scaling-stroke;}
+    .arch-flow-dash{fill:none;stroke:var(--accent);stroke-width:1.6;stroke-linecap:round;opacity:0.75;vector-effect:non-scaling-stroke;}
+    .arch-flow-green{fill:none;stroke:var(--green);stroke-width:1.6;stroke-linecap:round;opacity:0.75;vector-effect:non-scaling-stroke;}
+    .arch-label{fill:var(--dim);font-family:var(--font-mono);font-size:9px;pointer-events:none;}
     .arch-dot{opacity:0.9;}
-    .arch-note{display:flex;gap:10px;align-items:flex-start;font-family:var(--font-mono);font-size:12px;color:var(--dim);border:1px dashed var(--border-2);border-radius:var(--radius-sm);padding:12px 14px;margin-top:16px;}
+    .arch-note{display:flex;gap:10px;align-items:flex-start;font-family:var(--font-mono);font-size:12px;color:var(--dim);border:1px dashed var(--border-2);border-radius:var(--radius-sm);padding:12px 14px;margin-top:16px;position:relative;z-index:1;}
     .arch-note .ph{color:var(--accent);flex-shrink:0;margin-top:1px;}
 
     .subsys-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;}
@@ -143,12 +144,13 @@
     .panel p code{font-family:var(--font-mono);font-size:0.85em;color:var(--accent-2);background:var(--surface-2);padding:1px 5px;border-radius:4px;border:1px solid var(--border);}
 
     /* ── LIFECYCLE ───────────────────────────────────── */
-    .life-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:40px;}
-    .life-wrap svg{width:100%;height:auto;display:block;}
-    .life-node{fill:var(--bg-2);stroke:var(--border-2);stroke-width:1.5;}
+    .life-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:40px;position:relative;overflow:hidden;}
+    .life-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 50%,rgba(232,168,76,0.03),transparent 70%);pointer-events:none;z-index:0;}
+    .life-wrap svg{width:100%;height:auto;display:block;position:relative;z-index:1;}
+    .life-node{fill:url(#lifeNodeGrad);stroke:var(--border-2);stroke-width:1.5;}
     .life-node-label{fill:var(--text);font-family:var(--font-mono);font-size:12px;}
-    .life-edge{fill:none;stroke:var(--border-2);stroke-width:1.4;}
-    .life-edge-label{fill:var(--dim);font-family:var(--font-mono);font-size:9px;}
+    .life-edge{fill:none;stroke:var(--border-2);stroke-width:1.4;vector-effect:non-scaling-stroke;}
+    .life-edge-label{fill:var(--dim);font-family:var(--font-mono);font-size:9px;pointer-events:none;}
 
     /* ── FEATURES ────────────────────────────────────── */
     .feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:20px;}
@@ -318,9 +320,14 @@
       <svg id="arch-svg" viewBox="0 0 880 300" role="img" aria-label="Animated pipeline: app writes a job to Postgres and pushes its ID to Redis, a worker pops the ID, fetches the record, runs the handler, and writes the result back to Postgres.">
         <defs>
           <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#3A4047"/></marker>
-          <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="glowStrong" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <radialGradient id="bgGrad" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="#1A1F24"/><stop offset="100%" stop-color="#14171A"/></radialGradient>
+          <linearGradient id="nodeGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1E2228"/><stop offset="100%" stop-color="#16191E"/></linearGradient>
+          <linearGradient id="pgGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1A2E24"/><stop offset="100%" stop-color="#141E18"/></linearGradient>
+          <linearGradient id="redisGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2E2A1A"/><stop offset="100%" stop-color="#1E1A14"/></linearGradient>
         </defs>
-        <rect x="0" y="0" width="880" height="300" rx="12" fill="#14171A"/>
+        <rect x="0" y="0" width="880" height="300" rx="12" fill="url(#bgGrad)"/>
 
         <!-- App -->
         <g>
@@ -331,7 +338,7 @@
 
         <!-- Postgres -->
         <g>
-          <rect x="300" y="40" width="120" height="46" rx="8" class="arch-node" stroke="#4CAF82"/>
+          <rect x="300" y="40" width="120" height="46" rx="8" class="arch-node" stroke="#4CAF82" fill="url(#pgGrad)"/>
           <ellipse cx="360" cy="40" rx="60" ry="13" fill="#1B1E22" stroke="#4CAF82" stroke-width="1.5"/>
           <ellipse cx="360" cy="86" rx="60" ry="13" fill="#1B1E22" stroke="#4CAF82" stroke-width="1.5"/>
           <text x="360" y="66" class="arch-node-label" text-anchor="middle" dominant-baseline="middle">PostgreSQL</text>
@@ -340,7 +347,7 @@
 
         <!-- Redis -->
         <g>
-          <rect x="300" y="232" width="120" height="46" rx="8" class="arch-node" stroke="#E8A84C"/>
+          <rect x="300" y="232" width="120" height="46" rx="8" class="arch-node" stroke="#E8A84C" fill="url(#redisGrad)"/>
           <ellipse cx="360" cy="232" rx="60" ry="13" fill="#1B1E22" stroke="#E8A84C" stroke-width="1.5"/>
           <ellipse cx="360" cy="278" rx="60" ry="13" fill="#1B1E22" stroke="#E8A84C" stroke-width="1.5"/>
           <text x="360" y="258" class="arch-node-label" text-anchor="middle" dominant-baseline="middle">Redis</text>
@@ -361,7 +368,7 @@
           <text x="782" y="157" class="arch-node-sub" text-anchor="middle" dominant-baseline="middle">your code</text>
         </g>
 
-        <!-- Flow paths -->
+        <!-- flow paths -->
         <!-- app -> PG -->
         <path id="fp-app-pg" d="M136,130 C200,130 220,66 300,66" fill="none" class="arch-flow" marker-end="url(#arr)"/>
         <text x="212" y="106" class="arch-label" text-anchor="middle">insert record</text>
@@ -391,6 +398,9 @@
         <circle id="dot1" class="arch-dot" r="5" fill="#E8A84C" filter="url(#glow)"/>
         <circle id="dot2" class="arch-dot" r="4" fill="#E8A84C" filter="url(#glow)"/>
         <circle id="dot3" class="arch-dot" r="4" fill="#4CAF82" filter="url(#glow)"/>
+        <circle id="dot4" class="arch-dot" r="3.5" fill="#56A8C9" filter="url(#glow)"/>
+        <circle id="dot5" class="arch-dot" r="3" fill="#E8A84C" filter="url(#glow)"/>
+        <circle id="dot6" class="arch-dot" r="3" fill="#4CAF82" filter="url(#glow)"/>
       </svg>
       <div class="arch-note">
         <i class="ph ph-info"></i>
@@ -446,7 +456,10 @@
       <svg id="life-svg" viewBox="0 0 880 260" role="img" aria-label="Job state machine: pending to running, then completed, failed, or dead.">
         <defs>
           <marker id="arrL" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#3A4047"/></marker>
-          <filter id="glowL"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="glowL" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="glowLStrong" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <linearGradient id="lifeNodeGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1E2228"/><stop offset="100%" stop-color="#16191E"/></linearGradient>
+          <radialGradient id="lifeGlow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#E8A84C" stop-opacity="0.3"/><stop offset="100%" stop-color="#E8A84C" stop-opacity="0"/></radialGradient>
         </defs>
         <rect x="0" y="0" width="880" height="260" rx="12" fill="#14171A"/>
 
@@ -465,8 +478,9 @@
 
         <!-- running -->
         <g>
-          <rect id="l-run-glow" x="214" y="100" width="132" height="54" rx="11" fill="none" stroke="#E8A84C" stroke-width="5" opacity="0.15" filter="url(#glowL)"/>
-          <rect id="l-running" x="216" y="102" width="128" height="50" rx="9" class="life-node" stroke="#E8A84C" stroke-width="2.5"/>
+          <circle cx="280" cy="127" r="30" fill="url(#lifeGlow)" opacity="0.5"/>
+          <rect id="l-run-glow" x="214" y="100" width="132" height="54" rx="11" fill="none" stroke="#E8A84C" stroke-width="5" opacity="0.15" filter="url(#glowLStrong)"/>
+          <rect id="l-running" x="216" y="102" width="128" height="50" rx="9" class="life-node" stroke="#E8A84C" stroke-width="2.5" fill="url(#lifeNodeGrad)"/>
           <text x="280" y="127" class="life-node-label" text-anchor="middle" dominant-baseline="middle" fill="#F0B968">running</text>
         </g>
         <path d="M160,127 L216,127" class="life-edge" marker-end="url(#arrL)"/>
@@ -474,7 +488,7 @@
 
         <!-- completed -->
         <g>
-          <rect x="420" y="24" width="120" height="44" rx="9" class="life-node" stroke="#4CAF82" stroke-width="2"/>
+          <rect x="420" y="24" width="120" height="44" rx="9" class="life-node" stroke="#4CAF82" stroke-width="2" fill="url(#lifeNodeGrad)"/>
           <text x="480" y="46" class="life-node-label" text-anchor="middle" dominant-baseline="middle" fill="#4CAF82">completed</text>
         </g>
         <path d="M344,110 L480,68" class="life-edge" stroke="#4CAF82" marker-end="url(#arrL)"/>
@@ -482,7 +496,7 @@
 
         <!-- failed -->
         <g>
-          <rect x="420" y="180" width="120" height="44" rx="9" class="life-node" stroke="#E05252" stroke-width="2"/>
+          <rect x="420" y="180" width="120" height="44" rx="9" class="life-node" stroke="#E05252" stroke-width="2" fill="url(#lifeNodeGrad)"/>
           <text x="480" y="202" class="life-node-label" text-anchor="middle" dominant-baseline="middle" fill="#E05252">failed</text>
         </g>
         <path d="M344,142 L480,180" class="life-edge" stroke="#E05252" marker-end="url(#arrL)"/>
@@ -490,7 +504,7 @@
 
         <!-- dead -->
         <g>
-          <rect x="616" y="196" width="120" height="48" rx="9" class="life-node" stroke="#E05252" stroke-width="2.5"/>
+          <rect x="616" y="196" width="120" height="48" rx="9" class="life-node" stroke="#E05252" stroke-width="2.5" fill="url(#lifeNodeGrad)"/>
           <text x="676" y="220" class="life-node-label" text-anchor="middle" dominant-baseline="middle" fill="#E05252" font-weight="600">dead</text>
         </g>
         <path d="M540,202 L616,196" class="life-edge" stroke="#E05252" marker-end="url(#arrL)"/>
@@ -498,7 +512,7 @@
 
         <!-- re-queued -->
         <g>
-          <rect id="l-requeued" x="616" y="104" width="120" height="46" rx="9" class="life-node" stroke="#E8A84C" stroke-dasharray="5 3"/>
+          <rect id="l-requeued" x="616" y="104" width="120" height="46" rx="9" class="life-node" stroke="#E8A84C" stroke-dasharray="5 3" fill="url(#lifeNodeGrad)"/>
           <text x="676" y="127" class="life-node-label" text-anchor="middle" dominant-baseline="middle" fill="#F0B968">re-queued</text>
         </g>
         <path d="M540,196 L676,196 L676,150" class="life-edge" stroke="#E8A84C" marker-end="url(#arrL)"/>
@@ -506,9 +520,10 @@
         <path d="M676,104 L676,20 L100,20 L100,104" class="life-edge" stroke="#E8A84C" stroke-dasharray="4 3" marker-end="url(#arrL)"/>
         <text x="360" y="12" class="life-edge-label" fill="#F0B968" text-anchor="middle">backoff elapsed → scheduler re-promotes</text>
 
-        <!-- particle -->
+        <!-- particles -->
         <circle id="life-dot" r="6" fill="#E8A84C" filter="url(#glowL)" opacity="0"/>
         <circle id="life-trail" r="3" fill="#E8A84C" opacity="0"/>
+        <circle id="life-trail2" r="2" fill="#F0B968" opacity="0"/>
       </svg>
     </div>
 
@@ -775,7 +790,13 @@ ids, err := q.EnqueueMany(ctx, []kyu.EnqueueRequest{
 
     <div class="reveal spectrum">
       <svg viewBox="0 0 900 150" role="img" aria-label="Positioning spectrum from Redis-only queues on the left through Postgres-only in the middle to Kyu on the right.">
-        <line x1="80" y1="75" x2="820" y2="75" class="spec-line"/>
+        <defs>
+          <linearGradient id="specLineGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#3A4047"/><stop offset="50%" stop-color="#6B727A"/><stop offset="100%" stop-color="#3A4047"/></linearGradient>
+          <linearGradient id="specFillGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(232,168,76,0.15)"/><stop offset="100%" stop-color="rgba(232,168,76,0)"/></linearGradient>
+          <filter id="specGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <line x1="80" y1="75" x2="820" y2="75" stroke="url(#specLineGrad)" stroke-width="2"/>
+        <ellipse cx="740" cy="75" rx="60" ry="30" fill="url(#specFillGrad)" opacity="0.5"/>
         <g>
           <circle cx="170" cy="75" r="9" class="spec-dot"/>
           <text x="170" y="52" text-anchor="middle" fill="#9AA1A9" style="font-family:var(--font-mono);font-size:11px;">Redis-only</text>
@@ -789,7 +810,8 @@ ids, err := q.EnqueueMany(ctx, []kyu.EnqueueRequest{
           <text x="455" y="100" text-anchor="middle" fill="#6B727A" style="font-family:var(--font-mono);font-size:9px;">durable · slower</text>
         </g>
         <g id="kyu-spec" opacity="0">
-          <circle cx="740" cy="75" r="12" class="spec-dot kyu"/>
+          <circle cx="740" cy="75" r="18" fill="#E8A84C" opacity="0.12" filter="url(#specGlow)"/>
+          <circle cx="740" cy="75" r="12" class="spec-dot kyu" filter="url(#specGlow)"/>
           <text x="740" y="46" text-anchor="middle" fill="#F0B968" style="font-family:var(--font-ui);font-weight:700;font-size:13px;">Kyu — you are here</text>
           <text x="740" y="104" text-anchor="middle" fill="#F0B968" style="font-family:var(--font-mono);font-size:9px;">fast AND durable</text>
         </g>
@@ -950,11 +972,11 @@ fetch('https://api.github.com/repos/codetesla51/kyu')
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var hasSVG = document.getElementById('fp-app-pg');
   if (!hasSVG) return;
-  var dots = ['dot1', 'dot2', 'dot3'];
+  var dots = ['dot1', 'dot2', 'dot3', 'dot4', 'dot5', 'dot6'];
   var paths = ['#fp-app-pg', '#fp-app-r', '#fp-pg-w', '#fp-r-w', '#fp-w-h', '#fp-h-pg'];
   paths.forEach(function (sel, i) {
     var p = anime.path(sel);
-    var dot = document.getElementById(dots[i % dots.length]);
+    var dot = document.getElementById(dots[i]);
     if (!dot) return;
     anime({
       targets: dot,
@@ -962,7 +984,7 @@ fetch('https://api.github.com/repos/codetesla51/kyu')
       easing: 'easeInOutQuart',
       duration: 2100,
       loop: true,
-      delay: i * 420
+      delay: i * 350
     });
   });
   // moving dashes
@@ -979,7 +1001,7 @@ fetch('https://api.github.com/repos/codetesla51/kyu')
 // ── lifecycle state machine ─────────────────────────────
 (function () {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var dot = document.getElementById('life-dot'), trail = document.getElementById('life-trail');
+  var dot = document.getElementById('life-dot'), trail = document.getElementById('life-trail'), trail2 = document.getElementById('life-trail2');
   if (!dot) return;
   var pts = {
     pending: { x: 100, y: 127 }, running: { x: 280, y: 127 },
@@ -987,7 +1009,7 @@ fetch('https://api.github.com/repos/codetesla51/kyu')
     requeued: { x: 676, y: 127 }, dead: { x: 676, y: 220 }
   };
   function show(p) { dot.setAttribute('cx', p.x); dot.setAttribute('cy', p.y); dot.setAttribute('opacity', 1); }
-  function hide() { dot.setAttribute('opacity', 0); trail.setAttribute('opacity', 0); }
+  function hide() { dot.setAttribute('opacity', 0); trail.setAttribute('opacity', 0); if (trail2) trail2.setAttribute('opacity', 0); }
   function mv(from, to, dur, col, hold, done) {
     var o = { x: from.x, y: from.y };
     dot.setAttribute('fill', col);
@@ -996,20 +1018,22 @@ fetch('https://api.github.com/repos/codetesla51/kyu')
       update: function () {
         dot.setAttribute('cx', o.x); dot.setAttribute('cy', o.y); dot.setAttribute('opacity', 1);
         trail.setAttribute('cx', o.x); trail.setAttribute('cy', o.y); trail.setAttribute('opacity', 0.35);
+        if (trail2) { trail2.setAttribute('cx', o.x); trail2.setAttribute('cy', o.y); trail2.setAttribute('opacity', 0.2); }
       },
       complete: function () {
         trail.setAttribute('opacity', 0);
+        if (trail2) trail2.setAttribute('opacity', 0);
         setTimeout(done || function () {}, hold || 300);
       }
     });
   }
   var routes = [
-    ['ok', 'var(--color-green)', function (next) {
+    ['ok', '#4CAF82', function (next) {
       mv(pts.pending, pts.running, 550, '#E8A84C', 250, function () {
         mv(pts.running, pts.completed, 520, '#4CAF82', 500, function () { hide(); next(); });
       });
     }],
-    ['retry', 'var(--color-accent)', function (next) {
+    ['retry', '#E8A84C', function (next) {
       mv(pts.pending, pts.running, 550, '#E8A84C', 250, function () {
         mv(pts.running, pts.failed, 520, '#E05252', 250, function () {
           mv(pts.failed, pts.requeued, 480, '#E8A84C', 220, function () {
@@ -1018,7 +1042,7 @@ fetch('https://api.github.com/repos/codetesla51/kyu')
         });
       });
     }],
-    ['dead', 'var(--color-red)', function (next) {
+    ['dead', '#E05252', function (next) {
       mv(pts.pending, pts.running, 550, '#E8A84C', 250, function () {
         mv(pts.running, pts.failed, 520, '#E05252', 250, function () {
           mv(pts.failed, pts.dead, 480, '#E05252', 600, function () { hide(); next(); });
@@ -1040,7 +1064,7 @@ fetch('https://api.github.com/repos/codetesla51/kyu')
   if (!m) return;
   var io = new IntersectionObserver(function (e) {
     if (e[0].isIntersecting) {
-      anime({ targets: '#kyu-spec', opacity: [0, 1], translateY: [26, 0], duration: 900, easing: 'spring(1, 90, 10, 0)' });
+      anime({ targets: '#kyu-spec', opacity: [0, 1], translateY: [26, 0], scale: [0.5, 1], duration: 900, easing: 'spring(1, 90, 10, 0)' });
       io.unobserve(m);
     }
   }, { threshold: 0.4 });
