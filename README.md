@@ -1,35 +1,37 @@
 # Kyu Landing Page
 
-Marketing site for [Kyu](https://github.com/codetesla51/kyu), a Postgres-backed job queue for Go.
+Marketing site for [Kyu](https://github.com/codetesla51/kyu), a Go job queue where Postgres is the durable ledger and Redis is the fast dispatch lane.
 
 ## Design
 
-Vercel-inspired system:
-- Near-black ink on warm white/soft-gray canvas (`#171717` / `#fafafa`) with a 4-step gray ladder for depth
-- Geist + Geist Mono (Google Fonts), sentence-case headlines with aggressive negative tracking
-- Single decorative system: the brand mesh gradient (blue → teal → violet → magenta → coral), used at hero scale only
-- 100px-pill marketing CTAs, 6px-radius nav buttons, 8/12px card radius
-- Stacked hairline + soft-shadow elevation, one polarity-flipped dark band for benchmarks
-- No shadows in hero; the mesh gradient is the atmospheric depth cue
+Grafana-dark developer-tool aesthetic — dark only, no light bands, no SaaS treatment:
+
+- Always-dark canvas (`#101214`) with a surface/elevation ladder (`#14171A` → `#1B1E22` → `#22262B`), hairline borders, and an amber accent (`#E8A84C`)
+- Inter + JetBrains Mono (Google Fonts), mono labels and stat figures
+- Single icon system: Phosphor (`@phosphor-icons/web`), no other icon set
+- No Kyu logo or wordmark anywhere in nav or footer — navigation links and actions only, no logos at all
+- No "Get started" CTA; the hero's only action is the `go get` install command with a copy button and a "Read the code" GitHub link
+- Text-only, centered, problem-led hero — the dashboard screenshot lives in a section far down the page
 
 ## Structure
 
-1. **Hero** — text-only, problem-led copy ("Stop losing jobs when Redis flushes."), centered, no dashboard image
-2. **The trade-off** — fast-but-not-durable / durable-but-slow / reliable-but-heavy cards, Kyu as the fix
-3. **See it in action** — the Kyu dashboard screenshot (`screenshot-2026-08-05_18-11-32`) in dark browser chrome
-4. **Features** — six marketing-first cards
-5. **Quick start** — install / quick start / enqueue tabs with highlighted Go + Bash (highlight.js)
-6. **Benchmarks** — dark polarity-flip band with measured numbers + link to the full Barrage report
-7. **Compare** — Kyu vs asynq / river / machinery matrix
-8. **CTA + footer**
+1. **Hero** — problem-led copy ("Stop losing jobs when Redis flushes."), centered, install box + GitHub button, proof tags, animated word-stagger entrance
+2. **Stats strip** — Redis throughput 1,250/s · Postgres 749.9/s · 100% delivery · 52ns dispatch overhead
+3. **01 Architecture** — animated pipeline SVG (anime.js particles + moving dashes) with the Enqueue → Postgres/Redis → worker → handler flow, plus six subsystem panels
+4. **02 Lifecycle** — animated state-machine SVG (pending → running → completed / failed / re-queued / dead) + status table
+5. **03 Features** — thirteen cards (durability, priorities, scheduling, retries, DLQ, locking, middleware, batch, Prometheus, RunOnce, inspect APIs, webhooks, scope boundaries)
+6. **04 Quick start** — install / quick start / enqueue tabs with statically-rendered Go + Bash code (highlight.js) — content is in the markup, never empty — plus CLI / docker-compose / queue-isolation panels
+7. **05 Dashboard** — `dashboard.png` screenshot in browser chrome + metrics table
+8. **06 Benchmarks** — dispatch table (52ns register / 950ns execute) + Barrage load table (251.5/s HTTP, 749.9/s Postgres, 1250/s Redis, 100% success) + investigation-log link
+9. **07 Why Kyu** — positioning spectrum (Redis-only → Postgres-only → Kyu) + comparison matrix vs Asynq / River / Machinery / BullMQ
 
 ## Assets
 
-- `dashboard.png` — Kyu dashboard screenshot (copied from `/home/uthman/Pictures/screenshot-2026-08-05_18-11-32.png`)
+- `dashboard.png` — Kyu dashboard screenshot (copied from `/home/uthman/Pictures/screenshot-2026-08-05_18-11-32.png`), used only in the dashboard section
 
 ## Responsiveness
 
-Tested with a headless-chromium overflow harness at 375 / 768 / 1024 / 1440 px — zero horizontal overflow at every breakpoint. Nav collapses to a hamburger menu below 900px.
+Tested with a headless-chromium overflow harness at 375 / 768 / 1024 / 1440 px — zero horizontal overflow at every breakpoint (`html,body{overflow-x:clip}`). Nav collapses to a hamburger menu below 920px; feature/bench grids collapse to one column below 560px.
 
 ## Run locally
 
@@ -37,4 +39,4 @@ Tested with a headless-chromium overflow harness at 375 / 768 / 1024 / 1440 px �
 node server.js   # serves on http://localhost:3000
 ```
 
-Or open `index.html` directly — it's a single static file. Geist/Geist Mono fonts and highlight.js load from CDNs.
+Or open `index.html` directly — it's a single static file. Phosphor icons, highlight.js, anime.js, and Inter/JetBrains Mono fonts load from CDNs.
