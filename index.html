@@ -998,69 +998,62 @@ fetch('https://api.github.com/repos/codetesla51/kyu')
   });
 })();
 
-// ── lifecycle state machine (anime.path like arch) ──────────
+// ── lifecycle state machine ─────────────────────────────
 (function () {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var dot = document.getElementById('life-dot'), trail = document.getElementById('life-trail'), trail2 = document.getElementById('life-trail2');
   if (!dot) return;
-  var pathMap = {
-    dequeue:  '#lp-dequeue',
-    ok:       '#lp-ok',
-    error:    '#lp-error',
-    dead:     '#lp-dead',
-    retry:    '#lp-retry',
-    reschedule: '#lp-reschedule'
+  var pts = {
+    pending: { x: 100, y: 127 }, running: { x: 280, y: 127 },
+    completed: { x: 480, y: 46 }, failed: { x: 480, y: 202 },
+    requeued: { x: 676, y: 127 }, dead: { x: 676, y: 220 }
   };
-  var routeSequence = [
-    { path: 'dequeue',     col: '#E8A84C', hold: 250 },
-    { path: 'ok',          col: '#4CAF82', hold: 500 },
-    { path: 'error',       col: '#E05252', hold: 250 },
-    { path: 'retry',       col: '#E8A84C', hold: 220 },
-    { path: 'reschedule',  col: '#E8A84C', hold: 450 },
-    { path: 'dead',        col: '#E05252', hold: 600 }
-  ];
-  function hide() {
-    dot.setAttribute('opacity', '0');
-    trail.setAttribute('opacity', '0');
-    if (trail2) trail2.setAttribute('opacity', '0');
-  }
-  function animateStep(idx) {
-    if (idx >= routeSequence.length) { setTimeout(function () { animateStep(0); }, 350); return; }
-    var step = routeSequence[idx];
-    var pathEl = document.querySelector(pathMap[step.path]);
-    if (!pathEl) { animateStep(idx + 1); return; }
-    dot.setAttribute('fill', step.col);
-    var ap = anime.path(pathEl);
-    var getX = ap('x');
-    var getY = ap('y');
+  function hide() { dot.setAttribute('opacity', 0); trail.setAttribute('opacity', 0); if (trail2) trail2.setAttribute('opacity', 0); }
+  function mv(from, to, dur, col, hold, done) {
+    var o = { x: from.x, y: from.y };
+    dot.setAttribute('fill', col);
     anime({
-      targets: dot,
-      duration: 550,
-      easing: 'easeInOutQuart',
-      update: function (anim) {
-        var progress = Math.min(anim.currentTime / anim.duration, 1);
-        var x = getX(progress);
-        var y = getY(progress);
-        dot.setAttribute('cx', x);
-        dot.setAttribute('cy', y);
-        dot.setAttribute('opacity', '1');
-        trail.setAttribute('cx', x);
-        trail.setAttribute('cy', y);
-        trail.setAttribute('opacity', '0.35');
-        if (trail2) {
-          trail2.setAttribute('cx', x);
-          trail2.setAttribute('cy', y);
-          trail2.setAttribute('opacity', '0.2');
-        }
+      targets: o, x: to.x, y: to.y, duration: dur || 550, easing: 'easeInOutQuart',
+      update: function () {
+        dot.setAttribute('cx', o.x); dot.setAttribute('cy', o.y); dot.setAttribute('opacity', 1);
+        trail.setAttribute('cx', o.x); trail.setAttribute('cy', o.y); trail.setAttribute('opacity', 0.35);
+        if (trail2) { trail2.setAttribute('cx', o.x); trail2.setAttribute('cy', o.y); trail2.setAttribute('opacity', 0.2); }
       },
       complete: function () {
-        trail.setAttribute('opacity', '0');
-        if (trail2) trail2.setAttribute('opacity', '0');
-        setTimeout(function () { animateStep(idx + 1); }, step.hold);
+        trail.setAttribute('opacity', 0);
+        if (trail2) trail2.setAttribute('opacity', 0);
+        setTimeout(done || function () {}, hold || 300);
       }
     });
   }
-  setTimeout(function () { animateStep(0); }, 600);
+  var routes = [
+    ['ok', '#4CAF82', function (next) {
+      mv(pts.pending, pts.running, 550, '#E8A84C', 250, function () {
+        mv(pts.running, pts.completed, 520, '#4CAF82', 500, function () { hide(); next(); });
+      });
+    }],
+    ['retry', '#E8A84C', function (next) {
+      mv(pts.pending, pts.running, 550, '#E8A84C', 250, function () {
+        mv(pts.running, pts.failed, 520, '#E05252', 250, function () {
+          mv(pts.failed, pts.requeued, 480, '#E8A84C', 220, function () {
+            mv(pts.requeued, pts.pending, 640, '#E8A84C', 450, function () { hide(); next(); });
+          });
+        });
+      });
+    }],
+    ['dead', '#E05252', function (next) {
+      mv(pts.pending, pts.running, 550, '#E8A84C', 250, function () {
+        mv(pts.running, pts.failed, 520, '#E05252', 250, function () {
+          mv(pts.failed, pts.dead, 480, '#E05252', 600, function () { hide(); next(); });
+        });
+      });
+    }]
+  ];
+  function loop(i) {
+    hide();
+    routes[i][2](function () { setTimeout(function () { loop((i + 1) % routes.length); }, 350); });
+  }
+  setTimeout(function () { loop(0); }, 600);
 })();
 
 // ── spectrum marker ─────────────────────────────────────
