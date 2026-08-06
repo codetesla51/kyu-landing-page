@@ -5,242 +5,296 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kyu — durable job queue for Go</title>
   <meta name="description" content="Kyu is a Go job queue where Postgres is the durable ledger and Redis is the fast dispatch lane. Jobs survive a Redis wipe. History stays queryable in plain SQL.">
-  <meta name="theme-color" content="#101214">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <meta name="theme-color" content="#F5F1E8">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#101214; --bg-2:#14171A; --surface:#1B1E22; --surface-2:#22262B;
-      --border:#2A2E33; --border-2:#3A4047;
-      --text:#E7EAEE; --muted:#9AA1A9; --dim:#6B727A;
-      --accent:#E8A84C; --accent-2:#F0B968; --accent-dim:rgba(232,168,76,0.12);
-      --green:#4CAF82; --green-dim:rgba(76,175,130,0.12);
-      --red:#E05252; --red-dim:rgba(224,82,82,0.12);
-      --cyan:#56A8C9; --cyan-dim:rgba(86,168,201,0.12);
-      --font-ui:'Inter',system-ui,-apple-system,sans-serif;
-      --font-mono:'JetBrains Mono',ui-monospace,monospace;
-      --radius:14px; --radius-sm:9px;
-      --shadow:0 10px 40px rgba(0,0,0,0.45);
-      --maxw:1180px;
+      --paper:#F5F1E8; --paper-2:#EFEADF; --card:#FDFBF6;
+      --ink:#191A1C; --ink-2:#4A4E55; --ink-3:#858A92;
+      --hair:#DCD5C6; --hair-2:#C6BEB0;
+      --pg:#2E5E8C; --pg-tint:#E7EEF5;
+      --redis:#B23A1E; --redis-tint:#F7E8E3;
+      --ok:#1E7A4F; --ok-tint:#E4F1EA;
+      --font-mono:'IBM Plex Mono',ui-monospace,monospace;
+      --font-sans:'IBM Plex Sans',system-ui,sans-serif;
+      --radius:5px;
+      --maxw:1120px;
+      --pad:clamp(16px,4vw,24px);
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    html{scroll-behavior:smooth;scroll-padding-top:84px;}
+    html{scroll-padding-top:76px;}
     html,body{overflow-x:clip;}
     body{
-      background:var(--bg);color:var(--muted);font-family:var(--font-ui);
+      background:var(--paper);color:var(--ink-2);font-family:var(--font-sans);
       font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;
-      background-image:radial-gradient(1200px 600px at 70% -10%,rgba(232,168,76,0.05),transparent 60%),
-                       radial-gradient(1000px 500px at 0% 0%,rgba(86,168,201,0.04),transparent 55%);
-      background-attachment:fixed;
+      background-image:linear-gradient(var(--hair) 1px,transparent 1px);
+      background-size:100% 6px;background-position:0 0;
     }
-    ::selection{background:var(--accent);color:#14161A;}
-    h1,h2,h3{font-family:var(--font-ui);color:var(--text);font-weight:700;line-height:1.15;letter-spacing:-0.015em;}
-    p{color:var(--muted);}
-    a{color:var(--accent-2);text-decoration:none;}
-    a:hover{color:var(--accent);}
+    body::before{
+      content:'';position:fixed;inset:0 0 auto;height:4px;z-index:200;
+      background:linear-gradient(90deg,var(--pg) 0 50%,var(--redis) 50% 100%);
+    }
+    ::selection{background:var(--ink);color:var(--paper);}
+    h1,h2,h3{font-family:var(--font-mono);color:var(--ink);font-weight:600;line-height:1.18;letter-spacing:-0.015em;}
+    p{color:var(--ink-2);}
+    a{color:var(--pg);text-decoration:none;}
+    a:hover{color:var(--redis);text-decoration:underline;text-underline-offset:3px;}
     img{max-width:100%;height:auto;display:block;}
     code,kbd{font-family:var(--font-mono);}
-    .container{max-width:var(--maxw);margin:0 auto;padding:0 24px;}
-    @media(max-width:520px){.container{padding:0 16px;}}
+    :where(a,button,[role="button"]):focus-visible{outline:2px solid var(--pg);outline-offset:2px;border-radius:3px;}
+    .container{max-width:var(--maxw);margin-inline:auto;padding-inline:var(--pad);}
 
     /* ── NAV ─────────────────────────────────────────── */
-    #nav{position:sticky;top:0;z-index:100;background:rgba(16,18,20,0.82);backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);border-bottom:1px solid var(--border);}
-    .nav-inner{max-width:var(--maxw);margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:18px;}
-    @media(max-width:520px){.nav-inner{padding:0 16px;}}
-    .nav-links{display:flex;align-items:center;gap:2px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;}
-    .nav-links a{font-family:var(--font-mono);font-size:12px;color:var(--muted);padding:6px 12px;border-radius:7px;white-space:nowrap;transition:color .15s,background .15s;}
-    .nav-links a:hover{color:var(--text);background:var(--surface-2);}
+    #nav{position:sticky;top:0;z-index:100;background:rgba(245,241,232,0.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--hair);}
+    .nav-inner{max-width:var(--maxw);margin-inline:auto;padding-inline:var(--pad);height:60px;display:flex;align-items:center;justify-content:space-between;gap:18px;}
+    .brand{display:inline-flex;align-items:center;gap:9px;font-family:var(--font-mono);font-weight:600;font-size:15px;color:var(--ink);letter-spacing:0.01em;}
+    .brand .dot{width:14px;height:7px;border-radius:2px;background:linear-gradient(90deg,var(--pg) 0 50%,var(--redis) 50% 100%);}
+    .brand:hover{color:var(--ink);text-decoration:none;}
+    .nav-links{display:flex;align-items:center;gap:2px;border:1px solid var(--hair);border-radius:4px;background:var(--card);padding:3px;}
+    .nav-links a{font-family:var(--font-mono);font-size:12px;color:var(--ink-2);padding:5px 11px;border-radius:3px;white-space:nowrap;}
+    .nav-links a:hover{background:var(--paper-2);color:var(--ink);text-decoration:none;}
     .nav-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
-    .btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px;font-weight:500;padding:8px 14px;border-radius:9px;border:1px solid var(--border-2);background:var(--surface);color:var(--text);cursor:pointer;transition:border-color .15s,background .15s,transform .15s;white-space:nowrap;}
-    .btn:hover{border-color:var(--accent);color:var(--accent-2);}
+    .btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px;font-weight:500;padding:8px 14px;border-radius:4px;border:1px solid var(--ink);background:var(--paper);color:var(--ink);cursor:pointer;white-space:nowrap;}
+    .btn:hover{background:var(--ink);color:var(--paper);text-decoration:none;}
+    .btn.primary{background:var(--ink);color:var(--paper);}
+    .btn.primary:hover{background:var(--redis);border-color:var(--redis);color:var(--paper);}
     .btn .ph{font-size:16px;}
-    .icon-btn{width:38px;height:38px;padding:0;justify-content:center;}
-    #star-badge{display:none;align-items:center;gap:6px;font-family:var(--font-mono);font-size:11px;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 10px;text-decoration:none;}
+    #star-badge{display:none;align-items:center;gap:6px;font-family:var(--font-mono);font-size:11px;color:var(--ink-2);background:var(--card);border:1px solid var(--hair);border-radius:4px;padding:6px 10px;text-decoration:none;}
     #star-badge.visible{display:inline-flex;}
-    #star-badge:hover{border-color:var(--accent);color:var(--accent-2);}
-    #star-badge .ph{font-size:14px;color:var(--accent);}
-    #hamburger{display:none;background:var(--surface);border:1px solid var(--border);border-radius:9px;color:var(--muted);width:38px;height:38px;align-items:center;justify-content:center;cursor:pointer;}
+    #star-badge:hover{border-color:var(--ink);color:var(--ink);text-decoration:none;}
+    #star-badge .ph{font-size:14px;color:var(--redis);}
+    #hamburger{display:none;background:var(--card);border:1px solid var(--hair);border-radius:4px;color:var(--ink);width:44px;height:44px;align-items:center;justify-content:center;cursor:pointer;}
+    #hamburger:hover{border-color:var(--ink);}
     #hamburger .ph{font-size:20px;}
-    #mobile-menu{display:none;overflow:hidden;max-height:0;transition:max-height .28s ease;background:var(--bg-2);}
-    #mobile-menu.open{display:block;max-height:520px;border-bottom:1px solid var(--border);}
-    #mobile-menu a{display:flex;align-items:center;gap:9px;padding:14px 24px;border-top:1px solid var(--border);font-family:var(--font-mono);font-size:13px;color:var(--muted);}
-    #mobile-menu a:hover{color:var(--text);background:var(--surface);}
-    #mobile-menu a .ph{color:var(--accent);}
-    @media(max-width:1240px){
-      #star-badge{display:none!important;}
-    }
+    #mobile-menu{display:none;border-bottom:1px solid var(--hair);background:var(--paper-2);}
+    #mobile-menu.open{display:block;}
+    #mobile-menu a{display:flex;align-items:center;gap:9px;min-height:48px;padding:12px 24px;border-top:1px solid var(--hair);font-family:var(--font-mono);font-size:13px;color:var(--ink-2);}
+    #mobile-menu a:hover{color:var(--ink);background:var(--card);text-decoration:none;}
+    #mobile-menu a .ph{color:var(--redis);}
+    @media(max-width:1240px){#star-badge{display:none!important;}}
     @media(max-width:920px){
       .nav-links{display:none;}
       #hamburger{display:flex;}
       .nav-actions .gh-label{display:none;}
-      .nav-actions .btn{width:38px;padding:0;justify-content:center;}
+      .nav-actions .btn{width:44px;padding:0;justify-content:center;}
     }
+    @media(pointer:coarse){.btn{min-height:44px;}.nav-links a{min-height:40px;display:inline-flex;align-items:center;}}
 
     /* ── HERO ────────────────────────────────────────── */
-    .hero{padding:clamp(72px,10vw,118px) 0 40px;position:relative;text-align:center;}
-    .hero-label{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:12px;color:var(--accent-2);letter-spacing:0.12em;text-transform:uppercase;border:1px solid var(--accent-dim);background:var(--accent-dim);padding:6px 12px;border-radius:999px;margin-bottom:26px;}
-    .hero-label .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);}
-    .hero h1{font-size:clamp(2.5rem,5.6vw,4.3rem);line-height:1.05;max-width:860px;margin:0 auto 22px;}
-    .hero h1 .accent{color:var(--accent-2);}
-    .hero-sub{font-size:clamp(1rem,1.5vw,1.18rem);color:var(--muted);max-width:660px;margin:0 auto 36px;}
-    .hero-cta{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px;margin-bottom:26px;}
-    .install-box{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface);border:1px solid var(--border-2);border-radius:10px;padding:6px 6px 6px 16px;min-width:0;flex:1 1 320px;max-width:430px;}
-    .install-box code{font-family:var(--font-mono);font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .copy-btn{display:flex;align-items:center;gap:6px;background:var(--surface-2);border:1px solid var(--border-2);border-radius:7px;padding:8px 12px;font-family:var(--font-mono);font-size:12px;color:var(--muted);cursor:pointer;transition:color .15s,border-color .15s;flex-shrink:0;}
-    .copy-btn:hover{color:var(--accent-2);border-color:var(--accent);}
-    .copy-btn .ph{font-size:16px;}
-    .hero-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
-    .tag{font-family:var(--font-mono);font-size:11px;color:var(--muted);border:1px solid var(--border);background:var(--surface);padding:5px 10px;border-radius:7px;}
-    .tag .ph{font-size:13px;margin-right:4px;vertical-align:-2px;color:var(--accent);}
+    .hero{padding:clamp(64px,9vw,110px) 0 20px;}
+    .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,480px);gap:clamp(28px,5vw,64px);align-items:center;}
+    .hero-label{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:11px;color:var(--ink-2);letter-spacing:0.12em;text-transform:uppercase;border:1px solid var(--hair-2);background:var(--card);padding:6px 12px;border-radius:999px;margin-bottom:24px;}
+    .hero-label .dot{width:7px;height:7px;border-radius:50%;background:var(--redis);}
+    .hero h1{font-size:clamp(2.1rem,4.4vw,3.3rem);line-height:1.1;margin-bottom:22px;letter-spacing:-0.02em;}
+    .hero h1 .accent-red{color:var(--redis);}
+    .hero h1 .accent-blue{color:var(--pg);}
+    .hero-sub{font-size:clamp(1rem,1.4vw,1.13rem);max-width:600px;margin-bottom:30px;}
+    .hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:26px;}
+    .install-box{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--card);border:1px solid var(--hair-2);border-radius:4px;padding:6px 6px 6px 14px;min-width:0;flex:1 1 300px;max-width:430px;}
+    .install-box code{font-family:var(--font-mono);font-size:12.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .copy-btn{display:flex;align-items:center;gap:6px;background:var(--paper-2);border:1px solid var(--hair-2);border-radius:3px;padding:8px 11px;font-family:var(--font-mono);font-size:11.5px;color:var(--ink-2);cursor:pointer;flex-shrink:0;}
+    .copy-btn:hover{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+    .copy-btn .ph{font-size:15px;}
+    @media(pointer:coarse){.copy-btn{min-height:42px;}}
+    .hero-tags{display:flex;flex-wrap:wrap;gap:8px;}
+    .tag{font-family:var(--font-mono);font-size:11px;color:var(--ink-2);border:1px solid var(--hair);background:var(--card);padding:5px 10px;border-radius:3px;}
+    .tag .ph{font-size:13px;margin-right:4px;vertical-align:-2px;color:var(--pg);}
 
-    /* ── STATS STRIP ─────────────────────────────────── */
-    .stats-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-top:44px;}
-    .stat-panel{background:var(--bg-2);padding:22px 24px;}
-    .stat-panel .s-num{font-family:var(--font-mono);font-size:clamp(1.5rem,2.6vw,2.1rem);font-weight:600;color:var(--accent-2);line-height:1;margin-bottom:8px;}
-    .stat-panel .s-label{font-family:var(--font-mono);font-size:11px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;}
-    .stat-panel .s-note{font-size:12.5px;color:var(--dim);line-height:1.5;}
+    /* hero schematic */
+    .schematic{background:var(--card);border:1px solid var(--hair-2);border-radius:var(--radius);box-shadow:0 1px 0 var(--hair),0 18px 40px rgba(25,26,28,0.07);}
+    .schematic svg{width:100%;height:auto;display:block;}
+    .lane-legend{display:flex;flex-wrap:wrap;gap:8px 22px;padding:12px 16px;border-top:1px solid var(--hair);font-family:var(--font-mono);font-size:10.5px;color:var(--ink-3);}
+    .lg{display:inline-flex;align-items:center;gap:7px;}
+    .lg::before{content:'';width:14px;height:4px;border-radius:2px;}
+    .lg.lg-blue::before{background:var(--pg);}
+    .lg.lg-red::before{background:var(--redis);}
+    .diagram-bg{fill:var(--card);}
+    .sk-node{fill:#FFFFFF;stroke:var(--ink);stroke-width:1.5;}
+    .sk-node.pg{stroke:var(--pg);}
+    .sk-node.redis{stroke:var(--redis);}
+    .sk-label{fill:var(--ink);font-family:var(--font-mono);font-size:11px;font-weight:600;}
+    .sk-sub{fill:var(--ink-3);font-family:var(--font-mono);font-size:9px;}
+    .sk-edge{fill:none;stroke:var(--hair-2);stroke-width:1.5;vector-effect:non-scaling-stroke;}
+    .sk-edge.blue{stroke:var(--pg);}
+    .sk-edge.red{stroke:var(--redis);}
+    .sk-edge-label{fill:var(--ink-3);font-family:var(--font-mono);font-size:9px;}
+    .lane-band{fill:var(--pg-tint);}
+    .lane-band.red{fill:var(--redis-tint);}
+
+    /* ── STATS ───────────────────────────────────────── */
+    .stats-strip{display:grid;grid-template-columns:repeat(4,1fr);border-top:2px solid var(--ink);border-bottom:1px solid var(--hair-2);margin-top:clamp(36px,6vw,56px);}
+    .stat-panel{padding:20px 22px 24px;border-left:1px solid var(--hair);}
+    .stat-panel:first-child{border-left:none;}
+    .s-label{font-family:var(--font-mono);font-size:10.5px;font-weight:500;color:var(--ink-3);letter-spacing:0.1em;text-transform:uppercase;}
+    .s-num{font-family:var(--font-mono);font-weight:600;font-size:clamp(1.45rem,2.6vw,2rem);color:var(--ink);margin-top:8px;letter-spacing:-0.02em;line-height:1;}
+    .s-num .suffix{font-size:0.5em;color:var(--ink-3);font-weight:500;}
+    .s-note{font-size:12.5px;color:var(--ink-2);margin-top:8px;line-height:1.5;}
 
     /* ── SECTIONS ────────────────────────────────────── */
-    .section{padding:clamp(64px,9vw,110px) 0;border-top:1px solid var(--border);position:relative;}
-    .sec-head{margin-bottom:48px;}
-    .sec-num{font-family:var(--font-mono);font-size:12px;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:12px;}
-    .sec-num::after{content:'';height:1px;width:44px;background:var(--border-2);}
-    .sec-title{font-size:clamp(1.8rem,3.6vw,2.8rem);margin-bottom:16px;}
-    .sec-body{max-width:640px;font-size:1rem;line-height:1.7;}
-    .sec-body code{font-family:var(--font-mono);font-size:0.85em;color:var(--accent-2);background:var(--surface-2);padding:1px 6px;border-radius:5px;border:1px solid var(--border);}
+    .section{padding:clamp(60px,8vw,96px) 0;border-top:1px solid var(--hair);}
+    .sec-head{margin-bottom:clamp(34px,5vw,46px);}
+    .sec-meta{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+    .sec-num{font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--ink-3);letter-spacing:0.14em;}
+    .sec-num::after{content:'';display:inline-block;width:46px;height:1px;background:var(--hair-2);margin:0 16px 0 12px;vertical-align:middle;}
+    .lane-tag{font-family:var(--font-mono);font-size:10.5px;font-weight:500;color:var(--ink-2);letter-spacing:0.12em;text-transform:uppercase;display:inline-flex;align-items:center;gap:8px;}
+    .lane-tag::before{content:'';width:16px;height:7px;border-radius:2px;background:linear-gradient(90deg,var(--pg) 0 50%,var(--redis) 50% 100%);}
+    .sec-title{font-size:clamp(1.55rem,3.2vw,2.3rem);margin-bottom:16px;}
+    .sec-body{max-width:660px;font-size:1rem;line-height:1.7;}
+    .sec-body code{font-family:var(--font-mono);font-size:0.85em;color:var(--pg);background:var(--pg-tint);padding:1px 6px;border-radius:3px;border:1px solid var(--pg-tint);}
 
-    /* ── ARCH DIAGRAM ────────────────────────────────── */
-    .arch-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:40px;position:relative;overflow:hidden;}
-    .arch-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(232,168,76,0.04),transparent 70%);pointer-events:none;z-index:0;}
-    .arch-wrap svg{width:100%;height:auto;display:block;position:relative;z-index:1;}
-    .arch-node{fill:url(#nodeGrad);stroke:var(--border-2);stroke-width:1.5;}
-    .arch-node-label{fill:var(--text);font-family:var(--font-mono);font-size:12px;font-weight:500;}
-    .arch-node-sub{fill:var(--dim);font-family:var(--font-mono);font-size:9px;}
-    .arch-flow{fill:none;stroke:var(--border-2);stroke-width:1.5;vector-effect:non-scaling-stroke;}
-    .arch-flow-dash{fill:none;stroke:var(--accent);stroke-width:1.6;stroke-linecap:round;opacity:0.75;vector-effect:non-scaling-stroke;}
-    .arch-flow-green{fill:none;stroke:var(--green);stroke-width:1.6;stroke-linecap:round;opacity:0.75;vector-effect:non-scaling-stroke;}
-    .arch-label{fill:var(--dim);font-family:var(--font-mono);font-size:9px;pointer-events:none;}
-    .arch-dot{opacity:0.9;}
-    .arch-note{display:flex;gap:10px;align-items:flex-start;font-family:var(--font-mono);font-size:12px;color:var(--dim);border:1px dashed var(--border-2);border-radius:var(--radius-sm);padding:12px 14px;margin-top:16px;position:relative;z-index:1;}
-    .arch-note .ph{color:var(--accent);flex-shrink:0;margin-top:1px;}
+    /* ── DIAGRAM WRAPPERS ────────────────────────────── */
+    .diagram{background:var(--card);border:1px solid var(--hair-2);border-radius:var(--radius);padding:18px;margin-bottom:36px;}
+    .diagram svg{width:100%;height:auto;display:block;}
+    .arch-note{display:flex;gap:10px;align-items:flex-start;font-family:var(--font-mono);font-size:11.5px;color:var(--ink-2);border:1px dashed var(--hair-2);border-radius:var(--radius);padding:12px 14px;margin-top:14px;background:var(--paper-2);}
+    .arch-note .ph{color:var(--redis);flex-shrink:0;margin-top:1px;}
+    .arch-node{fill:#FFFFFF;stroke:var(--hair-2);stroke-width:1.5;}
+    .arch-node.pg{stroke:var(--pg);}
+    .arch-node.redis{stroke:var(--redis);}
+    .arch-node.handler{stroke:var(--ink-3);stroke-width:1.5;stroke-dasharray:5 3;}
+    .arch-node-label{fill:var(--ink);font-family:var(--font-mono);font-size:12px;font-weight:500;}
+    .arch-node-sub{fill:var(--ink-3);font-family:var(--font-mono);font-size:9px;}
+    .arch-flow{fill:none;stroke:var(--hair-2);stroke-width:1.5;vector-effect:non-scaling-stroke;}
+    .arch-flow.blue{stroke:var(--pg);}
+    .arch-flow.red{stroke:var(--redis);}
+    .arch-flow.ok{stroke:var(--ok);}
+    .arch-label{fill:var(--ink-3);font-family:var(--font-mono);font-size:9px;pointer-events:none;}
+    .pg-cyl{fill:var(--paper);stroke:var(--pg);stroke-width:1.5;}
+    .redis-cyl{fill:var(--paper);stroke:var(--redis);stroke-width:1.5;}
 
-    .subsys-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;}
-    .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:border-color .2s,transform .2s;}
-    .panel:hover{border-color:var(--border-2);transform:translateY(-2px);}
-    .panel .p-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-    .panel .p-icon{width:34px;height:34px;border-radius:9px;background:var(--accent-dim);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
-    .panel .p-icon.green{background:var(--green-dim);color:var(--green);}
-    .panel .p-icon.cyan{background:var(--cyan-dim);color:var(--cyan);}
-    .panel .p-icon.red{background:var(--red-dim);color:var(--red);}
-    .panel h3{font-size:16px;font-weight:600;letter-spacing:-0.01em;}
-    .panel .p-meta{font-family:var(--font-mono);font-size:10px;color:var(--accent);margin-bottom:10px;letter-spacing:0.08em;text-transform:uppercase;}
-    .panel p{font-size:14px;line-height:1.65;color:var(--muted);}
-    .panel p code{font-family:var(--font-mono);font-size:0.85em;color:var(--accent-2);background:var(--surface-2);padding:1px 5px;border-radius:4px;border:1px solid var(--border);}
+    .subsys-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;}
+    .panel{container-type:inline-size;background:var(--card);border:1px solid var(--hair);border-radius:var(--radius);padding:24px;border-top:3px solid var(--hair-2);}
+    .panel.blue{border-top-color:var(--pg);}
+    .panel.red{border-top-color:var(--redis);}
+    .panel.green{border-top-color:var(--ok);}
+    .panel .p-head{display:flex;align-items:center;gap:11px;margin-bottom:10px;}
+    .panel .p-icon{width:32px;height:32px;border-radius:4px;background:var(--pg-tint);color:var(--pg);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+    .panel .p-icon.red{background:var(--redis-tint);color:var(--redis);}
+    .panel .p-icon.green{background:var(--ok-tint);color:var(--ok);}
+    .panel h3{font-size:15px;font-weight:600;letter-spacing:-0.01em;}
+    .panel .p-meta{font-family:var(--font-mono);font-size:10px;color:var(--ink-3);margin-bottom:10px;letter-spacing:0.08em;text-transform:uppercase;}
+    .panel p{font-size:14px;line-height:1.66;}
+    .panel p code{font-family:var(--font-mono);font-size:0.85em;color:var(--pg);background:var(--pg-tint);padding:1px 5px;border-radius:3px;}
+    @container (max-width:340px){.panel{padding:20px 18px;}.panel p{font-size:13px;}}
 
     /* ── LIFECYCLE ───────────────────────────────────── */
-    .life-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:40px;position:relative;overflow:hidden;}
-    .life-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 50%,rgba(232,168,76,0.03),transparent 70%);pointer-events:none;z-index:0;}
-    .life-wrap svg{width:100%;height:auto;display:block;position:relative;z-index:1;}
-    .life-node{fill:url(#lifeNodeGrad);stroke:var(--border-2);stroke-width:1.5;}
-    .life-node-label{fill:var(--text);font-family:var(--font-mono);font-size:12px;}
-    .life-edge{fill:none;stroke:var(--border-2);stroke-width:1.4;vector-effect:non-scaling-stroke;}
-    .life-edge-label{fill:var(--dim);font-family:var(--font-mono);font-size:9px;pointer-events:none;}
+    .life-node{fill:#FFFFFF;stroke:var(--hair-2);stroke-width:1.5;}
+    .life-node.running{stroke:var(--pg);stroke-width:2.5;}
+    .life-node.ok{stroke:var(--ok);stroke-width:2;}
+    .life-node.err{stroke:var(--redis);stroke-width:2;}
+    .life-node.dead{stroke:var(--redis);stroke-width:2.5;}
+    .life-node.dashed{stroke:var(--ink-3);stroke-dasharray:5 3;}
+    .life-node-label{fill:var(--ink);font-family:var(--font-mono);font-size:12px;font-weight:500;}
+    .life-node-label.ok{fill:var(--ok);}
+    .life-node-label.err{fill:var(--redis);}
+    .life-node-label.act{fill:var(--pg);}
+    .life-edge{fill:none;stroke:var(--hair-2);stroke-width:1.4;vector-effect:non-scaling-stroke;}
+    .life-edge.ok{stroke:var(--ok);}
+    .life-edge.err{stroke:var(--redis);}
+    .life-edge.act{stroke:var(--pg);}
+    .life-edge-label{fill:var(--ink-3);font-family:var(--font-mono);font-size:9px;pointer-events:none;}
+    .life-edge-label.ok{fill:var(--ok);}
+    .life-edge-label.err{fill:var(--redis);}
+    .life-edge-label.act{fill:var(--pg);}
+    .life-run{fill:none;stroke:var(--pg);stroke-width:5;opacity:0.12;}
+    .life-run-glow{fill:url(#lifeGlow);opacity:0.35;}
 
     /* ── FEATURES ────────────────────────────────────── */
-    .feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:20px;}
-    .feat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px;position:relative;overflow:hidden;}
-    .feat::before{content:'';position:absolute;inset:0;background:linear-gradient(120deg,rgba(232,168,76,0.05),transparent 55%);opacity:0;transition:opacity .25s;}
-    .feat:hover::before{opacity:1;}
-    .feat .f-top{display:flex;align-items:center;gap:12px;margin-bottom:14px;position:relative;}
-    .feat .f-icon{width:38px;height:38px;border-radius:10px;background:var(--accent-dim);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:20px;}
-    .feat .f-icon.cyan{background:var(--cyan-dim);color:var(--cyan);}
-    .feat .f-icon.green{background:var(--green-dim);color:var(--green);}
-    .feat .f-icon.red{background:var(--red-dim);color:var(--red);}
-    .feat .f-num{font-family:var(--font-mono);font-size:11px;color:var(--dim);margin-left:auto;}
-    .feat h3{font-size:15px;font-weight:600;margin-bottom:8px;}
-    .feat p{font-size:13.5px;line-height:1.65;position:relative;}
-    .feat p code{font-family:var(--font-mono);font-size:0.85em;color:var(--accent-2);background:var(--surface-2);padding:1px 5px;border-radius:4px;border:1px solid var(--border);}
+    .feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px;}
+    .feat{container-type:inline-size;background:var(--card);border:1px solid var(--hair);border-top:3px solid var(--hair-2);border-radius:var(--radius);padding:24px 26px;}
+    .feat.blue{border-top-color:var(--pg);}
+    .feat.red{border-top-color:var(--redis);}
+    .feat.green{border-top-color:var(--ok);}
+    .feat .f-top{display:flex;align-items:center;gap:11px;margin-bottom:12px;}
+    .feat .f-icon{width:34px;height:34px;border-radius:4px;background:var(--pg-tint);color:var(--pg);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+    .feat .f-icon.red{background:var(--redis-tint);color:var(--redis);}
+    .feat .f-icon.green{background:var(--ok-tint);color:var(--ok);}
+    .feat .f-num{font-family:var(--font-mono);font-size:11px;color:var(--ink-3);margin-inline-start:auto;}
+    .feat h3{font-size:14.5px;font-weight:600;margin-bottom:8px;}
+    .feat p{font-size:13.5px;line-height:1.66;}
+    .feat p code{font-family:var(--font-mono);font-size:0.85em;color:var(--pg);background:var(--pg-tint);padding:1px 5px;border-radius:3px;}
+    .feat .f-note{font-size:13.5px;line-height:1.66;}
+    @container (max-width:380px){.feat{padding:20px;}.feat h3{font-size:13.5px;}}
 
     /* ── CODE / TABS ─────────────────────────────────── */
-    .tabs{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface);}
-    .tab-bar{display:flex;gap:0;overflow-x:auto;border-bottom:1px solid var(--border);background:var(--bg-2);}
-    .tab-btn{font-family:var(--font-mono);font-size:12px;padding:12px 18px;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;white-space:nowrap;transition:color .15s,border-color .15s;}
-    .tab-btn:hover{color:var(--text);}
-    .tab-btn.active{color:var(--accent-2);border-bottom-color:var(--accent);}
+    .tabs{border:1px solid var(--hair-2);border-radius:var(--radius);overflow:hidden;background:var(--card);}
+    .tab-bar{display:flex;gap:0;overflow-x:auto;border-bottom:1px solid var(--hair);background:var(--paper-2);}
+    .tab-btn{font-family:var(--font-mono);font-size:12px;padding:12px 18px;background:none;border:none;border-bottom:2px solid transparent;color:var(--ink-2);cursor:pointer;white-space:nowrap;}
+    .tab-btn:hover{color:var(--ink);}
+    .tab-btn.active{color:var(--ink);border-bottom-color:var(--redis);}
+    @media(pointer:coarse){.tab-btn{min-height:44px;}}
     .tab-panel{display:none;}
     .tab-panel.active{display:block;}
-    .code-wrap{position:relative;}
-    .code-copy{position:absolute;top:12px;right:12px;z-index:3;background:var(--surface-2);border:1px solid var(--border-2);border-radius:7px;padding:5px 10px;font-family:var(--font-mono);font-size:11px;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:6px;transition:color .15s,border-color .15s;}
-    .code-copy:hover{color:var(--accent-2);border-color:var(--accent);}
-    .code-copy .ph{font-size:14px;}
-    .code-wrap pre{margin:0;padding:20px 24px;overflow-x:auto;}
-    .code-wrap pre code{font-family:var(--font-mono);font-size:12.5px;line-height:1.7;background:transparent;color:var(--text);white-space:pre;}
+    .code-wrap{position:relative;background:var(--card);}
+    .code-copy{position:absolute;top:10px;inset-inline-end:10px;z-index:3;background:var(--paper-2);border:1px solid var(--hair-2);border-radius:3px;padding:4px 9px;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-2);cursor:pointer;display:flex;align-items:center;gap:6px;}
+    .code-copy:hover{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+    .code-copy .ph{font-size:13px;}
+    @media(pointer:coarse){.code-copy{min-height:34px;}}
+    .code-wrap pre{margin:0;padding:18px 20px;overflow-x:auto;}
+    .code-wrap pre code{font-family:var(--font-mono);font-size:12.5px;line-height:1.7;background:transparent;color:var(--ink);white-space:pre;}
     .hljs{background:transparent !important;}
 
     /* ── TABLES ──────────────────────────────────────── */
-    .table-scroll{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);-webkit-overflow-scrolling:touch;}
+    .table-scroll{overflow-x:auto;border:1px solid var(--hair-2);border-radius:var(--radius);background:var(--card);-webkit-overflow-scrolling:touch;}
     table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:520px;}
-    table.tbl th{font-family:var(--font-mono);font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--dim);text-align:left;padding:13px 18px;border-bottom:1px solid var(--border-2);background:var(--bg-2);white-space:nowrap;}
-    table.tbl td{padding:12px 18px;border-bottom:1px solid var(--border);color:var(--muted);vertical-align:top;font-size:13px;}
+    table.tbl th{font-family:var(--font-mono);font-size:10.5px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-3);text-align:start;padding:12px 18px;border-bottom:1px solid var(--hair-2);background:var(--paper-2);white-space:nowrap;}
+    table.tbl td{padding:11px 18px;border-bottom:1px solid var(--hair);color:var(--ink-2);vertical-align:top;font-size:13px;}
     table.tbl tr:last-child td{border-bottom:none;}
-    table.tbl td:first-child{font-family:var(--font-mono);color:var(--text);font-size:12.5px;white-space:nowrap;}
-    table.tbl .yes{color:var(--green);display:inline-flex;align-items:center;gap:5px;}
+    table.tbl td:first-child{font-family:var(--font-mono);color:var(--ink);font-size:12px;white-space:nowrap;}
+    table.tbl .yes{color:var(--ok);display:inline-flex;align-items:center;gap:5px;}
     table.tbl .yes .ph{font-size:15px;}
-    table.tbl .no{color:var(--dim);}
-    table.tbl .kyu-col{background:var(--accent-dim);color:var(--accent-2);}
-    th.kyu-col-head{color:var(--accent-2) !important;border-bottom:2px solid var(--accent);}
+    table.tbl .no{color:var(--ink-3);}
+    table.tbl .kyu-col{background:var(--pg-tint);color:var(--pg);font-weight:500;}
+    th.kyu-col-head{color:var(--pg) !important;border-bottom:2px solid var(--pg);}
 
-    /* ── SHOT / MEDIA ────────────────────────────────── */
-    .shot{border:1px solid var(--border-2);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);background:var(--surface);}
+    /* ── SHOT ────────────────────────────────────────── */
+    .shot{border:1px solid var(--hair-2);border-radius:var(--radius);overflow:hidden;box-shadow:0 18px 40px rgba(25,26,28,0.08);background:var(--card);}
     .shot img{width:100%;display:block;}
-    .shot-caption{display:flex;align-items:center;gap:8px;padding:12px 16px;border-top:1px solid var(--border);font-family:var(--font-mono);font-size:11px;color:var(--dim);background:var(--bg-2);}
-    .shot-caption .ph{color:var(--green);}
+    .shot-caption{display:flex;align-items:center;gap:8px;padding:11px 16px;border-top:1px solid var(--hair);font-family:var(--font-mono);font-size:11px;color:var(--ink-2);background:var(--paper-2);}
+    .shot-caption .ph{color:var(--ok);}
 
     /* ── BENCH ───────────────────────────────────────── */
-    .bench-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:20px;}
-    .bench-table th:first-child{width:130px;}
-    .bench-note{margin-top:18px;display:flex;gap:10px;align-items:flex-start;font-family:var(--font-mono);font-size:12px;color:var(--dim);border:1px dashed var(--border-2);border-radius:var(--radius-sm);padding:12px 14px;}
-    .bench-note .ph{color:var(--accent);flex-shrink:0;margin-top:1px;}
-    .bench-note a{text-decoration:underline;text-underline-offset:3px;}
+    .bench-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;}
+    .bench-note{margin-top:18px;display:flex;gap:10px;align-items:flex-start;font-family:var(--font-mono);font-size:11.5px;color:var(--ink-2);border:1px dashed var(--hair-2);border-radius:var(--radius);padding:12px 14px;background:var(--paper-2);}
+    .bench-note .ph{color:var(--redis);flex-shrink:0;margin-top:1px;}
+    .bench-note a{color:var(--pg);text-decoration:underline;text-underline-offset:3px;}
 
     /* ── SPECTRUM ────────────────────────────────────── */
-    .spectrum{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:40px;}
+    .spectrum{background:var(--card);border:1px solid var(--hair-2);border-radius:var(--radius);padding:22px;margin-bottom:36px;}
     .spectrum svg{width:100%;height:auto;display:block;}
-    .spec-line{stroke:var(--border-2);stroke-width:2;}
-    .spec-dot{fill:var(--bg-2);stroke:var(--dim);stroke-width:1.5;}
-    .spec-dot.kyu{fill:var(--accent);stroke:var(--accent);}
+    .spec-line{stroke:var(--hair-2);stroke-width:2;}
+    .spec-dot{fill:var(--card);stroke:var(--ink-3);stroke-width:1.5;}
+    .spec-dot.kyu{stroke:none;}
+    .spec-label{font-family:var(--font-mono);}
 
     /* ── FOOTER ──────────────────────────────────────── */
-    footer{border-top:1px solid var(--border);padding:48px 0 40px;}
-    .foot-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px;margin-bottom:26px;}
+    footer{border-top:1px solid var(--hair);padding:44px 0 40px;}
+    .foot-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px;margin-bottom:24px;}
     .foot-brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
-    .foot-brand .brand-title{color:var(--text);font-weight:700;font-size:17px;letter-spacing:0.01em;}
-    .foot-brand span{font-size:12px;color:var(--dim);}
+    .foot-brand .brand-title{color:var(--ink);font-weight:600;font-size:16px;letter-spacing:0.01em;}
+    .foot-brand span{font-size:12px;color:var(--ink-3);}
     .foot-links{display:flex;gap:22px;align-items:center;flex-wrap:wrap;}
-    .foot-links a{font-size:13px;color:var(--muted);}
-    .foot-links a:hover{color:var(--accent-2);}
-    .foot-bottom{border-top:1px solid var(--border);padding-top:20px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;}
-    .foot-bottom p{font-family:var(--font-mono);font-size:11px;color:var(--dim);}
+    .foot-links a{font-size:13px;color:var(--ink-2);}
+    .foot-links a:hover{color:var(--redis);}
+    .foot-bottom{border-top:1px solid var(--hair);padding-top:18px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;}
+    .foot-bottom p{font-family:var(--font-mono);font-size:11px;color:var(--ink-3);}
 
-    /* ── REVEAL ──────────────────────────────────────── */
-    .reveal{opacity:0;transform:translateY(22px);}
-    .reveal.in{opacity:1;transform:none;}
-    @media(prefers-reduced-motion:reduce){
-      .reveal{opacity:1;transform:none;}
-      *{animation:none !important;transition:none !important;}
-    }
-
-    @media(max-width:920px){
+    @media(max-width:980px){
+      .hero-grid{grid-template-columns:1fr;}
+      .schematic{order:-1;}
       .stats-strip{grid-template-columns:repeat(2,1fr);}
+      .stat-panel:nth-child(3){border-left:none;}
+      .stat-panel:nth-child(n+3){border-top:1px solid var(--hair);}
     }
     @media(max-width:560px){
       .stats-strip{grid-template-columns:1fr;}
+      .stat-panel{border-left:none;border-top:1px solid var(--hair);}
+      .stat-panel:first-child{border-top:none;}
       .feat-grid{grid-template-columns:1fr;}
     }
   </style>
@@ -250,6 +304,7 @@
 <!-- NAV -->
 <nav id="nav">
   <div class="nav-inner">
+    <a class="brand" href="#top"><span class="dot"></span>kyu</a>
     <div class="nav-links">
       <a href="#architecture">architecture</a>
       <a href="#lifecycle">lifecycle</a>
@@ -261,7 +316,7 @@
     <div class="nav-actions">
       <a id="star-badge" href="https://github.com/codetesla51/kyu" target="_blank" rel="noopener"><i class="ph ph-star"></i><span id="star-count">…</span></a>
       <a href="https://github.com/codetesla51/kyu" target="_blank" rel="noopener" class="btn"><i class="ph ph-github-logo"></i><span class="gh-label">GitHub</span></a>
-      <button id="hamburger" aria-label="Open menu"><i class="ph ph-list"></i></button>
+      <button id="hamburger" aria-label="Open menu" aria-expanded="false"><i class="ph ph-list"></i></button>
     </div>
   </div>
   <div id="mobile-menu">
@@ -279,30 +334,68 @@
 <!-- HERO -->
 <header class="hero" id="top">
   <div class="container">
-    <div class="hero-inner" id="hero-copy">
-      <span class="hero-label" id="hero-label"><span class="dot"></span>durable job queue for go</span>
-      <h1 id="hero-title">Stop losing jobs when <span class="accent">Redis flushes</span>.</h1>
-      <p class="hero-sub" id="hero-sub">In-memory queues are fast until a flush takes your work with it. Postgres-only queues are durable but slow. Kyu keeps every job in Postgres and dispatches through Redis: durable when it matters, fast where it counts.</p>
-      <div class="hero-cta" id="hero-cta">
-        <div class="install-box">
-          <code>go get github.com/codetesla51/kyu</code>
-          <button class="copy-btn" onclick="copyText(this.parentElement.querySelector('code'),this)"><i class="ph ph-copy"></i>copy</button>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <span class="hero-label"><span class="dot"></span>durable job queue for go</span>
+        <h1>Jobs survive a <span class="accent-red">Redis flush</span>.<br>Dispatch stays <span class="accent-blue">fast</span>.</h1>
+        <p class="hero-sub">In-memory queues are fast until a flush takes your work with it. Postgres-only queues are durable but slow. Kyu keeps every job in Postgres and dispatches through Redis: durable when it matters, fast where it counts.</p>
+        <div class="hero-cta">
+          <div class="install-box">
+            <code>go get github.com/codetesla51/kyu</code>
+            <button class="copy-btn" onclick="copyText(this.parentElement.querySelector('code'),this)" aria-label="Copy install command"><i class="ph ph-copy"></i>copy</button>
+          </div>
+          <a href="https://github.com/codetesla51/kyu" target="_blank" rel="noopener" class="btn primary"><i class="ph ph-github-logo"></i>Read the code</a>
         </div>
-        <a href="https://github.com/codetesla51/kyu" target="_blank" rel="noopener" class="btn"><i class="ph ph-github-logo"></i>Read the code</a>
+        <div class="hero-tags">
+          <span class="tag"><i class="ph ph-shield-check"></i>durable by design</span>
+          <span class="tag"><i class="ph ph-lightning"></i>~1,250 jobs/s</span>
+          <span class="tag"><i class="ph ph-terminal"></i>CLI + dashboard included</span>
+          <span class="tag"><i class="ph ph-check"></i>MIT · no SaaS</span>
+        </div>
       </div>
-      <div class="hero-tags" id="hero-tags">
-        <span class="tag"><i class="ph ph-shield-check"></i>durable by design</span>
-        <span class="tag"><i class="ph ph-lightning"></i>~1,250 jobs/s</span>
-        <span class="tag"><i class="ph ph-terminal"></i>CLI + dashboard included</span>
-        <span class="tag"><i class="ph ph-check"></i>MIT · no SaaS</span>
+
+      <div class="schematic" role="img" aria-label="Kyu moves a job through two lanes: Postgres holds the durable record, Redis holds a fast index of job IDs, and a worker reads both.">
+        <svg viewBox="0 0 560 300">
+          <rect class="diagram-bg" x="0" y="0" width="560" height="300" rx="6"/>
+          <rect class="lane-band" x="112" y="24" width="336" height="30" rx="3"/>
+          <rect class="lane-band red" x="112" y="246" width="336" height="30" rx="3"/>
+          <rect class="sk-node" x="16" y="128" width="96" height="44" rx="4"/>
+          <text x="64" y="146" class="sk-label" text-anchor="middle">your app</text>
+          <text x="64" y="161" class="sk-sub" text-anchor="middle">Enqueue()</text>
+          <rect class="sk-node pg" x="176" y="18" width="128" height="42" rx="4"/>
+          <text x="240" y="37" class="sk-label" text-anchor="middle">Postgres</text>
+          <text x="240" y="51" class="sk-sub" text-anchor="middle">ledger</text>
+          <rect class="sk-node redis" x="176" y="240" width="128" height="42" rx="4"/>
+          <text x="240" y="259" class="sk-label" text-anchor="middle">Redis</text>
+          <text x="240" y="273" class="sk-sub" text-anchor="middle">index</text>
+          <rect class="sk-node" x="448" y="128" width="96" height="44" rx="4"/>
+          <text x="496" y="146" class="sk-label" text-anchor="middle">worker</text>
+          <text x="496" y="161" class="sk-sub" text-anchor="middle">N goroutines</text>
+          <path d="M112,146 L140,146 L140,39 L176,39" class="sk-edge blue" marker-end="url(#arrBlue)"/>
+          <text x="140" y="14" class="sk-edge-label" text-anchor="middle">insert record</text>
+          <path d="M304,39 L404,39 L404,146 L448,146" class="sk-edge blue" marker-end="url(#arrBlue)"/>
+          <text x="380" y="32" class="sk-edge-label" text-anchor="middle">fetch record</text>
+          <path d="M112,146 L140,146 L140,261 L176,261" class="sk-edge red" marker-end="url(#arrRed)"/>
+          <text x="140" y="294" class="sk-edge-label" text-anchor="middle">zadd id · priority</text>
+          <path d="M304,261 L404,261 L404,146 L448,146" class="sk-edge red" marker-end="url(#arrRed)"/>
+          <text x="380" y="254" class="sk-edge-label" text-anchor="middle">pop id</text>
+          <defs>
+            <marker id="arrBlue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#2E5E8C"/></marker>
+            <marker id="arrRed" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#B23A1E"/></marker>
+          </defs>
+        </svg>
+        <div class="lane-legend">
+          <span class="lg lg-blue">blue · durable state in postgres</span>
+          <span class="lg lg-red">red · fast signal in redis</span>
+        </div>
       </div>
     </div>
 
-    <div class="stats-strip" id="stats-strip">
-      <div class="stat-panel"><div class="s-num">1,250<span style="font-size:0.5em;">/s</span></div><div class="s-label">redis throughput</div><div class="s-note">p99 41.9ms on the dispatch lane</div></div>
-      <div class="stat-panel"><div class="s-num">749.9<span style="font-size:0.5em;">/s</span></div><div class="s-label">postgres durability</div><div class="s-note">single node · p99 966ms</div></div>
-      <div class="stat-panel"><div class="s-num">100%</div><div class="s-label">job delivery</div><div class="s-note">zero silent loss across every workload</div></div>
-      <div class="stat-panel"><div class="s-num">52ns</div><div class="s-label">dispatch overhead</div><div class="s-note">register cost · 0 allocs</div></div>
+    <div class="stats-strip">
+      <div class="stat-panel"><div class="s-label">redis throughput</div><div class="s-num">1,250<span class="suffix">/s</span></div><div class="s-note">p99 41.9ms on the dispatch lane</div></div>
+      <div class="stat-panel"><div class="s-label">postgres durability</div><div class="s-num">749.9<span class="suffix">/s</span></div><div class="s-note">single node · p99 966ms</div></div>
+      <div class="stat-panel"><div class="s-label">job delivery</div><div class="s-num">100<span class="suffix">%</span></div><div class="s-note">zero silent loss across every workload</div></div>
+      <div class="stat-panel"><div class="s-label">dispatch overhead</div><div class="s-num">52<span class="suffix">ns</span></div><div class="s-note">register cost · 0 allocs</div></div>
     </div>
   </div>
 </header>
@@ -310,97 +403,72 @@
 <!-- ARCHITECTURE -->
 <section class="section" id="architecture">
   <div class="container">
-    <div class="sec-head reveal">
-      <div class="sec-num">01 / architecture</div>
+    <div class="sec-head">
+      <div class="sec-meta"><span class="sec-num">01</span><span class="lane-tag">postgres + redis</span></div>
       <h2 class="sec-title">Two backends. One job queue. Zero coordination code.</h2>
       <p class="sec-body">Kyu runs five concurrent subsystems after <code>Start()</code>. They don't talk to each other — each one talks to Postgres or Redis. That shared state <em>is</em> the coordination layer.</p>
     </div>
 
-    <div class="arch-wrap reveal">
-      <svg id="arch-svg" viewBox="0 0 880 300" role="img" aria-label="Animated pipeline: app writes a job to Postgres and pushes its ID to Redis, a worker pops the ID, fetches the record, runs the handler, and writes the result back to Postgres.">
+    <div class="diagram">
+      <svg id="arch-svg" viewBox="0 0 880 300" role="img" aria-label="Pipeline: the app writes a job to Postgres and pushes its ID to Redis, a worker pops the ID, fetches the record, runs the handler, and writes the result back to Postgres.">
         <defs>
-          <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#3A4047"/></marker>
-          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-          <filter id="glowStrong" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-          <radialGradient id="bgGrad" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="#1A1F24"/><stop offset="100%" stop-color="#14171A"/></radialGradient>
-          <linearGradient id="nodeGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1E2228"/><stop offset="100%" stop-color="#16191E"/></linearGradient>
-          <linearGradient id="pgGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1A2E24"/><stop offset="100%" stop-color="#141E18"/></linearGradient>
-          <linearGradient id="redisGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2E2A1A"/><stop offset="100%" stop-color="#1E1A14"/></linearGradient>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#C6BEB0"/></marker>
+          <linearGradient id="nodeGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#F7F4EC"/></linearGradient>
         </defs>
-        <rect x="0" y="0" width="880" height="300" rx="12" fill="url(#bgGrad)"/>
+        <rect class="diagram-bg" x="0" y="0" width="880" height="300" rx="8"/>
 
-        <!-- App -->
         <g>
-          <rect x="18" y="122" width="118" height="48" rx="9" class="arch-node"/>
+          <rect x="18" y="122" width="118" height="48" rx="6" class="arch-node"/>
           <text x="77" y="140" class="arch-node-label" text-anchor="middle" dominant-baseline="middle">Your App</text>
           <text x="77" y="157" class="arch-node-sub" text-anchor="middle" dominant-baseline="middle">Enqueue()</text>
         </g>
 
-        <!-- Postgres -->
         <g>
-          <rect x="300" y="40" width="120" height="46" rx="8" class="arch-node" stroke="#4CAF82" fill="url(#pgGrad)"/>
-          <ellipse cx="360" cy="40" rx="60" ry="13" fill="#1B1E22" stroke="#4CAF82" stroke-width="1.5"/>
-          <ellipse cx="360" cy="86" rx="60" ry="13" fill="#1B1E22" stroke="#4CAF82" stroke-width="1.5"/>
+          <rect x="300" y="40" width="120" height="46" rx="6" class="arch-node pg"/>
+          <ellipse cx="360" cy="40" rx="60" ry="13" class="pg-cyl"/>
+          <ellipse cx="360" cy="86" rx="60" ry="13" class="pg-cyl"/>
           <text x="360" y="66" class="arch-node-label" text-anchor="middle" dominant-baseline="middle">PostgreSQL</text>
           <text x="360" y="24" class="arch-node-sub" text-anchor="middle">source of truth</text>
         </g>
 
-        <!-- Redis -->
         <g>
-          <rect x="300" y="232" width="120" height="46" rx="8" class="arch-node" stroke="#E8A84C" fill="url(#redisGrad)"/>
-          <ellipse cx="360" cy="232" rx="60" ry="13" fill="#1B1E22" stroke="#E8A84C" stroke-width="1.5"/>
-          <ellipse cx="360" cy="278" rx="60" ry="13" fill="#1B1E22" stroke="#E8A84C" stroke-width="1.5"/>
+          <rect x="300" y="232" width="120" height="46" rx="6" class="arch-node redis"/>
+          <ellipse cx="360" cy="232" rx="60" ry="13" class="redis-cyl"/>
+          <ellipse cx="360" cy="278" rx="60" ry="13" class="redis-cyl"/>
           <text x="360" y="258" class="arch-node-label" text-anchor="middle" dominant-baseline="middle">Redis</text>
           <text x="360" y="216" class="arch-node-sub" text-anchor="middle">priority index</text>
         </g>
 
-        <!-- Worker Pool -->
         <g>
-          <rect x="520" y="122" width="128" height="48" rx="9" class="arch-node"/>
+          <rect x="520" y="122" width="128" height="48" rx="6" class="arch-node"/>
           <text x="584" y="140" class="arch-node-label" text-anchor="middle" dominant-baseline="middle">Worker Pool</text>
           <text x="584" y="157" class="arch-node-sub" text-anchor="middle" dominant-baseline="middle">N goroutines</text>
         </g>
 
-        <!-- Handler -->
         <g>
-          <rect x="712" y="122" width="140" height="48" rx="9" class="arch-node" stroke="#3A4047" stroke-width="1.5" stroke-dasharray="5 3"/>
+          <rect x="712" y="122" width="140" height="48" rx="6" class="arch-node handler"/>
           <text x="782" y="140" class="arch-node-label" text-anchor="middle" dominant-baseline="middle">Handler fn()</text>
           <text x="782" y="157" class="arch-node-sub" text-anchor="middle" dominant-baseline="middle">your code</text>
         </g>
 
-        <!-- flow paths -->
-        <!-- app -> PG -->
-        <path id="fp-app-pg" d="M136,130 C200,130 220,66 300,66" fill="none" class="arch-flow" marker-end="url(#arr)"/>
+        <path d="M136,130 C200,130 220,66 300,66" fill="none" class="arch-flow" marker-end="url(#arr)"/>
         <text x="212" y="106" class="arch-label" text-anchor="middle">insert record</text>
-        <path id="fd-app-pg" d="M136,130 C200,130 220,66 300,66" fill="none" class="arch-flow-dash"/>
-        <!-- app -> Redis -->
-        <path id="fp-app-r" d="M136,162 C200,162 220,254 300,254" fill="none" class="arch-flow" marker-end="url(#arr)"/>
+        <path d="M136,130 C200,130 220,66 300,66" fill="none" class="arch-flow blue"/>
+        <path d="M136,162 C200,162 220,254 300,254" fill="none" class="arch-flow" marker-end="url(#arr)"/>
         <text x="212" y="222" class="arch-label" text-anchor="middle">zadd ID · score=priority</text>
-        <path id="fd-app-r" d="M136,162 C200,162 220,254 300,254" fill="none" class="arch-flow-dash"/>
-        <!-- PG -> worker -->
-        <path id="fp-pg-w" d="M420,66 C500,66 500,122 520,138" fill="none" class="arch-flow" marker-end="url(#arr)"/>
+        <path d="M136,162 C200,162 220,254 300,254" fill="none" class="arch-flow red"/>
+        <path d="M420,66 C500,66 500,122 520,138" fill="none" class="arch-flow" marker-end="url(#arr)"/>
         <text x="472" y="80" class="arch-label" text-anchor="middle">fetch record</text>
-        <path id="fd-pg-w" d="M420,66 C500,66 500,122 520,138" fill="none" class="arch-flow-dash"/>
-        <!-- Redis -> worker -->
-        <path id="fp-r-w" d="M420,254 C500,254 500,198 520,176" fill="none" class="arch-flow" marker-end="url(#arr)"/>
+        <path d="M420,66 C500,66 500,122 520,138" fill="none" class="arch-flow blue"/>
+        <path d="M420,254 C500,254 500,198 520,176" fill="none" class="arch-flow" marker-end="url(#arr)"/>
         <text x="470" y="266" class="arch-label" text-anchor="middle">pop ID</text>
-        <path id="fd-r-w" d="M420,254 C500,254 500,198 520,176" fill="none" class="arch-flow-dash"/>
-        <!-- worker -> handler -->
-        <path id="fp-w-h" d="M648,146 C668,146 690,146 712,146" fill="none" class="arch-flow" marker-end="url(#arr)"/>
+        <path d="M420,254 C500,254 500,198 520,176" fill="none" class="arch-flow red"/>
+        <path d="M648,146 C668,146 690,146 712,146" fill="none" class="arch-flow" marker-end="url(#arr)"/>
         <text x="680" y="138" class="arch-label" text-anchor="middle">run</text>
-        <path id="fd-w-h" d="M648,146 C668,146 690,146 712,146" fill="none" class="arch-flow-dash"/>
-        <!-- handler -> PG (update status) -->
-        <path id="fp-h-pg" d="M782,122 C782,20 300,20 360,86" fill="none" class="arch-flow" stroke-dasharray="4 3" marker-end="url(#arr)"/>
+        <path d="M648,146 C668,146 690,146 712,146" fill="none" class="arch-flow"/>
+        <path d="M782,122 C782,20 300,20 360,86" fill="none" class="arch-flow" stroke-dasharray="4 3" marker-end="url(#arr)"/>
         <text x="560" y="30" class="arch-label" text-anchor="middle">update status · guarded by locked_by</text>
-        <path id="fd-h-pg" d="M782,122 C782,20 300,20 360,86" fill="none" class="arch-flow-green"/>
-
-        <!-- particles -->
-        <circle id="dot1" class="arch-dot" r="5" fill="#E8A84C" filter="url(#glow)"/>
-        <circle id="dot2" class="arch-dot" r="4" fill="#E8A84C" filter="url(#glow)"/>
-        <circle id="dot3" class="arch-dot" r="4" fill="#4CAF82" filter="url(#glow)"/>
-        <circle id="dot4" class="arch-dot" r="3.5" fill="#56A8C9" filter="url(#glow)"/>
-        <circle id="dot5" class="arch-dot" r="3" fill="#E8A84C" filter="url(#glow)"/>
-        <circle id="dot6" class="arch-dot" r="3" fill="#4CAF82" filter="url(#glow)"/>
+        <path d="M782,122 C782,20 300,20 360,86" fill="none" class="arch-flow ok"/>
       </svg>
       <div class="arch-note">
         <i class="ph ph-info"></i>
@@ -409,32 +477,32 @@
     </div>
 
     <div class="subsys-grid">
-      <div class="panel reveal">
+      <div class="panel blue">
         <div class="p-head"><span class="p-icon"><i class="ph ph-activity"></i></span><h3>Worker pool</h3></div>
         <div class="p-meta">engine 01 · continuous</div>
         <p>Pops the highest-score ID from Redis, fetches the full record from Postgres, runs your handler, and writes the outcome back. Claims are guarded by optimistic locking: a stale worker can never clobber a newer one.</p>
       </div>
-      <div class="panel reveal">
-        <div class="p-head"><span class="p-icon cyan"><i class="ph ph-calendar"></i></span><h3>Scheduler</h3></div>
+      <div class="panel">
+        <div class="p-head"><span class="p-icon"><i class="ph ph-calendar"></i></span><h3>Scheduler</h3></div>
         <div class="p-meta">engine 02 · every 5s</div>
         <p>Asks Postgres which scheduled and backoff-delayed jobs are now due, then pushes their IDs into Redis. Postgres holds the schedule; Redis just gets told when to run things.</p>
       </div>
-      <div class="panel reveal">
+      <div class="panel red">
         <div class="p-head"><span class="p-icon red"><i class="ph ph-bug"></i></span><h3>Stale reaper</h3></div>
         <div class="p-meta">engine 03 · every 60s</div>
         <p>Resets jobs stuck in <code>running</code> past <code>StaleJobTimeout</code> — the workers that claimed them crashed. The job comes back as pending and runs again.</p>
       </div>
-      <div class="panel reveal">
+      <div class="panel green">
         <div class="p-head"><span class="p-icon green"><i class="ph ph-lifebuoy"></i></span><h3>Orphan reaper</h3></div>
         <div class="p-meta">engine 04 · every 60s</div>
         <p>Re-queues pending jobs that went missing from Redis — a worker died between popping and claiming, or the sorted set was cleared. Nothing waits forever.</p>
       </div>
-      <div class="panel reveal">
+      <div class="panel">
         <div class="p-head"><span class="p-icon"><i class="ph ph-chart-line"></i></span><h3>Metrics server</h3></div>
         <div class="p-meta">engine 05 · on MetricsPort</div>
         <p>Exposes a Prometheus <code>/metrics</code> endpoint the moment you set a port. Each queue instance owns a private registry, so multiple instances in one process never collide.</p>
       </div>
-      <div class="panel reveal">
+      <div class="panel green">
         <div class="p-head"><span class="p-icon green"><i class="ph ph-database"></i></span><h3>Ledger + dispatcher</h3></div>
         <div class="p-meta">the core split</div>
         <p>Every state change is a Postgres write you can <code>SELECT</code>. Redis only answers "what runs next" at microseconds. You get relational durability and sorted-set scheduling without either one doing the other's job.</p>
@@ -446,88 +514,73 @@
 <!-- LIFECYCLE -->
 <section class="section" id="lifecycle">
   <div class="container">
-    <div class="sec-head reveal">
-      <div class="sec-num">02 / lifecycle</div>
+    <div class="sec-head">
+      <div class="sec-meta"><span class="sec-num">02</span><span class="lane-tag">ledger · postgres</span></div>
       <h2 class="sec-title">Every transition is a row you can query.</h2>
       <p class="sec-body">pending → running → completed. Or failed → re-queued with backoff, then dead. Each change is an update in a normal Postgres table — no vendor API, no hidden state, just SQL.</p>
     </div>
 
-    <div class="life-wrap reveal">
+    <div class="diagram">
       <svg id="life-svg" viewBox="0 0 880 260" role="img" aria-label="Job state machine: pending to running, then completed, failed, or dead.">
         <defs>
-          <marker id="arrL" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#3A4047"/></marker>
-          <filter id="glowL" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-          <filter id="glowLStrong" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-          <linearGradient id="lifeNodeGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1E2228"/><stop offset="100%" stop-color="#16191E"/></linearGradient>
-          <radialGradient id="lifeGlow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#E8A84C" stop-opacity="0.3"/><stop offset="100%" stop-color="#E8A84C" stop-opacity="0"/></radialGradient>
+          <marker id="arrL" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#C6BEB0"/></marker>
+          <radialGradient id="lifeGlow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#2E5E8C" stop-opacity="0.25"/><stop offset="100%" stop-color="#2E5E8C" stop-opacity="0"/></radialGradient>
         </defs>
-        <rect x="0" y="0" width="880" height="260" rx="12" fill="#14171A"/>
+        <rect class="diagram-bg" x="0" y="0" width="880" height="260" rx="8"/>
 
-        <!-- pending -->
         <g>
-          <rect id="l-pending" x="40" y="104" width="120" height="46" rx="9" class="life-node"/>
+          <rect x="40" y="104" width="120" height="46" rx="6" class="life-node"/>
           <text x="100" y="127" class="life-node-label" text-anchor="middle" dominant-baseline="middle">pending</text>
         </g>
-        <!-- cancelled -->
         <g>
-          <rect x="40" y="16" width="120" height="44" rx="9" class="life-node" stroke="#3A4047" stroke-dasharray="5 3"/>
-          <text x="100" y="38" class="life-node-label" text-anchor="middle" dominant-baseline="middle" fill="#6B727A">cancelled</text>
+          <rect x="40" y="16" width="120" height="44" rx="6" class="life-node dashed"/>
+          <text x="100" y="38" class="life-node-label" text-anchor="middle" dominant-baseline="middle" fill="#858A92">cancelled</text>
         </g>
-        <path id="lp-cancel" d="M100,104 L100,60" class="life-edge" stroke-dasharray="4 3" marker-end="url(#arrL)"/>
+        <path d="M100,104 L100,60" class="life-edge" stroke-dasharray="4 3" marker-end="url(#arrL)"/>
         <text x="116" y="84" class="life-edge-label">CancelJob()</text>
 
-        <!-- running -->
         <g>
-          <circle cx="280" cy="127" r="30" fill="url(#lifeGlow)" opacity="0.5"/>
-          <rect id="l-run-glow" x="214" y="100" width="132" height="54" rx="11" fill="none" stroke="#E8A84C" stroke-width="5" opacity="0.15" filter="url(#glowLStrong)"/>
-          <rect id="l-running" x="216" y="102" width="128" height="50" rx="9" class="life-node" stroke="#E8A84C" stroke-width="2.5" fill="url(#lifeNodeGrad)"/>
-          <text x="280" y="127" class="life-node-label" text-anchor="middle" dominant-baseline="middle" fill="#F0B968">running</text>
+          <circle cx="280" cy="127" r="30" class="life-run-glow"/>
+          <rect x="214" y="100" width="132" height="54" rx="7" class="life-run"/>
+          <rect x="216" y="102" width="128" height="50" rx="6" class="life-node running"/>
+          <text x="280" y="127" class="life-node-label act" text-anchor="middle" dominant-baseline="middle">running</text>
         </g>
-        <path id="lp-dequeue" d="M160,127 L216,127" class="life-edge" marker-end="url(#arrL)"/>
+        <path d="M160,127 L216,127" class="life-edge" marker-end="url(#arrL)"/>
         <text x="188" y="118" class="life-edge-label" text-anchor="middle">dequeue</text>
 
-        <!-- completed -->
         <g>
-          <rect x="420" y="24" width="120" height="44" rx="9" class="life-node" stroke="#4CAF82" stroke-width="2" fill="url(#lifeNodeGrad)"/>
-          <text x="480" y="46" class="life-node-label" text-anchor="middle" dominant-baseline="middle" fill="#4CAF82">completed</text>
+          <rect x="420" y="24" width="120" height="44" rx="6" class="life-node ok"/>
+          <text x="480" y="46" class="life-node-label ok" text-anchor="middle" dominant-baseline="middle">completed</text>
         </g>
-        <path id="lp-ok" d="M344,110 L480,68" class="life-edge" stroke="#4CAF82" marker-end="url(#arrL)"/>
-        <text x="400" y="84" class="life-edge-label" fill="#4CAF82" text-anchor="middle">handler ok</text>
+        <path d="M344,110 L480,68" class="life-edge ok" marker-end="url(#arrL)"/>
+        <text x="400" y="84" class="life-edge-label ok" text-anchor="middle">handler ok</text>
 
-        <!-- failed -->
         <g>
-          <rect x="420" y="180" width="120" height="44" rx="9" class="life-node" stroke="#E05252" stroke-width="2" fill="url(#lifeNodeGrad)"/>
-          <text x="480" y="202" class="life-node-label" text-anchor="middle" dominant-baseline="middle" fill="#E05252">failed</text>
+          <rect x="420" y="180" width="120" height="44" rx="6" class="life-node err"/>
+          <text x="480" y="202" class="life-node-label err" text-anchor="middle" dominant-baseline="middle">failed</text>
         </g>
-        <path id="lp-error" d="M344,142 L480,180" class="life-edge" stroke="#E05252" marker-end="url(#arrL)"/>
-        <text x="402" y="168" class="life-edge-label" fill="#E05252" text-anchor="middle">error</text>
+        <path d="M344,142 L480,180" class="life-edge err" marker-end="url(#arrL)"/>
+        <text x="402" y="168" class="life-edge-label err" text-anchor="middle">error</text>
 
-        <!-- dead -->
         <g>
-          <rect x="616" y="196" width="120" height="48" rx="9" class="life-node" stroke="#E05252" stroke-width="2.5" fill="url(#lifeNodeGrad)"/>
-          <text x="676" y="220" class="life-node-label" text-anchor="middle" dominant-baseline="middle" fill="#E05252" font-weight="600">dead</text>
+          <rect x="616" y="196" width="120" height="48" rx="6" class="life-node dead"/>
+          <text x="676" y="220" class="life-node-label err" text-anchor="middle" dominant-baseline="middle" font-weight="600">dead</text>
         </g>
-        <path id="lp-dead" d="M540,202 L616,196" class="life-edge" stroke="#E05252" marker-end="url(#arrL)"/>
-        <text x="578" y="190" class="life-edge-label" fill="#E05252" text-anchor="middle">no retries</text>
+        <path d="M540,202 L616,196" class="life-edge err" marker-end="url(#arrL)"/>
+        <text x="578" y="190" class="life-edge-label err" text-anchor="middle">no retries</text>
 
-        <!-- re-queued -->
         <g>
-          <rect id="l-requeued" x="616" y="104" width="120" height="46" rx="9" class="life-node" stroke="#E8A84C" stroke-dasharray="5 3" fill="url(#lifeNodeGrad)"/>
-          <text x="676" y="127" class="life-node-label" text-anchor="middle" dominant-baseline="middle" fill="#F0B968">re-queued</text>
+          <rect x="616" y="104" width="120" height="46" rx="6" class="life-node dashed"/>
+          <text x="676" y="127" class="life-node-label act" text-anchor="middle" dominant-baseline="middle">re-queued</text>
         </g>
-        <path id="lp-retry" d="M540,196 L676,196 L676,150" class="life-edge" stroke="#E8A84C" marker-end="url(#arrL)"/>
-        <text x="608" y="210" class="life-edge-label" fill="#F0B968">retries remain</text>
-        <path id="lp-reschedule" d="M676,104 L676,20 L100,20 L100,104" class="life-edge" stroke="#E8A84C" stroke-dasharray="4 3" marker-end="url(#arrL)"/>
-        <text x="360" y="12" class="life-edge-label" fill="#F0B968" text-anchor="middle">backoff elapsed → scheduler re-promotes</text>
-
-        <!-- particles -->
-        <circle id="life-dot" r="6" fill="#E8A84C" filter="url(#glowL)" opacity="0"/>
-        <circle id="life-trail" r="3" fill="#E8A84C" opacity="0"/>
-        <circle id="life-trail2" r="2" fill="#F0B968" opacity="0"/>
+        <path d="M540,196 L676,196 L676,150" class="life-edge act" marker-end="url(#arrL)"/>
+        <text x="608" y="210" class="life-edge-label act">retries remain</text>
+        <path d="M676,104 L676,20 L100,20 L100,104" class="life-edge act" stroke-dasharray="4 3" marker-end="url(#arrL)"/>
+        <text x="360" y="12" class="life-edge-label act" text-anchor="middle">backoff elapsed → scheduler re-promotes</text>
       </svg>
     </div>
 
-    <div class="reveal table-scroll">
+    <div class="table-scroll">
       <table class="tbl" style="min-width:640px;">
         <thead><tr><th>status</th><th>means</th><th>who changes it</th></tr></thead>
         <tbody>
@@ -546,64 +599,64 @@
 <!-- FEATURES -->
 <section class="section" id="features">
   <div class="container">
-    <div class="sec-head reveal">
-      <div class="sec-num">03 / features</div>
+    <div class="sec-head">
+      <div class="sec-meta"><span class="sec-num">03</span><span class="lane-tag">postgres + redis</span></div>
       <h2 class="sec-title">Operable in production, not just in a demo.</h2>
       <p class="sec-body">Kyu ships the tooling real queues need — dead letters, a dashboard, a CLI — as part of the library rather than as add-ons you discover you need later.</p>
     </div>
 
-    <div class="feat-grid" id="feat-grid">
-      <div class="feat reveal">
+    <div class="feat-grid">
+      <div class="feat green">
         <div class="f-top"><span class="f-icon green"><i class="ph ph-shield-check"></i></span><h3>Durable by default</h3><span class="f-num">f01</span></div>
         <p>Redis is a cache; Postgres is a database, and Kyu treats them accordingly. Clear Redis entirely — your jobs are still there, still scheduled, still run.</p>
       </div>
-      <div class="feat reveal">
+      <div class="feat blue">
         <div class="f-top"><span class="f-icon"><i class="ph ph-sort-ascending"></i></span><h3>Priority queues</h3><span class="f-num">f02</span></div>
         <p><code>Priority</code> maps to the Redis sorted-set score. Workers always pop the highest score first — <code>process_payment</code> at 10 beats <code>send_email</code> at 1.</p>
       </div>
-      <div class="feat reveal">
-        <div class="f-top"><span class="f-icon cyan"><i class="ph ph-calendar"></i></span><h3>Scheduled jobs</h3><span class="f-num">f03</span></div>
+      <div class="feat">
+        <div class="f-top"><span class="f-icon"><i class="ph ph-calendar"></i></span><h3>Scheduled jobs</h3><span class="f-num">f03</span></div>
         <p>Pass a <code>ScheduledAt</code> time and the scheduler promotes it when the clock catches up. No cron process, no second service.</p>
       </div>
-      <div class="feat reveal">
+      <div class="feat">
         <div class="f-top"><span class="f-icon"><i class="ph ph-repeat"></i></span><h3>Retries + exponential backoff</h3><span class="f-num">f04</span></div>
         <p>Fail once → wait 1s. Twice → 2s. Three → 4s. Your downstream service gets a chance to recover instead of absorbing a retry storm.</p>
       </div>
-      <div class="feat reveal">
+      <div class="feat red">
         <div class="f-top"><span class="f-icon red"><i class="ph ph-archive"></i></span><h3>Dead-letter queue</h3><span class="f-num">f05</span></div>
         <p>Jobs that exhaust retries stay <code>dead</code> forever, queryable by SQL. Inspect them, <code>Retry()</code> one, <code>RetryAllDead()</code> the lot onto a dedicated queue, or purge.</p>
       </div>
-      <div class="feat reveal">
-        <div class="f-top"><span class="f-icon cyan"><i class="ph ph-lock"></i></span><h3>Optimistic locking</h3><span class="f-num">f06</span></div>
+      <div class="feat blue">
+        <div class="f-top"><span class="f-icon"><i class="ph ph-lock"></i></span><h3>Optimistic locking</h3><span class="f-num">f06</span></div>
         <p>Workers stamp <code>locked_by</code> when they claim a job. Every transition is guarded by that stamp, so a worker with a lost claim can't clobber the current owner.</p>
       </div>
-      <div class="feat reveal">
+      <div class="feat">
         <div class="f-top"><span class="f-icon"><i class="ph ph-brackets-curly"></i></span><h3>Middleware + panic recovery</h3><span class="f-num">f07</span></div>
         <p>Wrap every job in logging, timing, or auth middleware. Panics in handlers are caught and recorded, not propagated into the worker.</p>
       </div>
-      <div class="feat reveal">
+      <div class="feat green">
         <div class="f-top"><span class="f-icon green"><i class="ph ph-stack"></i></span><h3>Batch enqueue</h3><span class="f-num">f08</span></div>
         <p><code>EnqueueMany</code> writes a batch as one COPY into Postgres and one ZADD into Redis — atomic, fast, and IDs come back in input order.</p>
       </div>
-      <div class="feat reveal">
-        <div class="f-top"><span class="f-icon cyan"><i class="ph ph-chart-line"></i></span><h3>Prometheus + Grafana</h3><span class="f-num">f09</span></div>
+      <div class="feat blue">
+        <div class="f-top"><span class="f-icon"><i class="ph ph-chart-line"></i></span><h3>Prometheus + Grafana</h3><span class="f-num">f09</span></div>
         <p>Set <code>MetricsPort</code> and <code>/metrics</code> is live. The included docker-compose provisions Grafana with a prebuilt dashboard — queue depth, throughput, failures by type.</p>
       </div>
-      <div class="feat reveal">
+      <div class="feat">
         <div class="f-top"><span class="f-icon"><i class="ph ph-clock"></i></span><h3>RunOnce cron mode</h3><span class="f-num">f10</span></div>
         <p>Drains the queue and exits with code 0. Wire it to a Kubernetes CronJob or crontab — no long-running process needed for batch work.</p>
       </div>
-      <div class="feat reveal">
+      <div class="feat red">
         <div class="f-top"><span class="f-icon red"><i class="ph ph-magnifying-glass"></i></span><h3>Inspect · cancel · reset</h3><span class="f-num">f11</span></div>
         <p><code>Inspect(id)</code>, <code>CancelJob(id)</code>, <code>Reset(id)</code>, <code>Purge(status)</code>, <code>Pause()</code>/<code>Resume()</code>, <code>Stats()</code>, filtered + paginated <code>ListJobs()</code>. All of it, in the library.</p>
       </div>
-      <div class="feat reveal">
+      <div class="feat green">
         <div class="f-top"><span class="f-icon green"><i class="ph ph-bell"></i></span><h3>Completion webhooks</h3><span class="f-num">f12</span></div>
         <p>Set <code>CallbackURL</code> and Kyu POSTs <code>{job_id, status, payload, error}</code> on completion. Fire-and-forget with a 10s timeout — callbacks never slow down processing.</p>
       </div>
-      <div class="feat reveal" style="grid-column:1/-1;">
+      <div class="feat blue" style="grid-column:1/-1;">
         <div class="f-top"><span class="f-icon"><i class="ph ph-tree-structure"></i></span><h3>Scope — deliberate boundaries</h3><span class="f-num">f13</span></div>
-        <p style="max-width:760px;">Handlers are plain Go functions compiled into your binary — no DSL, no sidecar, no sandbox; they share your toolchain and deploy pipeline. Kyu is a job queue, not a workflow orchestrator: no DAG engine, jobs are independent units of work, and multi-step sequences are expressed in application code (each handler enqueues the next job).</p>
+        <p class="f-note" style="max-width:760px;">Handlers are plain Go functions compiled into your binary — no DSL, no sidecar, no sandbox; they share your toolchain and deploy pipeline. Kyu is a job queue, not a workflow orchestrator: no DAG engine, jobs are independent units of work, and multi-step sequences are expressed in application code (each handler enqueues the next job).</p>
       </div>
     </div>
   </div>
@@ -612,13 +665,13 @@
 <!-- QUICK START -->
 <section class="section" id="quickstart">
   <div class="container">
-    <div class="sec-head reveal">
-      <div class="sec-num">04 / quick start</div>
+    <div class="sec-head">
+      <div class="sec-meta"><span class="sec-num">04</span><span class="lane-tag">postgres + redis</span></div>
       <h2 class="sec-title">From zero to processing in minutes.</h2>
       <p class="sec-body">The <code>jobs</code> table and its indexes are created by embedded goose migrations on the first <code>Connect()</code>. No code generation step, no extra tooling.</p>
     </div>
 
-    <div class="reveal tabs">
+    <div class="tabs">
       <div class="tab-bar">
         <button class="tab-btn active" data-tab="install">install</button>
         <button class="tab-btn" data-tab="qs">quick start</button>
@@ -626,7 +679,7 @@
       </div>
       <div class="tab-panel active" id="tab-install">
         <div class="code-wrap">
-          <button class="code-copy" onclick="copyText(this.parentElement.querySelector('code'),this)"><i class="ph ph-copy"></i>copy</button>
+          <button class="code-copy" onclick="copyText(this.parentElement.querySelector('code'),this)" aria-label="Copy code"><i class="ph ph-copy"></i>copy</button>
           <pre><code class="language-bash">go get github.com/codetesla51/kyu
 
 # the CLI ships as its own command
@@ -635,7 +688,7 @@ go install github.com/codetesla51/kyu/cmd/kyu@latest</code></pre>
       </div>
       <div class="tab-panel" id="tab-qs">
         <div class="code-wrap">
-          <button class="code-copy" onclick="copyText(this.parentElement.querySelector('code'),this)"><i class="ph ph-copy"></i>copy</button>
+          <button class="code-copy" onclick="copyText(this.parentElement.querySelector('code'),this)" aria-label="Copy code"><i class="ph ph-copy"></i>copy</button>
           <pre><code class="language-go">q := kyu.New(kyu.Config{
     DSN:         "postgres://user:pass@localhost:5432/mydb?sslmode=disable",
     RedisAddr:   "localhost:6380",
@@ -657,7 +710,7 @@ if err := q.Start(ctx); err != nil { log.Fatal(err) }</code></pre>
       </div>
       <div class="tab-panel" id="tab-enqueue">
         <div class="code-wrap">
-          <button class="code-copy" onclick="copyText(this.parentElement.querySelector('code'),this)"><i class="ph ph-copy"></i>copy</button>
+          <button class="code-copy" onclick="copyText(this.parentElement.querySelector('code'),this)" aria-label="Copy code"><i class="ph ph-copy"></i>copy</button>
           <pre><code class="language-go">// run immediately, processed by priority
 jobID, err := q.Enqueue(ctx, "send_email", `{"to":"user@example.com"}`, kyu.EnqueueOptions{
     MaxRetries: 3,
@@ -682,27 +735,25 @@ ids, err := q.EnqueueMany(ctx, []kyu.EnqueueRequest{
       </div>
     </div>
 
-    <div class="reveal" style="margin-top:40px;">
-      <div class="subsys-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));">
-        <div class="panel">
-          <div class="p-head"><span class="p-icon green"><i class="ph ph-terminal"></i></span><h3>CLI included</h3></div>
-          <div class="p-meta">one binary</div>
-          <p style="font-family:var(--font-mono);font-size:12px;line-height:2;">
-            kyu serve · workers + dashboard<br>
-            kyu enqueue send_email '{"to":"u@ex.com"}'<br>
-            kyu inspect &lt;job_id&gt; · kyu version
-          </p>
-        </div>
-        <div class="panel">
-          <div class="p-head"><span class="p-icon cyan"><i class="ph ph-rocket-launch"></i></span><h3>One command stack</h3></div>
-          <div class="p-meta">docker compose</div>
-          <p style="font-family:var(--font-mono);font-size:12px;line-height:2;">docker compose up --build<br>→ dashboard :8080 · metrics :9090<br>→ grafana :3000 (admin/admin)</p>
-        </div>
-        <div class="panel">
-          <div class="p-head"><span class="p-icon red"><i class="ph ph-stack-simple"></i></span><h3>Queue isolation</h3></div>
-          <div class="p-meta">QueueName</div>
-          <p>Give each app a unique <code>QueueName</code> and its Redis sorted set is separate. Apps sharing a name compete for the same jobs — that's how multi-worker deployments scale.</p>
-        </div>
+    <div class="subsys-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:36px;">
+      <div class="panel green">
+        <div class="p-head"><span class="p-icon green"><i class="ph ph-terminal"></i></span><h3>CLI included</h3></div>
+        <div class="p-meta">one binary</div>
+        <p style="font-family:var(--font-mono);font-size:12px;line-height:2;">
+          kyu serve · workers + dashboard<br>
+          kyu enqueue send_email '{"to":"u@ex.com"}'<br>
+          kyu inspect &lt;job_id&gt; · kyu version
+        </p>
+      </div>
+      <div class="panel">
+        <div class="p-head"><span class="p-icon"><i class="ph ph-rocket-launch"></i></span><h3>One command stack</h3></div>
+        <div class="p-meta">docker compose</div>
+        <p style="font-family:var(--font-mono);font-size:12px;line-height:2;">docker compose up --build<br>→ dashboard :8080 · metrics :9090<br>→ grafana :3000 (admin/admin)</p>
+      </div>
+      <div class="panel red">
+        <div class="p-head"><span class="p-icon red"><i class="ph ph-stack-simple"></i></span><h3>Queue isolation</h3></div>
+        <div class="p-meta">QueueName</div>
+        <p>Give each app a unique <code>QueueName</code> and its Redis sorted set is separate. Apps sharing a name compete for the same jobs — that's how multi-worker deployments scale.</p>
       </div>
     </div>
   </div>
@@ -711,30 +762,28 @@ ids, err := q.EnqueueMany(ctx, []kyu.EnqueueRequest{
 <!-- DASHBOARD -->
 <section class="section" id="dashboard">
   <div class="container">
-    <div class="sec-head reveal">
-      <div class="sec-num">05 / dashboard</div>
+    <div class="sec-head">
+      <div class="sec-meta"><span class="sec-num">05</span><span class="lane-tag">ops</span></div>
       <h2 class="sec-title">Watch the queue without leaving your browser.</h2>
       <p class="sec-body"><code>kyu serve</code> starts a web dashboard by default. Live stats stream over SSE, and every management action — retry dead jobs, purge a status, pause workers, enqueue from the UI — is a click away. It's embedded in the binary; nothing extra to install.</p>
     </div>
 
-    <div class="reveal shot">
+    <div class="shot">
       <img src="dashboard.png" alt="Kyu dashboard: queue depth, per-status job totals, worker state, and a live jobs stream">
       <div class="shot-caption"><i class="ph ph-check"></i>live overview · jobs stream (SSE) · dead-letter actions · pause/resume</div>
     </div>
 
-    <div class="reveal" style="margin-top:36px;">
-      <div class="table-scroll">
-        <table class="tbl" style="min-width:540px;">
-          <thead><tr><th>metric</th><th>type</th><th>what it tracks</th></tr></thead>
-          <tbody>
-            <tr><td>kyu_jobs_total</td><td>counter</td><td>total jobs ever submitted</td></tr>
-            <tr><td>kyu_jobs_processed_total</td><td>counter_vec</td><td>completed jobs, labelled by status</td></tr>
-            <tr><td>kyu_job_failures_total</td><td>counter_vec</td><td>failures, labelled by job_type</td></tr>
-            <tr><td>kyu_jobs_dead_total</td><td>counter</td><td>jobs that exhausted all retries</td></tr>
-            <tr><td>kyu_queue_depth</td><td>gauge</td><td>jobs currently waiting in Redis</td></tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="table-scroll" style="margin-top:36px;">
+      <table class="tbl" style="min-width:540px;">
+        <thead><tr><th>metric</th><th>type</th><th>what it tracks</th></tr></thead>
+        <tbody>
+          <tr><td>kyu_jobs_total</td><td>counter</td><td>total jobs ever submitted</td></tr>
+          <tr><td>kyu_jobs_processed_total</td><td>counter_vec</td><td>completed jobs, labelled by status</td></tr>
+          <tr><td>kyu_job_failures_total</td><td>counter_vec</td><td>failures, labelled by job_type</td></tr>
+          <tr><td>kyu_jobs_dead_total</td><td>counter</td><td>jobs that exhausted all retries</td></tr>
+          <tr><td>kyu_queue_depth</td><td>gauge</td><td>jobs currently waiting in Redis</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </section>
@@ -742,14 +791,14 @@ ids, err := q.EnqueueMany(ctx, []kyu.EnqueueRequest{
 <!-- BENCHMARKS -->
 <section class="section" id="benchmarks">
   <div class="container">
-    <div class="sec-head reveal">
-      <div class="sec-num">06 / benchmarks</div>
+    <div class="sec-head">
+      <div class="sec-meta"><span class="sec-num">06</span><span class="lane-tag">measured</span></div>
       <h2 class="sec-title">Fast where it should be, honest about the rest.</h2>
       <p class="sec-body">Dispatch overhead is under a microsecond — but that's not the ceiling. Cross-layer load testing with Barrage found the real bound is Postgres write latency, which is exactly where durability comes from.</p>
     </div>
 
     <div class="bench-grid">
-      <div class="reveal table-scroll">
+      <div class="table-scroll">
         <table class="tbl" style="min-width:440px;">
           <thead><tr><th>dispatch benchmark</th><th>cost</th><th>allocs</th></tr></thead>
           <tbody>
@@ -760,7 +809,7 @@ ids, err := q.EnqueueMany(ctx, []kyu.EnqueueRequest{
           </tbody>
         </table>
       </div>
-      <div class="reveal table-scroll">
+      <div class="table-scroll">
         <table class="tbl bench-table" style="min-width:440px;">
           <thead><tr><th>barrage load test</th><th>rate</th><th>p99</th><th>success</th></tr></thead>
           <tbody>
@@ -772,7 +821,7 @@ ids, err := q.EnqueueMany(ctx, []kyu.EnqueueRequest{
       </div>
     </div>
 
-    <div class="reveal bench-note">
+    <div class="bench-note">
       <i class="ph ph-info"></i>
       <span>Barrage drives HTTP, Postgres, and Redis on one clock and correlates them by time bucket — it shows cross-layer behavior under simultaneous load, not a per-job causal trace. 60s run, 20s ramp, 300 enqueues/s, 900 DB ops/s, 1500 Redis cmds/s. Full investigation log: <a href="https://github.com/codetesla51/kyu/blob/master/benchmarks/README.md" target="_blank" rel="noopener">github.com/codetesla51/kyu → benchmarks/README.md</a></span>
     </div>
@@ -782,43 +831,43 @@ ids, err := q.EnqueueMany(ctx, []kyu.EnqueueRequest{
 <!-- COMPARISON -->
 <section class="section" id="comparison">
   <div class="container">
-    <div class="sec-head reveal">
-      <div class="sec-num">07 / why kyu</div>
+    <div class="sec-head">
+      <div class="sec-meta"><span class="sec-num">07</span><span class="lane-tag">postgres + redis</span></div>
       <h2 class="sec-title">Neither Redis-only nor Postgres-only. Both.</h2>
       <p class="sec-body">Redis-only queues are fast until they lose the queue. Postgres-only queues are durable but scan for what to run next. Kyu deliberately splits the difference: Postgres is the ledger, Redis is the dispatcher.</p>
     </div>
 
-    <div class="reveal spectrum">
+    <div class="spectrum">
       <svg viewBox="0 0 900 150" role="img" aria-label="Positioning spectrum from Redis-only queues on the left through Postgres-only in the middle to Kyu on the right.">
         <defs>
-          <linearGradient id="specLineGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#3A4047"/><stop offset="50%" stop-color="#6B727A"/><stop offset="100%" stop-color="#3A4047"/></linearGradient>
-          <linearGradient id="specFillGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(232,168,76,0.15)"/><stop offset="100%" stop-color="rgba(232,168,76,0)"/></linearGradient>
-          <filter id="specGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <linearGradient id="specLineGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#C6BEB0"/><stop offset="50%" stop-color="#858A92"/><stop offset="100%" stop-color="#C6BEB0"/></linearGradient>
+          <linearGradient id="specFillGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E7EEF5"/><stop offset="100%" stop-color="#E7EEF5" stop-opacity="0"/></linearGradient>
+          <linearGradient id="specSplit" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#2E5E8C"/><stop offset="50%" stop-color="#2E5E8C"/><stop offset="50%" stop-color="#B23A1E"/><stop offset="100%" stop-color="#B23A1E"/></linearGradient>
         </defs>
         <line x1="80" y1="75" x2="820" y2="75" stroke="url(#specLineGrad)" stroke-width="2"/>
-        <ellipse cx="740" cy="75" rx="60" ry="30" fill="url(#specFillGrad)" opacity="0.5"/>
+        <ellipse cx="740" cy="75" rx="70" ry="34" fill="url(#specFillGrad)"/>
         <g>
           <circle cx="170" cy="75" r="9" class="spec-dot"/>
-          <text x="170" y="52" text-anchor="middle" fill="#9AA1A9" style="font-family:var(--font-mono);font-size:11px;">Redis-only</text>
-          <text x="170" y="36" text-anchor="middle" fill="#6B727A" style="font-family:var(--font-mono);font-size:9px;">Asynq · BullMQ</text>
-          <text x="170" y="100" text-anchor="middle" fill="#6B727A" style="font-family:var(--font-mono);font-size:9px;">fast · fragile</text>
+          <text x="170" y="52" text-anchor="middle" fill="#191A1C" style="font-family:var(--font-mono);font-size:11px;font-weight:600;">Redis-only</text>
+          <text x="170" y="36" text-anchor="middle" fill="#858A92" style="font-family:var(--font-mono);font-size:9px;">Asynq · BullMQ</text>
+          <text x="170" y="100" text-anchor="middle" fill="#858A92" style="font-family:var(--font-mono);font-size:9px;">fast · fragile</text>
         </g>
         <g>
           <circle cx="455" cy="75" r="9" class="spec-dot"/>
-          <text x="455" y="52" text-anchor="middle" fill="#9AA1A9" style="font-family:var(--font-mono);font-size:11px;">Postgres-only</text>
-          <text x="455" y="36" text-anchor="middle" fill="#6B727A" style="font-family:var(--font-mono);font-size:9px;">River</text>
-          <text x="455" y="100" text-anchor="middle" fill="#6B727A" style="font-family:var(--font-mono);font-size:9px;">durable · slower</text>
+          <text x="455" y="52" text-anchor="middle" fill="#191A1C" style="font-family:var(--font-mono);font-size:11px;font-weight:600;">Postgres-only</text>
+          <text x="455" y="36" text-anchor="middle" fill="#858A92" style="font-family:var(--font-mono);font-size:9px;">River</text>
+          <text x="455" y="100" text-anchor="middle" fill="#858A92" style="font-family:var(--font-mono);font-size:9px;">durable · slower</text>
         </g>
-        <g id="kyu-spec" opacity="0">
-          <circle cx="740" cy="75" r="18" fill="#E8A84C" opacity="0.12" filter="url(#specGlow)"/>
-          <circle cx="740" cy="75" r="12" class="spec-dot kyu" filter="url(#specGlow)"/>
-          <text x="740" y="46" text-anchor="middle" fill="#F0B968" style="font-family:var(--font-ui);font-weight:700;font-size:13px;">Kyu — you are here</text>
-          <text x="740" y="104" text-anchor="middle" fill="#F0B968" style="font-family:var(--font-mono);font-size:9px;">fast AND durable</text>
+        <g>
+          <circle cx="740" cy="75" r="22" fill="url(#specSplit)" opacity="0.12"/>
+          <circle cx="740" cy="75" r="11" fill="url(#specSplit)"/>
+          <text x="740" y="44" text-anchor="middle" fill="#191A1C" style="font-family:var(--font-mono);font-weight:600;font-size:13px;">Kyu — you are here</text>
+          <text x="740" y="104" text-anchor="middle" fill="#B23A1E" style="font-family:var(--font-mono);font-size:9px;">fast AND durable</text>
         </g>
       </svg>
     </div>
 
-    <div class="reveal table-scroll">
+    <div class="table-scroll">
       <table class="tbl" style="min-width:820px;">
         <thead>
           <tr>
@@ -827,7 +876,7 @@ ids, err := q.EnqueueMany(ctx, []kyu.EnqueueRequest{
             <th>asynq</th>
             <th>river</th>
             <th>machinery</th>
-            <th>bullmq <span style="font-size:9px;color:var(--dim);font-weight:400;">node</span></th>
+            <th>bullmq <span style="font-size:9px;color:var(--ink-3);font-weight:400;">node</span></th>
           </tr>
         </thead>
         <tbody>
@@ -877,7 +926,7 @@ function copyText(codeEl, btn) {
   var done = function () {
     var orig = btn.innerHTML;
     btn.innerHTML = '<i class="ph ph-check"></i> copied';
-    btn.style.color = 'var(--green)';
+    btn.style.color = 'var(--ok)';
     setTimeout(function () { btn.innerHTML = orig; btn.style.color = ''; }, 1400);
   };
   if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -905,8 +954,12 @@ document.querySelectorAll('.tab-btn').forEach(function (btn) {
 // ── mobile menu ─────────────────────────────────────────
 var hb = document.getElementById('hamburger'), mm = document.getElementById('mobile-menu');
 if (hb && mm) {
-  hb.addEventListener('click', function () { mm.classList.toggle('open'); });
-  mm.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { mm.classList.remove('open'); }); });
+  hb.addEventListener('click', function () {
+    var open = mm.classList.toggle('open');
+    hb.setAttribute('aria-expanded', open ? 'true' : 'false');
+    hb.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  });
+  mm.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { mm.classList.remove('open'); hb.setAttribute('aria-expanded', 'false'); }); });
 }
 
 // ── star count ──────────────────────────────────────────
@@ -919,156 +972,6 @@ fetch('https://api.github.com/repos/codetesla51/kyu')
       document.getElementById('star-badge').classList.add('visible');
     }
   }).catch(function () {});
-
-// ── scroll reveal ───────────────────────────────────────
-(function () {
-  var els = document.querySelectorAll('.reveal');
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    els.forEach(function (el) { el.classList.add('in'); });
-    return;
-  }
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) {
-      if (e.isIntersecting) {
-        var el = e.target, d = parseFloat(el.dataset.delay || 0);
-        setTimeout(function () {
-          el.classList.add('in');
-          el.style.transition = 'opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1)';
-        }, d);
-        io.unobserve(el);
-      }
-    });
-  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-  els.forEach(function (el) { io.observe(el); });
-})();
-
-// ── hero entrance (improved easing + stagger) ───────────
-(function () {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var hero = document.getElementById('hero-copy');
-  if (!hero) return;
-  document.querySelectorAll('#hero-title').forEach(function (h) {
-    var raw = h.innerHTML.replace(/<br\s*\/?>/gi, ' __BR__ ').replace(/<span class="accent">(.*?)<\/span>/g, ' __ACC__ $1 __ACCEND__ ');
-    h.innerHTML = raw.trim().split(/\s+/).map(function (w) {
-      if (w === '__BR__') return '<br>';
-      if (w === '__ACC__') return '<span class="accent" style="display:inline-block;">';
-      if (w === '__ACCEND__') return '</span>';
-      return '<span class="hw" style="display:inline-block;opacity:0;transform:translateY(22px)">' + w + '</span>';
-    }).join(' ');
-  });
-  if (!window.anime) {
-    document.querySelectorAll('#hero-title .hw').forEach(function (w) { w.style.opacity = 1; w.style.transform = 'none'; });
-    return;
-  }
-  anime.timeline({ easing: 'easeOutExpo' })
-    .add({ targets: '#hero-label', opacity: [0, 1], translateY: [10, 0], duration: 500 }, 0)
-    .add({ targets: '#hero-title .hw', opacity: [0, 1], translateY: [22, 0], duration: 650, delay: anime.stagger(34) }, 150)
-    .add({ targets: '#hero-sub', opacity: [0, 1], translateY: [16, 0], duration: 600 }, 700)
-    .add({ targets: '#hero-cta, #hero-tags', opacity: [0, 1], translateY: [12, 0], duration: 550, delay: anime.stagger(90) }, 850);
-})();
-
-// ── ARCH pipeline particles (anime.path) ────────────────
-(function () {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var hasSVG = document.getElementById('fp-app-pg');
-  if (!hasSVG) return;
-  var dots = ['dot1', 'dot2', 'dot3', 'dot4', 'dot5', 'dot6'];
-  var paths = ['#fp-app-pg', '#fp-app-r', '#fp-pg-w', '#fp-r-w', '#fp-w-h', '#fp-h-pg'];
-  paths.forEach(function (sel, i) {
-    var p = anime.path(sel);
-    var dot = document.getElementById(dots[i]);
-    if (!dot) return;
-    anime({
-      targets: dot,
-      translateX: p('x'), translateY: p('y'),
-      easing: 'easeInOutQuart',
-      duration: 2100,
-      loop: true,
-      delay: i * 350
-    });
-  });
-  // moving dashes
-  paths.forEach(function (sel) {
-    var el = document.querySelector(sel.replace('#fp', '#fd'));
-    if (el) {
-      var len = el.getTotalLength();
-      el.style.strokeDasharray = len + ' ' + len;
-      anime({ targets: el, strokeDashoffset: [len, 0], duration: 2600, easing: 'linear', loop: true });
-    }
-  });
-})();
-
-// ── lifecycle state machine ─────────────────────────────
-(function () {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var dot = document.getElementById('life-dot'), trail = document.getElementById('life-trail'), trail2 = document.getElementById('life-trail2');
-  if (!dot) return;
-  var pts = {
-    pending: { x: 100, y: 127 }, running: { x: 280, y: 127 },
-    completed: { x: 480, y: 46 }, failed: { x: 480, y: 202 },
-    requeued: { x: 676, y: 127 }, dead: { x: 676, y: 220 }
-  };
-  function hide() { dot.setAttribute('opacity', 0); trail.setAttribute('opacity', 0); if (trail2) trail2.setAttribute('opacity', 0); }
-  function mv(from, to, dur, col, hold, done) {
-    var o = { x: from.x, y: from.y };
-    dot.setAttribute('fill', col);
-    anime({
-      targets: o, x: to.x, y: to.y, duration: dur || 550, easing: 'easeInOutQuart',
-      update: function () {
-        dot.setAttribute('cx', o.x); dot.setAttribute('cy', o.y); dot.setAttribute('opacity', 1);
-        trail.setAttribute('cx', o.x); trail.setAttribute('cy', o.y); trail.setAttribute('opacity', 0.35);
-        if (trail2) { trail2.setAttribute('cx', o.x); trail2.setAttribute('cy', o.y); trail2.setAttribute('opacity', 0.2); }
-      },
-      complete: function () {
-        trail.setAttribute('opacity', 0);
-        if (trail2) trail2.setAttribute('opacity', 0);
-        setTimeout(done || function () {}, hold || 300);
-      }
-    });
-  }
-  var routes = [
-    ['ok', '#4CAF82', function (next) {
-      mv(pts.pending, pts.running, 550, '#E8A84C', 250, function () {
-        mv(pts.running, pts.completed, 520, '#4CAF82', 500, function () { hide(); next(); });
-      });
-    }],
-    ['retry', '#E8A84C', function (next) {
-      mv(pts.pending, pts.running, 550, '#E8A84C', 250, function () {
-        mv(pts.running, pts.failed, 520, '#E05252', 250, function () {
-          mv(pts.failed, pts.requeued, 480, '#E8A84C', 220, function () {
-            mv(pts.requeued, pts.pending, 640, '#E8A84C', 450, function () { hide(); next(); });
-          });
-        });
-      });
-    }],
-    ['dead', '#E05252', function (next) {
-      mv(pts.pending, pts.running, 550, '#E8A84C', 250, function () {
-        mv(pts.running, pts.failed, 520, '#E05252', 250, function () {
-          mv(pts.failed, pts.dead, 480, '#E05252', 600, function () { hide(); next(); });
-        });
-      });
-    }]
-  ];
-  function loop(i) {
-    hide();
-    routes[i][2](function () { setTimeout(function () { loop((i + 1) % routes.length); }, 350); });
-  }
-  setTimeout(function () { loop(0); }, 600);
-})();
-
-// ── spectrum marker ─────────────────────────────────────
-(function () {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var m = document.getElementById('kyu-spec');
-  if (!m) return;
-  var io = new IntersectionObserver(function (e) {
-    if (e[0].isIntersecting) {
-      anime({ targets: '#kyu-spec', opacity: [0, 1], translateY: [26, 0], scale: [0.5, 1], duration: 900, easing: 'spring(1, 90, 10, 0)' });
-      io.unobserve(m);
-    }
-  }, { threshold: 0.4 });
-  io.observe(m);
-})();
 </script>
 </body>
 </html>
