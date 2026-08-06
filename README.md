@@ -15,9 +15,9 @@ Grafana-dark developer-tool aesthetic — dark only, no light bands, no SaaS tre
 
 ## Structure
 
-1. **Hero** — problem-led copy ("Stop losing jobs when Redis flushes."), centered, install box + GitHub button, proof tags, animated word-stagger entrance
+1. **Hero** — centered problem-led copy ("Jobs survive a Redis flush. Dispatch stays fast.") above a full-width pipeline schematic that loops continuously (GSAP DrawSVG: connectors draw in, labels fade, boxes pulse, flow rests — paused off-screen); install box + GitHub button + proof tags below the copy
 2. **Stats strip** — Redis throughput 1,250/s · Postgres 749.9/s · 100% delivery · 52ns dispatch overhead
-3. **01 Architecture** — animated pipeline SVG (anime.js particles + moving dashes) with the Enqueue → Postgres/Redis → worker → handler flow, plus six subsystem panels
+3. **01 Architecture** — GSAP DrawSVG pipeline animation: the app → Postgres/Redis → worker connectors draw themselves (blue lane first, red lane offset 0.3s), labels fade in as each path completes, destination boxes pulse on arrival; plays on scroll into view + six subsystem panels
 4. **02 Lifecycle** — animated state-machine SVG (pending → running → completed / failed / re-queued / dead) + status table
 5. **03 Features** — thirteen cards (durability, priorities, scheduling, retries, DLQ, locking, middleware, batch, Prometheus, RunOnce, inspect APIs, webhooks, scope boundaries)
 6. **04 Quick start** — install / quick start / enqueue tabs with statically-rendered Go + Bash code (highlight.js) — content is in the markup, never empty — plus CLI / docker-compose / queue-isolation panels
@@ -39,4 +39,4 @@ Tested with a headless-chromium overflow harness at 375 / 768 / 1024 / 1440 px �
 node server.js   # serves on http://localhost:3000
 ```
 
-Or open `index.html` directly — it's a single static file. Phosphor icons, highlight.js, anime.js, and Inter/JetBrains Mono fonts load from CDNs.
+Or open `index.html` directly — it's a single static file. Phosphor icons, highlight.js, GSAP 3.13 (core + DrawSVGPlugin + ScrollTrigger), and IBM Plex fonts load from CDNs.
