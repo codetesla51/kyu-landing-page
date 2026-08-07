@@ -68,14 +68,17 @@
     .container{max-width:var(--maxw);margin-inline:auto;padding-inline:var(--pad);}
 
     /* ── NAV ─────────────────────────────────────────── */
-    #nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--hair);}
+    #nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--hair);transition:box-shadow .25s ease,border-color .25s ease;}
+    #nav.scrolled{box-shadow:0 1px 0 var(--hair),0 10px 28px rgba(25,26,28,0.08);}
     .nav-inner{max-width:var(--maxw);margin-inline:auto;padding-inline:var(--pad);height:60px;display:flex;align-items:center;justify-content:space-between;gap:18px;}
     .brand{display:inline-flex;align-items:center;gap:9px;font-family:var(--font-mono);font-weight:600;font-size:15px;color:var(--ink);letter-spacing:0.01em;}
     .brand .dot{width:14px;height:7px;border-radius:2px;background:linear-gradient(90deg,var(--pg) 0 50%,var(--redis) 50% 100%);}
     .brand:hover{color:var(--ink);text-decoration:none;}
     .nav-links{display:flex;align-items:center;gap:2px;border:1px solid var(--hair);border-radius:4px;background:var(--card);padding:3px;}
-    .nav-links a{font-family:var(--font-mono);font-size:12px;color:var(--ink-2);padding:5px 11px;border-radius:3px;white-space:nowrap;}
+    .nav-links a{font-family:var(--font-mono);font-size:12px;color:var(--ink-2);padding:5px 11px;border-radius:3px;white-space:nowrap;position:relative;}
     .nav-links a:hover{background:var(--paper-2);color:var(--ink);text-decoration:none;}
+    .nav-links a.active{color:var(--ink);background:var(--paper-2);}
+    .nav-links a.active::after{content:'';position:absolute;left:11px;right:11px;bottom:2px;height:2px;border-radius:1px;background:linear-gradient(90deg,var(--pg) 0 50%,var(--redis) 50% 100%);}
     .nav-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
     .btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px;font-weight:500;padding:8px 14px;border-radius:4px;border:1px solid var(--ink);background:var(--paper);color:var(--ink);cursor:pointer;white-space:nowrap;}
     .btn:hover{background:var(--ink);color:var(--paper);text-decoration:none;}
@@ -86,27 +89,45 @@
     #star-badge.visible{display:inline-flex;}
     #star-badge:hover{border-color:var(--ink);color:var(--ink);text-decoration:none;}
     #star-badge .ph{font-size:14px;color:var(--redis);}
-    #hamburger{display:none;background:var(--card);border:1px solid var(--hair);border-radius:4px;color:var(--ink);width:44px;height:44px;align-items:center;justify-content:center;cursor:pointer;}
+    #hamburger{display:none;background:var(--card);border:1px solid var(--hair);border-radius:4px;color:var(--ink);width:44px;height:44px;align-items:center;justify-content:center;cursor:pointer;flex-direction:column;gap:5px;padding:0;}
     #hamburger:hover{border-color:var(--ink);}
-    #hamburger .ph{font-size:20px;}
+    .hb-bar{display:block;width:16px;height:2px;border-radius:1px;background:var(--ink);transition:transform .22s ease,opacity .15s ease;}
+    #hamburger[aria-expanded="true"] .hb-bar:nth-child(1){transform:translateY(7px) rotate(45deg);}
+    #hamburger[aria-expanded="true"] .hb-bar:nth-child(2){opacity:0;}
+    #hamburger[aria-expanded="true"] .hb-bar:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
     #theme-toggle{background:var(--card);border:1px solid var(--hair);border-radius:4px;color:var(--ink-2);width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
     #theme-toggle:hover{border-color:var(--ink);color:var(--ink);}
     #theme-toggle .ph{font-size:18px;}
-    #mobile-menu a.theme-row{background:var(--card);color:var(--ink);}
-    #mobile-menu a.theme-row .ph{color:var(--pg);}
-    #mobile-menu{display:none;border-bottom:1px solid var(--hair);background:var(--paper-2);}
-    #mobile-menu.open{display:block;}
+    #mobile-menu{display:none;border-bottom:1px solid var(--hair);background:var(--paper-2);max-height:calc(100vh - 60px);max-height:calc(100dvh - 60px);overflow-y:auto;}
+    #mobile-menu.open{display:block;animation:menuIn .22s ease-out;}
+    @keyframes menuIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
+    .mobile-head{display:flex;align-items:center;gap:12px;padding:10px 24px;border-top:1px solid var(--hair);font-family:var(--font-mono);font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);background:var(--card);}
     #mobile-menu a{display:flex;align-items:center;gap:9px;min-height:48px;padding:12px 24px;border-top:1px solid var(--hair);font-family:var(--font-mono);font-size:13px;color:var(--ink-2);}
     #mobile-menu a:hover{color:var(--ink);background:var(--card);text-decoration:none;}
     #mobile-menu a .ph{color:var(--redis);}
+    #mobile-menu a.active{color:var(--ink);background:var(--card);}
+    #mobile-menu a.active::before{content:'';width:14px;height:6px;border-radius:2px;background:linear-gradient(90deg,var(--pg) 0 50%,var(--redis) 50% 100%);flex-shrink:0;}
+    #mobile-menu a:not(.active)::before{content:'';width:14px;height:6px;flex-shrink:0;border-radius:2px;border:1px solid var(--hair-2);}
+    #mobile-menu a.theme-row::before,#mobile-menu a[target="_blank"]::before{display:none;}
+    #mobile-menu a.theme-row{background:var(--card);color:var(--ink);}
+    #mobile-menu a.theme-row .ph{color:var(--pg);}
     @media(max-width:1240px){#star-badge{display:none!important;}}
+    @media(max-width:1060px){
+      .nav-links a{padding:5px 8px;}
+      .nav-inner{gap:12px;}
+    }
     @media(max-width:920px){
       .nav-links{display:none;}
       #hamburger{display:flex;}
       .nav-actions .gh-label{display:none;}
       .nav-actions .btn{width:44px;padding:0;justify-content:center;}
     }
-    @media(pointer:coarse){.btn{min-height:44px;}.nav-links a{min-height:40px;display:inline-flex;align-items:center;}}
+    @media(prefers-reduced-motion:reduce){
+      #nav{transition:none;}
+      #mobile-menu.open{animation:none;}
+      .hb-bar{transition:none;}
+    }
+    @media(pointer:coarse){.btn{min-height:44px;}.nav-links a{min-height:44px;display:inline-flex;align-items:center;}.copy-btn{min-height:44px;}}
 
     /* ── HERO ────────────────────────────────────────── */
     .hero{padding:clamp(64px,9vw,110px) 0 clamp(36px,5vw,56px);}
@@ -129,17 +150,41 @@
     .tag{font-family:var(--font-mono);font-size:11px;color:var(--ink-2);border:1px solid var(--hair);background:var(--card);padding:5px 10px;border-radius:3px;}
     .tag .ph{font-size:13px;margin-right:4px;vertical-align:-2px;color:var(--pg);}
 
-    /* hero schematic */
+    /* hero schematic — canvas chrome */
     .schematic,.diagram,.spectrum{background:var(--card);border:1px solid var(--hair-2);border-radius:var(--radius);box-shadow:0 1px 0 var(--hair),0 18px 40px rgba(25,26,28,0.07);overflow:hidden;position:relative;}
-    .schematic::before,.diagram::before,.spectrum::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+    .canvas-bar{display:flex;align-items:center;gap:12px;padding:8px 14px;border-bottom:1px solid var(--hair);background:var(--paper-2);font-family:var(--font-mono);font-size:10.5px;letter-spacing:0.05em;color:var(--ink-3);position:relative;z-index:2;}
+    .canvas-bar .cb-dots{display:inline-flex;gap:5px;margin-right:2px;}
+    .canvas-bar .cb-dots i{width:8px;height:8px;border-radius:50%;border:1px solid var(--hair-2);background:transparent;}
+    .canvas-bar .cb-dots i.r{background:var(--redis);border-color:var(--redis);}
+    .canvas-bar .cb-dots i.b{background:var(--pg);border-color:var(--pg);}
+    .canvas-bar .cb-dots i.g{background:var(--ok);border-color:var(--ok);}
+    .canvas-bar .cb-name{color:var(--ink-2);font-weight:500;white-space:nowrap;}
+    .canvas-bar .cb-meta{margin-left:auto;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;}
+    .canvas-surface{position:relative;margin:10px;border:1px solid var(--hair);border-radius:3px;overflow:hidden;}
+    .canvas-surface::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
       background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
       background-size:20px 20px,20px 20px;}
-    .schematic svg,.diagram svg,.spectrum svg{width:100%;height:auto;display:block;position:relative;z-index:1;}
+    .canvas-surface::after{content:'';position:absolute;inset:4px;pointer-events:none;z-index:2;
+      background:
+        linear-gradient(var(--hair-2),var(--hair-2)) left top / 10px 1px,
+        linear-gradient(var(--hair-2),var(--hair-2)) left top / 1px 10px,
+        linear-gradient(var(--hair-2),var(--hair-2)) right top / 10px 1px,
+        linear-gradient(var(--hair-2),var(--hair-2)) right top / 1px 10px,
+        linear-gradient(var(--hair-2),var(--hair-2)) left bottom / 10px 1px,
+        linear-gradient(var(--hair-2),var(--hair-2)) left bottom / 1px 10px,
+        linear-gradient(var(--hair-2),var(--hair-2)) right bottom / 10px 1px,
+        linear-gradient(var(--hair-2),var(--hair-2)) right bottom / 1px 10px;
+      background-repeat:no-repeat;}
+    .canvas-surface svg{width:100%;height:auto;display:block;}
+    .canvas-status{display:flex;flex-wrap:wrap;align-items:center;gap:8px 22px;padding:10px 16px;border-top:1px solid var(--hair);background:var(--paper-2);font-family:var(--font-mono);font-size:10.5px;color:var(--ink-3);position:relative;z-index:2;}
+    .canvas-status .ph{color:var(--pg);}
+    .canvas-status .cs-right{margin-left:auto;}
     .lane-legend{display:flex;flex-wrap:wrap;gap:8px 22px;padding:12px 16px;border-top:1px solid var(--hair);font-family:var(--font-mono);font-size:10.5px;color:var(--ink-3);position:relative;z-index:1;}
     .lg{display:inline-flex;align-items:center;gap:7px;}
     .lg::before{content:'';width:14px;height:4px;border-radius:2px;}
     .lg.lg-blue::before{background:var(--pg);}
     .lg.lg-red::before{background:var(--redis);}
+    .lg-readout{margin-left:auto;}
     .sk-node{fill:var(--node-bg);stroke:var(--ink);stroke-width:1.5;}
     .sk-node.pg{stroke:var(--pg);}
     .sk-node.redis{stroke:var(--redis);}
@@ -181,6 +226,7 @@
     /* ── DIAGRAM WRAPPERS ────────────────────────────── */
     .diagram,.spectrum{margin-bottom:36px;}
     .arch-note{display:flex;gap:10px;align-items:flex-start;font-family:var(--font-mono);font-size:11.5px;color:var(--ink-2);border-top:1px solid var(--hair);background:var(--paper-2);padding:12px 16px;position:relative;z-index:1;}
+    .arch-note span{min-width:0;overflow-wrap:anywhere;}
     .arch-note .ph{color:var(--redis);flex-shrink:0;margin-top:1px;}
     .arch-node{fill:var(--node-bg);stroke:var(--hair-2);stroke-width:1.5;}
     .arch-node.pg{stroke:var(--pg);}
@@ -196,7 +242,7 @@
     .pg-cyl{fill:var(--paper);stroke:var(--pg);stroke-width:1.5;}
     .redis-cyl{fill:var(--paper);stroke:var(--redis);stroke-width:1.5;}
 
-    .subsys-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;}
+    .subsys-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:18px;}
     .panel{container-type:inline-size;background:var(--card);border:1px solid var(--hair);border-radius:var(--radius);padding:24px;border-top:3px solid var(--hair-2);}
     .panel.blue{border-top-color:var(--pg);}
     .panel.red{border-top-color:var(--redis);}
@@ -234,7 +280,7 @@
     .life-run-glow{fill:url(#lifeGlow);opacity:0.35;}
 
     /* ── FEATURES ────────────────────────────────────── */
-    .feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px;}
+    .feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(330px,100%),1fr));gap:18px;}
     .feat{container-type:inline-size;background:var(--card);border:1px solid var(--hair);border-top:3px solid var(--hair-2);border-radius:var(--radius);padding:24px 26px;}
     .feat.blue{border-top-color:var(--pg);}
     .feat.red{border-top-color:var(--redis);}
@@ -252,6 +298,7 @@
 
     /* ── CODE / TABS ─────────────────────────────────── */
     .tabs{border:1px solid var(--hair-2);border-radius:var(--radius);overflow:hidden;background:var(--card);}
+    .tabs .canvas-bar{border-bottom:none;padding-bottom:4px;}
     .tab-bar{display:flex;gap:0;overflow-x:auto;border-bottom:1px solid var(--hair);background:var(--paper-2);}
     .tab-btn{font-family:var(--font-mono);font-size:12px;padding:12px 18px;background:none;border:none;border-bottom:2px solid transparent;color:var(--ink-2);cursor:pointer;white-space:nowrap;}
     .tab-btn:hover{color:var(--ink);}
@@ -263,13 +310,14 @@
     .code-copy{position:absolute;top:10px;inset-inline-end:10px;z-index:3;background:var(--paper-2);border:1px solid var(--hair-2);border-radius:3px;padding:4px 9px;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-2);cursor:pointer;display:flex;align-items:center;gap:6px;}
     .code-copy:hover{background:var(--ink);color:var(--paper);border-color:var(--ink);}
     .code-copy .ph{font-size:13px;}
-    @media(pointer:coarse){.code-copy{min-height:34px;}}
+    @media(pointer:coarse){.code-copy{min-height:44px;}}
     .code-wrap pre{margin:0;padding:18px 20px;overflow-x:auto;}
     .code-wrap pre code{font-family:var(--font-mono);font-size:12.5px;line-height:1.7;background:transparent;color:var(--ink);white-space:pre;}
     .hljs{background:transparent !important;}
 
     /* ── TABLES ──────────────────────────────────────── */
     .table-scroll{overflow-x:auto;border:1px solid var(--hair-2);border-radius:var(--radius);background:var(--card);-webkit-overflow-scrolling:touch;}
+    .table-scroll .canvas-bar{position:sticky;left:0;border-radius:0;}
     table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:520px;}
     table.tbl th{font-family:var(--font-mono);font-size:10.5px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-3);text-align:start;padding:12px 18px;border-bottom:1px solid var(--hair-2);background:var(--paper-2);white-space:nowrap;}
     table.tbl td{padding:11px 18px;border-bottom:1px solid var(--hair);color:var(--ink-2);vertical-align:top;font-size:13px;}
@@ -282,14 +330,15 @@
     th.kyu-col-head{color:var(--pg) !important;border-bottom:2px solid var(--pg);}
 
     /* ── SHOT ────────────────────────────────────────── */
-    .shot{border:1px solid var(--hair-2);border-radius:var(--radius);overflow:hidden;box-shadow:0 18px 40px rgba(25,26,28,0.08);background:var(--card);}
+    .shot{position:relative;border:1px solid var(--hair-2);border-radius:var(--radius);overflow:hidden;box-shadow:0 18px 40px rgba(25,26,28,0.08);background:var(--card);}
     .shot img{width:100%;display:block;}
     .shot-caption{display:flex;align-items:center;gap:8px;padding:11px 16px;border-top:1px solid var(--hair);font-family:var(--font-mono);font-size:11px;color:var(--ink-2);background:var(--paper-2);}
     .shot-caption .ph{color:var(--ok);}
 
     /* ── BENCH ───────────────────────────────────────── */
-    .bench-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;}
+    .bench-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:18px;}
     .bench-note{margin-top:18px;display:flex;gap:10px;align-items:flex-start;font-family:var(--font-mono);font-size:11.5px;color:var(--ink-2);border:1px dashed var(--hair-2);border-radius:var(--radius);padding:12px 14px;background:var(--paper-2);}
+    .bench-note span{min-width:0;overflow-wrap:anywhere;}
     .bench-note .ph{color:var(--redis);flex-shrink:0;margin-top:1px;}
     .bench-note a{color:var(--pg);text-decoration:underline;text-underline-offset:3px;}
 
@@ -315,6 +364,9 @@
       .stats-strip{grid-template-columns:1fr;}
       .stat-panel{border-left:none;}
       .feat-grid{grid-template-columns:1fr;}
+      .hero h1 br{display:none;}
+      .sec-meta{flex-wrap:wrap;}
+      .sec-meta::after{flex:1 1 auto;}
     }
   </style>
 </head>
@@ -336,10 +388,11 @@
       <a id="star-badge" href="https://github.com/codetesla51/kyu" target="_blank" rel="noopener"><i class="ph ph-star"></i><span id="star-count">…</span></a>
       <a href="https://github.com/codetesla51/kyu" target="_blank" rel="noopener" class="btn"><i class="ph ph-github-logo"></i><span class="gh-label">GitHub</span></a>
       <button id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode"><i class="ph ph-moon-stars"></i></button>
-      <button id="hamburger" aria-label="Open menu" aria-expanded="false"><i class="ph ph-list"></i></button>
+      <button id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"><span class="hb-bar"></span><span class="hb-bar"></span><span class="hb-bar"></span></button>
     </div>
   </div>
   <div id="mobile-menu">
+    <div class="mobile-head"><span class="cb-dots"><i class="r"></i><i class="b"></i><i class="g"></i></span><span>menu</span><span class="cs-right">7 sections</span></div>
     <a href="#architecture">architecture</a>
     <a href="#lifecycle">lifecycle</a>
     <a href="#features">features</a>
@@ -376,6 +429,8 @@
       </div>
 
       <div class="schematic" role="img" aria-label="Kyu moves a job through two lanes: Postgres holds the durable record, Redis holds a fast index of job IDs, and a worker reads both.">
+        <div class="canvas-bar"><span class="cb-dots"><i class="r"></i><i class="b"></i><i class="g"></i></span><span class="cb-name">dispatch.svg</span><span class="cb-meta">960×340 · 2 lanes</span></div>
+        <div class="canvas-surface">
         <svg id="hero-svg" viewBox="0 0 960 340">
           <rect class="lane-band" x="187" y="28" width="576" height="50" rx="3"/>
           <rect class="lane-band red" x="187" y="262" width="576" height="50" rx="3"/>
@@ -413,9 +468,11 @@
             <marker id="arrRed" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="var(--redis)"/></marker>
           </defs>
         </svg>
+        </div>
         <div class="lane-legend">
           <span class="lg lg-blue">blue · durable state in postgres</span>
           <span class="lg lg-red">red · fast signal in redis</span>
+          <span class="lg-readout">drawsvg loop · scroll-gated</span>
         </div>
       </div>
     </div>
@@ -440,6 +497,8 @@
     </div>
 
     <div class="diagram">
+      <div class="canvas-bar"><span class="cb-dots"><i class="r"></i><i class="b"></i><i class="g"></i></span><span class="cb-name">architecture.svg</span><span class="cb-meta">960×360 · 12×6 grid</span></div>
+      <div class="canvas-surface">
       <svg id="arch-svg" viewBox="0 0 960 360" role="img" aria-label="Grid layout: the app enqueues into Postgres and Redis, a worker fetches from Postgres, pops from Redis, runs the handler, and writes the result back to Postgres.">
         <defs>
           <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="var(--hair-2)"/></marker>
@@ -512,6 +571,7 @@
         <path id="arch-fl-update" d="M700,120 V8 H360" fill="none" class="arch-flow ok" stroke-dasharray="4 3" marker-end="url(#arrOK)"/>
         <text id="arch-lb-update" x="530" y="52" class="arch-label" text-anchor="middle">update status · guarded by locked_by</text>
       </svg>
+      </div>
       <div class="arch-note">
         <i class="ph ph-info"></i>
         <span>Postgres owns the schedule and the history. Redis only holds a sorted set of IDs scored by priority — it's a disposable index, not a source of truth.</span>
@@ -563,6 +623,8 @@
     </div>
 
     <div class="diagram">
+      <div class="canvas-bar"><span class="cb-dots"><i class="r"></i><i class="b"></i><i class="g"></i></span><span class="cb-name">lifecycle.svg</span><span class="cb-meta">960×360 · 7 states</span></div>
+      <div class="canvas-surface">
       <svg id="life-svg" viewBox="0 0 960 360" role="img" aria-label="Job state machine: pending to running, then completed, failed, or dead.">
         <defs>
           <marker id="arrL" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="var(--hair-2)"/></marker>
@@ -644,9 +706,11 @@
         <path d="M700,176 V340 H80 V176" class="life-edge act" stroke-dasharray="4 3" marker-end="url(#arrLAct)"/>
         <text x="390" y="328" class="life-edge-label act" text-anchor="middle">backoff elapsed → scheduler re-promotes</text>
       </svg>
+      </div>
     </div>
 
     <div class="table-scroll">
+      <div class="canvas-bar"><span class="cb-dots"><i class="r"></i><i class="b"></i><i class="g"></i></span><span class="cb-name">status.tsv</span><span class="cb-meta">7 rows · postgres</span></div>
       <table class="tbl" style="min-width:640px;">
         <thead><tr><th>status</th><th>means</th><th>who changes it</th></tr></thead>
         <tbody>
@@ -738,6 +802,7 @@
     </div>
 
     <div class="tabs">
+      <div class="canvas-bar"><span class="cb-dots"><i class="r"></i><i class="b"></i><i class="g"></i></span><span class="cb-name">quickstart.go</span><span class="cb-meta">go 1.22+</span></div>
       <div class="tab-bar">
         <button class="tab-btn active" data-tab="install">install</button>
         <button class="tab-btn" data-tab="qs">quick start</button>
@@ -801,7 +866,7 @@ ids, err := q.EnqueueMany(ctx, []kyu.EnqueueRequest{
       </div>
     </div>
 
-    <div class="subsys-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:36px;">
+    <div class="subsys-grid" style="grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));margin-top:36px;">
       <div class="panel green">
         <div class="p-head"><span class="p-icon green"><i class="ph ph-terminal"></i></span><h3>CLI included</h3></div>
         <div class="p-meta">one binary</div>
@@ -835,11 +900,13 @@ ids, err := q.EnqueueMany(ctx, []kyu.EnqueueRequest{
     </div>
 
     <div class="shot">
-      <img src="dashboard.png" alt="Kyu dashboard: queue depth, per-status job totals, worker state, and a live jobs stream">
+      <div class="canvas-bar"><span class="cb-dots"><i class="r"></i><i class="b"></i><i class="g"></i></span><span class="cb-name">kyu dashboard</span><span class="cb-meta">kyu serve · :8080</span></div>
+      <img src="dashboard.png" width="1920" height="1080" loading="lazy" decoding="async" alt="Kyu dashboard: queue depth, per-status job totals, worker state, and a live jobs stream">
       <div class="shot-caption"><i class="ph ph-check"></i>live overview · jobs stream (SSE) · dead-letter actions · pause/resume</div>
     </div>
 
     <div class="table-scroll" style="margin-top:36px;">
+      <div class="canvas-bar"><span class="cb-dots"><i class="r"></i><i class="b"></i><i class="g"></i></span><span class="cb-name">metrics.json</span><span class="cb-meta">/metrics · prometheus</span></div>
       <table class="tbl" style="min-width:540px;">
         <thead><tr><th>metric</th><th>type</th><th>what it tracks</th></tr></thead>
         <tbody>
@@ -865,6 +932,7 @@ ids, err := q.EnqueueMany(ctx, []kyu.EnqueueRequest{
 
     <div class="bench-grid">
       <div class="table-scroll">
+        <div class="canvas-bar"><span class="cb-dots"><i class="r"></i><i class="b"></i><i class="g"></i></span><span class="cb-name">dispatch.bench</span><span class="cb-meta">go test -bench</span></div>
         <table class="tbl" style="min-width:440px;">
           <thead><tr><th>dispatch benchmark</th><th>cost</th><th>allocs</th></tr></thead>
           <tbody>
@@ -876,6 +944,7 @@ ids, err := q.EnqueueMany(ctx, []kyu.EnqueueRequest{
         </table>
       </div>
       <div class="table-scroll">
+        <div class="canvas-bar"><span class="cb-dots"><i class="r"></i><i class="b"></i><i class="g"></i></span><span class="cb-name">barrage.json</span><span class="cb-meta">60s · 300 enq/s</span></div>
         <table class="tbl bench-table" style="min-width:440px;">
           <thead><tr><th>barrage load test</th><th>rate</th><th>p99</th><th>success</th></tr></thead>
           <tbody>
@@ -904,6 +973,8 @@ ids, err := q.EnqueueMany(ctx, []kyu.EnqueueRequest{
     </div>
 
     <div class="spectrum">
+      <div class="canvas-bar"><span class="cb-dots"><i class="r"></i><i class="b"></i><i class="g"></i></span><span class="cb-name">comparison.svg</span><span class="cb-meta">960×360 · 2 queues → 1</span></div>
+      <div class="canvas-surface">
       <svg viewBox="0 0 960 360" role="img" aria-label="Neither Redis-only nor Postgres-only: Redis-only and Postgres-only queues converge into Kyu, which uses Postgres as the ledger and Redis as the dispatcher.">
         <defs>
           <marker id="specArrRed" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="var(--redis)"/></marker>
@@ -944,9 +1015,11 @@ ids, err := q.EnqueueMany(ctx, []kyu.EnqueueRequest{
         </g>
         <text x="360" y="344" class="arch-label" text-anchor="middle" fill="var(--ok)" style="font-size:10px;font-weight:600;">Kyu — fast AND durable</text>
       </svg>
+      </div>
     </div>
 
     <div class="table-scroll">
+      <div class="canvas-bar"><span class="cb-dots"><i class="r"></i><i class="b"></i><i class="g"></i></span><span class="cb-name">comparison.csv</span><span class="cb-meta">kyu · asynq · river · machinery · bullmq</span></div>
       <table class="tbl" style="min-width:820px;">
         <thead>
           <tr>
@@ -1065,14 +1138,61 @@ document.querySelectorAll('.tab-btn').forEach(function (btn) {
 
 // ── mobile menu ─────────────────────────────────────────
 var hb = document.getElementById('hamburger'), mm = document.getElementById('mobile-menu');
+function closeMenu() {
+  mm.classList.remove('open');
+  hb.setAttribute('aria-expanded', 'false');
+  hb.setAttribute('aria-label', 'Open menu');
+}
 if (hb && mm) {
   hb.addEventListener('click', function () {
     var open = mm.classList.toggle('open');
     hb.setAttribute('aria-expanded', open ? 'true' : 'false');
     hb.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
   });
-  mm.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { mm.classList.remove('open'); hb.setAttribute('aria-expanded', 'false'); }); });
+  mm.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closeMenu); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
+  document.addEventListener('click', function (e) {
+    if (mm.classList.contains('open') && !document.getElementById('nav').contains(e.target)) closeMenu();
+  });
 }
+
+// ── nav: scrollspy + scrolled shadow ────────────────────
+(function () {
+  var nav = document.getElementById('nav');
+  var links = document.querySelectorAll('.nav-links a[href^="#"], #mobile-menu a[href^="#"]');
+  var sections = [];
+  links.forEach(function (a) {
+    var id = a.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if (el && sections.indexOf(el) === -1) sections.push(el);
+  });
+  function onScroll() {
+    if (nav) nav.classList.toggle('scrolled', window.scrollY > 8);
+    var pos = window.scrollY + Math.min(window.innerHeight * 0.35, 240);
+    var current = null;
+    sections.forEach(function (s) { if (s.offsetTop <= pos + 8) current = s; });
+    links.forEach(function (a) {
+      var on = current && a.getAttribute('href') === '#' + current.id;
+      a.classList.toggle('active', !!on);
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  // smooth-scroll anchor clicks with the sticky nav accounted for
+  links.forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      var id = a.getAttribute('href').slice(1);
+      var el = document.getElementById(id);
+      if (el) {
+        e.preventDefault();
+        closeMenu();
+        var y = el.getBoundingClientRect().top + window.scrollY - 70;
+        window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+        history.replaceState(null, '', '#' + id);
+      }
+    });
+  });
+})();
 
 // ── star count ──────────────────────────────────────────
 fetch('https://api.github.com/repos/codetesla51/kyu')
